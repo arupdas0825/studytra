@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { GraduationCap, Menu, X } from 'lucide-react'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -28,7 +30,6 @@ export default function Navbar() {
         justifyContent: 'space-between',
         height: 68,
       }}>
-        {/* Logo */}
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10,
@@ -40,41 +41,30 @@ export default function Navbar() {
           <span style={{
             fontFamily: 'Fraunces, serif',
             fontWeight: 700, fontSize: '1.3rem',
-            color: 'var(--navy)',
-            letterSpacing: '-0.02em',
+            color: 'var(--navy)', letterSpacing: '-0.02em',
           }}>Studytra</span>
         </a>
 
-        {/* Desktop Links */}
-        <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}
-          className="desktop-nav">
+        <div style={{ display: 'flex', gap: 32, alignItems: 'center' }} className="desktop-nav">
           {links.map(l => (
             <a key={l} href={`#${l.toLowerCase().replace(/ /g, '-')}`}
-              style={{
-                fontSize: '0.9rem', fontWeight: 500,
-                color: 'var(--gray-600)',
-                transition: 'color 0.2s',
-              }}
+              style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--gray-600)', transition: 'color 0.2s' }}
               onMouseEnter={e => e.target.style.color = 'var(--navy)'}
               onMouseLeave={e => e.target.style.color = 'var(--gray-600)'}
             >{l}</a>
           ))}
         </div>
 
-        {/* CTA */}
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button style={{
-            display: 'none',
-            background: 'none', color: 'var(--navy)', fontSize: '0.9rem',
-            fontWeight: 500, padding: '8px 16px',
-          }} className="sign-in-btn">Sign In</button>
-          <button style={{
-            background: 'var(--navy)', color: 'white',
-            padding: '10px 22px', borderRadius: 10,
-            fontSize: '0.88rem', fontWeight: 600,
-            letterSpacing: '0.01em',
-            transition: 'background 0.2s, transform 0.15s',
-          }}
+          <button
+            onClick={() => navigate('/chat')}
+            style={{
+              background: 'var(--navy)', color: 'white',
+              padding: '10px 22px', borderRadius: 10,
+              fontSize: '0.88rem', fontWeight: 600,
+              letterSpacing: '0.01em',
+              transition: 'background 0.2s, transform 0.15s',
+            }}
             onMouseEnter={e => { e.target.style.background = 'var(--navy-mid)'; e.target.style.transform = 'translateY(-1px)' }}
             onMouseLeave={e => { e.target.style.background = 'var(--navy)'; e.target.style.transform = 'translateY(0)' }}
           >
@@ -90,7 +80,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div style={{
           background: 'white', borderTop: '1px solid var(--gray-200)',
@@ -103,6 +92,12 @@ export default function Navbar() {
               style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--navy)' }}
             >{l}</a>
           ))}
+          <button onClick={() => navigate('/chat')}
+            style={{
+              background: 'var(--navy)', color: 'white',
+              padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem',
+            }}
+          >Start Planning →</button>
         </div>
       )}
 
@@ -110,9 +105,6 @@ export default function Navbar() {
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
           .menu-btn { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .sign-in-btn { display: block !important; }
         }
       `}</style>
     </nav>
