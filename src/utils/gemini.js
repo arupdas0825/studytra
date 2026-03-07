@@ -4,7 +4,7 @@ const MODEL = 'gemini-2.0-flash'
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
 
 export async function callGemini(messages) {
-  const apiKey = 'AIzaSyCmNzuKDHqnLUNg6QbzZ3UWzqmJ4t32jTY'
+  const apiKey = VITE_GEMINI_API_KEY
 
   const profileRaw = sessionStorage.getItem('studentProfile')
   const profile = profileRaw ? JSON.parse(profileRaw) : null
