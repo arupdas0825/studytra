@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Send, AlertCircle, RefreshCw } from 'lucide-react'
+import { Send, RefreshCw, AlertCircle } from 'lucide-react'
 import ChatSidebar from '../components/chat/ChatSidebar'
 import MessageBubble from '../components/chat/MessageBubble'
 import TypingIndicator from '../components/chat/TypingIndicator'
+import OnboardingForm from '../components/OnboardingForm'
 import { callGemini, parsePlanLock } from '../utils/gemini'
 
 export default function ChatPage() {
@@ -11,361 +12,230 @@ export default function ChatPage() {
   const [searchParams] = useSearchParams()
   const preselectedCountry = searchParams.get('country') || null
 
+  const [showOnboarding, setShowOnboarding] = useState(() => !sessionStorage.getItem('studentProfile'))
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [lockedPlan, setLockedPlan] = useState(null)
   const [error, setError] = useState(null)
 
-  const messagesEndRef = useRef(null)
+  const endRef = useRef(null)
   const inputRef = useRef(null)
-  const hasInitialized = useRef(false)
+  const initialized = useRef(false)
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, loading])
 
-  // ✅ AI এখন নিজে থেকে প্রথমে greet করবে
-  const initializeChat = useCallback(async () => {
-    if (hasInitialized.current) return
-    hasInitialized.current = true
+  const initChat = useCallback(async () => {
+    if (initialized.current || showOnboarding) return
+    initialized.current = true
     setLoading(true)
     setError(null)
 
+    const profileRaw = sessionStorage.getItem('studentProfile')
+    const profile = profileRaw ? JSON.parse(profileRaw) : null
+    const country = preselectedCountry || profile?.dreamCountry || ''
+
+    const trigger = country && country !== 'Not decided yet'
+      ? `A student named ${profile?.fullName || 'a student'} just arrived. They want to study in ${country}. They are currently doing ${profile?.currentLevel || 'their studies'} at ${profile?.currentUniversity || 'their institution'} and want to pursue ${profile?.targetDegree || 'a degree'} in ${profile?.targetCourse || 'their field'}. Greet them warmly by first name, acknowledge their country choice, and ask for their target intake and any specific questions they have.`
+      : `A student named ${profile?.fullName || 'a new student'} just arrived at Studytra. Greet them warmly, introduce yourself as Studytra AI, and run the 5-step onboarding: country (Germany/USA/Canada/UK/Australia), degree, intake, current stage (A-F), and budget.`
+
     try {
-      // AI কে বলছি student এসেছে, এখন greet করো
-      const systemTrigger = preselectedCountry
-        ? `A student just arrived at the chat page. They have pre-selected "${preselectedCountry}" as their target country. Greet them warmly as Studytra AI, acknowledge their country choice, and ask for their degree and target intake in a friendly structured way.`
-        : `A student just arrived at the Studytra chat page. Greet them warmly as Studytra AI and ask all three onboarding questions: target country (Germany/USA/Canada), degree, and target intake — all in one message.`
-
-      const response = await callGemini([
-        { role: 'user', content: systemTrigger },
-      ])
-
-      const { cleanText, plan } = parsePlanLock(response)
+      const res = await callGemini([{ role: 'user', content: trigger }])
+      const { cleanText, plan } = parsePlanLock(res)
       setMessages([{ role: 'assistant', content: cleanText }])
       if (plan) setLockedPlan(plan)
     } catch (err) {
-      if (err.message === 'MISSING_API_KEY') {
-        setError('missing_key')
-      } else {
-        setError(err.message || 'Connection failed. Please retry.')
-      }
+      setError(err.message)
     } finally {
       setLoading(false)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
-  }, [preselectedCountry])
+  }, [showOnboarding, preselectedCountry])
 
-  useEffect(() => {
-    initializeChat()
-  }, [initializeChat])
+  useEffect(() => { initChat() }, [initChat])
 
   const handleSend = async () => {
-    const trimmed = input.trim()
-    if (!trimmed || loading) return
-
-    const userMsg = { role: 'user', content: trimmed }
-    const updatedMessages = [...messages, userMsg]
-    setMessages(updatedMessages)
+    const t = input.trim()
+    if (!t || loading) return
+    const updated = [...messages, { role: 'user', content: t }]
+    setMessages(updated)
     setInput('')
     setLoading(true)
     setError(null)
-
     try {
-      const apiMessages = updatedMessages.map(m => ({ role: m.role, content: m.content }))
-      const response = await callGemini(apiMessages)
-      const { cleanText, plan } = parsePlanLock(response)
-      setMessages(prev => [...prev, { role: 'assistant', content: cleanText }])
+      const res = await callGemini(updated.map(m => ({ role: m.role, content: m.content })))
+      const { cleanText, plan } = parsePlanLock(res)
+      setMessages(p => [...p, { role: 'assistant', content: cleanText }])
       if (plan && !lockedPlan) setLockedPlan(plan)
     } catch (err) {
-      setError(err.message || 'Failed to get a response. Please retry.')
+      setError(err.message)
     } finally {
       setLoading(false)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
-  }
-
+  const profile = (() => { try { return JSON.parse(sessionStorage.getItem('studentProfile') || 'null') } catch { return null } })()
   const quickReplies = lockedPlan ? [
-    'Show me the complete roadmap',
-    'What exams do I need?',
-    'Explain the visa process step by step',
-    'Break down my monthly costs',
-    'Compare Indian bank education loans',
-    'Show pre-departure checklist',
+    'Show complete roadmap', 'Visa step-by-step', 'Monthly cost breakdown',
+    'Which exams do I need?', 'Best universities for my profile', 'Education loan options',
   ] : [
-    'Germany – MSc Computer Science – Winter 2026',
-    'USA – MS Data Science – Fall 2026',
-    'Canada – MBA – September 2026',
+    'Germany – MSc Computer Science', 'USA – MS Data Science – Fall 2026',
+    'Canada – MBA – September 2026', 'UK – MSc Finance', 'Australia – Master of IT',
   ]
 
-  const handleRetry = () => {
-    setError(null)
-    if (messages.length === 0) {
-      hasInitialized.current = false
-      initializeChat()
-    }
-  }
-
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--off-white)', overflow: 'hidden' }}>
-      <ChatSidebar lockedPlan={lockedPlan} onBack={() => navigate('/')} />
+    <>
+      {showOnboarding && (
+        <OnboardingForm onClose={() => {
+          setShowOnboarding(false)
+          setTimeout(() => { initialized.current = false; initChat() }, 100)
+        }} />
+      )}
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ display: 'flex', height: '100vh', background: 'var(--ivory)', overflow: 'hidden' }}>
+        <ChatSidebar lockedPlan={lockedPlan} onBack={() => navigate('/')} profile={profile} />
 
-        {/* Mobile header */}
-        <div style={{
-          display: 'none', padding: '14px 18px',
-          background: 'white', borderBottom: '1px solid var(--gray-200)',
-          alignItems: 'center', justifyContent: 'space-between',
-        }} className="mobile-header">
-          <button onClick={() => navigate('/')} style={{
-            background: 'none', color: 'var(--navy)',
-            fontSize: '0.85rem', fontWeight: 600,
-            display: 'flex', alignItems: 'center', gap: 6,
-          }}>← Home</button>
-          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, color: 'var(--navy)' }}>Studytra AI</span>
-          {lockedPlan && (
-            <span style={{
-              fontSize: '0.7rem', background: 'var(--accent-light)',
-              color: 'var(--accent)', padding: '3px 10px',
-              borderRadius: 100, fontWeight: 600,
-            }}>🔒 {lockedPlan.country}</span>
-          )}
-        </div>
-
-        {/* Chat header */}
-        <div style={{
-          padding: '16px 28px',
-          background: 'white',
-          borderBottom: '1px solid var(--gray-200)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <div>
-            <div style={{
-              fontFamily: 'Fraunces, serif', fontWeight: 700,
-              fontSize: '1.05rem', color: 'var(--navy)',
-            }}>
-              {lockedPlan
-                ? `${lockedPlan.country} · ${lockedPlan.degree} · ${lockedPlan.intake}`
-                : 'Study Abroad Advisor'}
-            </div>
-            <div style={{
-              fontSize: '0.75rem',
-              color: loading ? 'var(--accent)' : '#22c55e',
-              display: 'flex', alignItems: 'center', gap: 5, marginTop: 3,
-            }}>
-              <div style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: loading ? 'var(--accent)' : '#22c55e',
-                animation: loading ? 'pulse-dot 1s infinite' : 'none',
-              }} />
-              {loading ? 'Studytra AI is thinking...' : 'Online · Ready to plan'}
-            </div>
-          </div>
-
-          {lockedPlan && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              background: 'var(--accent-light)',
-              border: '1px solid rgba(201,147,58,0.25)',
-              borderRadius: 100, padding: '5px 14px',
-            }}>
-              <span style={{ fontSize: '0.9rem' }}>🔒</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)' }}>Plan Locked</span>
-            </div>
-          )}
-        </div>
-
-        {/* Messages area */}
-        <div style={{
-          flex: 1, overflowY: 'auto',
-          padding: '24px 28px',
-          display: 'flex', flexDirection: 'column',
-        }}>
-
-          {/* Loading initial greeting */}
-          {messages.length === 0 && loading && (
-            <div style={{ textAlign: 'center', margin: 'auto', padding: '40px 20px' }}>
-              <div style={{
-                width: 56, height: 56, borderRadius: '50%',
-                background: 'var(--navy)', margin: '0 auto 16px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.4rem',
-              }}>🎓</div>
-              <h3 style={{
-                fontFamily: 'Fraunces, serif', fontSize: '1.2rem',
-                color: 'var(--navy)', marginBottom: 8,
-              }}>Studytra AI is starting...</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
-                Preparing your personalized study abroad advisor
-              </p>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && error !== 'missing_key' && (
-            <div style={{
-              background: '#fef2f2', border: '1px solid #fecaca',
-              borderRadius: 14, padding: '16px 20px',
-              marginBottom: 16, maxWidth: 520,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <AlertCircle size={16} color="#dc2626" />
-                <strong style={{ fontSize: '0.88rem', color: '#dc2626' }}>
-                  {error === 'QUOTA_EXCEEDED' ? 'API Quota Exceeded' : 'Connection Error'}
-                </strong>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          {/* Header */}
+          <div style={{
+            padding: '16px 28px', background: 'white',
+            borderBottom: '1px solid var(--gray-200)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <div>
+              <div style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '1rem', color: 'var(--blue-950)' }}>
+                {lockedPlan ? `${lockedPlan.country} · ${lockedPlan.degree} · ${lockedPlan.intake}` : 'Studytra AI Advisor'}
               </div>
-              <p style={{ fontSize: '0.82rem', color: '#dc2626', lineHeight: 1.6 }}>
-                {error === 'QUOTA_EXCEEDED'
-                  ? 'Free tier quota reached. Wait a minute and retry — quota resets hourly.'
-                  : error}
-              </p>
-              <button onClick={handleRetry} style={{
-                marginTop: 12, display: 'flex', alignItems: 'center', gap: 6,
-                background: '#dc2626', color: 'white',
-                padding: '7px 16px', borderRadius: 8,
-                fontSize: '0.8rem', fontWeight: 600,
+              <div style={{
+                fontSize: '0.74rem', color: loading ? '#f59e0b' : 'var(--mint-500)',
+                display: 'flex', alignItems: 'center', gap: 5, marginTop: 3,
               }}>
-                <RefreshCw size={13} /> Retry
-              </button>
+                <div style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: loading ? '#f59e0b' : 'var(--mint-500)',
+                  animation: loading ? 'pulse-ring 1s infinite' : 'none',
+                }} />
+                {loading ? 'Studytra AI is thinking...' : 'Online · Ready to plan'}
+              </div>
             </div>
-          )}
+            {lockedPlan && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                background: 'var(--mint-50)', border: '1px solid var(--mint-200)',
+                borderRadius: 'var(--r-full)', padding: '5px 14px',
+              }}>
+                <span style={{ fontSize: '0.8rem' }}>🔒</span>
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--mint-600)' }}>Plan Locked</span>
+              </div>
+            )}
+          </div>
 
           {/* Messages */}
-          {messages.map((msg, i) => (
-            <MessageBubble key={i} message={msg} />
-          ))}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px', display: 'flex', flexDirection: 'column' }}>
+            {messages.length === 0 && loading && (
+              <div style={{ textAlign: 'center', margin: 'auto', padding: '40px' }}>
+                <div style={{
+                  width: 60, height: 60, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)',
+                  margin: '0 auto 16px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem',
+                }}>🎓</div>
+                <p style={{ color: 'var(--gray-500)', fontSize: '0.9rem' }}>Studytra AI is getting ready...</p>
+              </div>
+            )}
 
-          {/* Typing indicator — only show after initial greeting loaded */}
-          {loading && messages.length > 0 && <TypingIndicator />}
+            {error && (
+              <div style={{
+                background: 'white', border: '1px solid var(--gray-200)',
+                borderRadius: 'var(--r-lg)', padding: '24px',
+                maxWidth: 420, margin: '20px auto', textAlign: 'center',
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: 12 }}>⏳</div>
+                <h3 style={{ fontSize: '1rem', color: 'var(--blue-950)', marginBottom: 8 }}>
+                  {error === 'QUOTA_EXCEEDED' ? 'Just a moment...' : 'Connection hiccup'}
+                </h3>
+                <p style={{ fontSize: '0.84rem', color: 'var(--gray-500)', marginBottom: 20, lineHeight: 1.65 }}>
+                  {error === 'QUOTA_EXCEEDED'
+                    ? 'Studytra AI is handling many students right now. Wait 30 seconds and retry.'
+                    : 'Something went wrong. A quick retry usually fixes it.'}
+                </p>
+                <button onClick={() => { setError(null); if (!messages.length) { initialized.current = false; initChat() } }} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 7,
+                  background: 'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)',
+                  color: 'white', padding: '10px 22px', borderRadius: 'var(--r-sm)',
+                  fontSize: '0.88rem', fontWeight: 700,
+                }}>
+                  <RefreshCw size={14} /> Try Again
+                </button>
+              </div>
+            )}
 
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick replies */}
-        {!loading && messages.length > 0 && (
-          <div style={{
-            padding: '0 28px 12px',
-            display: 'flex', gap: 8, flexWrap: 'wrap',
-          }}>
-            {quickReplies.map(reply => (
-              <button key={reply}
-                onClick={() => {
-                  setInput(reply)
-                  setTimeout(() => inputRef.current?.focus(), 50)
-                }}
-                style={{
-                  background: 'white', color: 'var(--navy)',
-                  border: '1px solid var(--gray-200)',
-                  borderRadius: 100, padding: '6px 14px',
-                  fontSize: '0.78rem', fontWeight: 500,
-                  transition: 'all 0.15s', cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--navy)'; e.currentTarget.style.background = 'var(--gray-100)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--gray-200)'; e.currentTarget.style.background = 'white' }}
-              >
-                {reply}
-              </button>
-            ))}
+            {messages.map((m, i) => <MessageBubble key={i} message={m} />)}
+            {loading && messages.length > 0 && <TypingIndicator />}
+            <div ref={endRef} />
           </div>
-        )}
 
-        {/* Input */}
-        <div style={{
-          padding: '14px 28px 20px',
-          background: 'white',
-          borderTop: '1px solid var(--gray-200)',
-        }}>
-          <div style={{
-            display: 'flex', gap: 10, alignItems: 'flex-end',
-            maxWidth: 860, margin: '0 auto',
-          }}>
-            <div style={{
-              flex: 1, position: 'relative',
-              border: `1.5px solid ${input ? 'var(--navy)' : 'var(--gray-200)'}`,
-              borderRadius: 14, overflow: 'hidden',
-              background: 'var(--off-white)',
-              transition: 'border-color 0.2s',
-            }}>
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                  lockedPlan
-                    ? `Ask anything about your ${lockedPlan.country} plan...`
-                    : 'Type your reply here...'
-                }
-                rows={1}
-                disabled={loading}
-                style={{
-                  width: '100%', padding: '13px 16px',
-                  background: 'transparent',
-                  border: 'none', outline: 'none', resize: 'none',
-                  fontSize: '0.93rem', fontFamily: 'DM Sans, sans-serif',
-                  color: 'var(--text)', lineHeight: 1.5,
-                  maxHeight: 120, overflowY: 'auto',
+          {/* Quick replies */}
+          {!loading && messages.length > 0 && !error && (
+            <div style={{ padding: '0 28px 12px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {quickReplies.map(r => (
+                <button key={r} onClick={() => { setInput(r); setTimeout(() => inputRef.current?.focus(), 50) }} style={{
+                  background: 'white', color: 'var(--blue-700)',
+                  border: '1px solid var(--blue-100)',
+                  borderRadius: 'var(--r-full)', padding: '6px 14px',
+                  fontSize: '0.78rem', fontWeight: 500, whiteSpace: 'nowrap',
+                  transition: 'all 0.15s',
                 }}
-                onInput={e => {
-                  e.target.style.height = 'auto'
-                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
-                }}
-              />
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--blue-700)'; e.currentTarget.style.color = 'white' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--blue-700)' }}
+                >{r}</button>
+              ))}
             </div>
+          )}
 
-            <button
-              onClick={handleSend}
-              disabled={loading || !input.trim()}
-              style={{
-                width: 48, height: 48, borderRadius: 13,
-                background: input.trim() && !loading ? 'var(--navy)' : 'var(--gray-200)',
+          {/* Input */}
+          <div style={{ padding: '14px 28px 20px', background: 'white', borderTop: '1px solid var(--gray-200)' }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', maxWidth: 860, margin: '0 auto' }}>
+              <div style={{
+                flex: 1,
+                border: `1.5px solid ${input ? 'var(--blue-400)' : 'var(--gray-200)'}`,
+                borderRadius: 'var(--r-md)', overflow: 'hidden',
+                background: 'var(--ivory)', transition: 'border-color 0.2s',
+              }}>
+                <textarea ref={inputRef} value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
+                  placeholder={lockedPlan ? `Ask anything about your ${lockedPlan.country} plan...` : 'Tell me your target country, degree, and intake...'}
+                  rows={1} disabled={loading}
+                  style={{
+                    width: '100%', padding: '13px 16px',
+                    background: 'transparent', border: 'none', outline: 'none',
+                    resize: 'none', fontSize: '0.92rem', fontFamily: 'DM Sans',
+                    color: 'var(--text)', lineHeight: 1.5, maxHeight: 120, overflowY: 'auto',
+                  }}
+                  onInput={e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px' }}
+                />
+              </div>
+              <button onClick={handleSend} disabled={loading || !input.trim()} style={{
+                width: 48, height: 48, borderRadius: 'var(--r-md)', flexShrink: 0,
+                background: input.trim() && !loading
+                  ? 'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)'
+                  : 'var(--gray-200)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, transition: 'all 0.2s',
+                transition: 'all 0.2s',
                 cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-              }}
-              onMouseEnter={e => { if (input.trim() && !loading) e.currentTarget.style.background = 'var(--navy-mid)' }}
-              onMouseLeave={e => { if (input.trim() && !loading) e.currentTarget.style.background = 'var(--navy)' }}
-            >
-              <Send size={17} color={input.trim() && !loading ? 'white' : 'var(--gray-400)'} />
-            </button>
+                boxShadow: input.trim() && !loading ? '0 4px 14px rgba(26,58,140,0.3)' : 'none',
+              }}>
+                <Send size={17} color={input.trim() && !loading ? 'white' : 'var(--gray-400)'} />
+              </button>
+            </div>
+            <p style={{ textAlign: 'center', fontSize: '0.68rem', color: 'var(--gray-400)', marginTop: 8 }}>
+              Enter to send · Shift+Enter for new line
+            </p>
           </div>
-
-          <p style={{
-            textAlign: 'center', fontSize: '0.7rem',
-            color: 'var(--gray-400)', marginTop: 8,
-          }}>
-            Press <kbd style={{
-              background: 'var(--gray-100)', border: '1px solid var(--gray-200)',
-              borderRadius: 4, padding: '1px 5px', fontSize: '0.65rem',
-            }}>Enter</kbd> to send ·{' '}
-            <kbd style={{
-              background: 'var(--gray-100)', border: '1px solid var(--gray-200)',
-              borderRadius: 4, padding: '1px 5px', fontSize: '0.65rem',
-            }}>Shift+Enter</kbd> for new line
-          </p>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .mobile-header { display: flex !important; }
-        }
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.8); }
-        }
-        textarea::placeholder { color: var(--gray-400); }
-      `}</style>
-    </div>
+    </>
   )
 }
