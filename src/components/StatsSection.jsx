@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { Users, Globe, Star, Zap } from 'lucide-react'
+import { fetchLiveSessionCount, subscribeToSessionCount } from '../utils/supabase'
 
-const stats = [
-  { icon: Users, value: 12400, suffix: '+', label: 'Students Planning', color: 'var(--blue-700)' },
-  { icon: Globe, value: 5, suffix: '', label: 'Countries Covered', color: 'var(--mint-500)' },
-  { icon: Star, value: 4.9, suffix: '/5', label: 'Average Rating', color: '#f59e0b' },
-  { icon: Zap, value: 100, suffix: '% Free', label: 'No Consultancy Fees', color: 'var(--blue-400)' },
-]
+// Still export for backward compatibility
+export function getAIUsageCount() {
+  return parseInt(localStorage.getItem('studytra_ai_sessions') || '10247')
+}
 
-function useCountUp(target, duration = 1800, start = false) {
+function useCountUp(target, duration = 2000, start = false) {
   const [count, setCount] = useState(0)
   useEffect(() => {
     if (!start) return
     let startTime = null
-    const isDecimal = target % 1 !== 0
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp
-      const progress = Math.min((timestamp - startTime) / duration, 1)
+    const isDecimal = String(target).includes('.')
+    const step = (ts) => {
+      if (!startTime) startTime = ts
+      const progress = Math.min((ts - startTime) / duration, 1)
       const eased = 1 - Math.pow(1 - progress, 3)
-      setCount(isDecimal ? parseFloat((eased * target).toFixed(1)) : Math.floor(eased * target))
+      setCount(isDecimal
+        ? parseFloat((eased * target).toFixed(1))
+        : Math.floor(eased * target))
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
@@ -26,33 +27,55 @@ function useCountUp(target, duration = 1800, start = false) {
   return count
 }
 
-function StatItem({ icon: Icon, value, suffix, label, color, animate }) {
-  const count = useCountUp(value, 1800, animate)
+function StatItem({ icon: Icon, value, suffix, label, color, animate, isLive }) {
+  const count = useCountUp(typeof value === 'number' ? value : 0, 2000, animate)
+  const displayVal = animate ? count : value
+
   return (
     <div style={{
-      textAlign: 'center', padding: '24px 16px',
+      textAlign: 'center', padding: '28px 16px',
       transition: 'transform 0.2s',
     }}
-      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-      onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
+      onMouseLeave={e => e.currentTarget.style.transform = 'none'}
     >
       <div style={{
-        width: 48, height: 48, borderRadius: 'var(--r-md)',
+        width: 50, height: 50, borderRadius: 'var(--r-md)',
         background: `${color}15`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        margin: '0 auto 14px',
+        margin: '0 auto 16px',
       }}>
         <Icon size={22} color={color} />
       </div>
-      <div style={{
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontWeight: 800, fontSize: '2rem',
-        color: 'var(--blue-950)', lineHeight: 1,
-        marginBottom: 6,
-      }}>
-        {animate ? count : value}{suffix}
+
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
+        <div style={{
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          fontWeight: 800, fontSize: '2.2rem',
+          color: 'var(--blue-950)', lineHeight: 1,
+        }}>
+          {typeof displayVal === 'number'
+            ? displayVal.toLocaleString('en-IN')
+            : displayVal}
+        </div>
+        <div style={{
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          fontWeight: 800, fontSize: '1.3rem',
+          color: 'var(--blue-950)',
+        }}>{suffix}</div>
+        {isLive && (
+          <div style={{
+            marginLeft: 6,
+            width: 7, height: 7, borderRadius: '50%',
+            background: 'var(--mint-500)',
+            animation: 'livepin 2s infinite',
+          }} />
+        )}
       </div>
-      <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)', fontWeight: 500 }}>{label}</div>
+
+      <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)', fontWeight: 500, marginTop: 6 }}>
+        {label}
+      </div>
     </div>
   )
 }
@@ -60,7 +83,25 @@ function StatItem({ icon: Icon, value, suffix, label, color, animate }) {
 export default function StatsSection() {
   const ref = useRef(null)
   const [animate, setAnimate] = useState(false)
+  const [liveCount, setLiveCount] = useState(getAIUsageCount())
 
+  // ── Fetch real count from Supabase on mount ──
+  useEffect(() => {
+    fetchLiveSessionCount().then(count => {
+      setLiveCount(count)
+      localStorage.setItem('studytra_ai_sessions', String(count))
+    })
+
+    // ── Real-time: re-fetch whenever a new student row is inserted ──
+    const unsubscribe = subscribeToSessionCount((newCount) => {
+      setLiveCount(newCount)
+      localStorage.setItem('studytra_ai_sessions', String(newCount))
+    })
+
+    return unsubscribe
+  }, [])
+
+  // ── Trigger count-up animation when section scrolls into view ──
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => { if (entries[0].isIntersecting) setAnimate(true) },
@@ -70,32 +111,34 @@ export default function StatsSection() {
     return () => observer.disconnect()
   }, [])
 
+  const stats = [
+    {
+      icon: Users, value: liveCount, suffix: '+', label: 'AI Sessions Started',
+      color: 'var(--blue-700)', isLive: true,
+    },
+    { icon: Globe, value: 5, suffix: '', label: 'Countries Covered', color: 'var(--mint-500)' },
+    { icon: Star, value: 4.9, suffix: '/5', label: 'Average Rating', color: '#f59e0b' },
+    { icon: Zap, value: 100, suffix: '% Free', label: 'No Consultancy Fees', color: 'var(--blue-400)' },
+  ]
+
   return (
     <section ref={ref} style={{
       background: 'var(--ivory)',
       borderTop: '1px solid var(--gray-200)',
       borderBottom: '1px solid var(--gray-200)',
-      padding: '16px 24px',
     }}>
       <div className="container">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 0,
-        }} className="stats-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }} className="stats-grid">
           {stats.map((s, i) => (
-            <div key={i} style={{
-              borderRight: i < 3 ? '1px solid var(--gray-200)' : 'none',
-            }}>
+            <div key={i} style={{ borderRight: i < 3 ? '1px solid var(--gray-200)' : 'none' }}>
               <StatItem {...s} animate={animate} />
             </div>
           ))}
         </div>
       </div>
       <style>{`
-        @media (max-width: 640px) {
-          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
-        }
+        @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2,1fr) !important; } }
+        @keyframes livepin { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.4); } }
       `}</style>
     </section>
   )

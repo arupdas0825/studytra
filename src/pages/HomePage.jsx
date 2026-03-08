@@ -7,6 +7,7 @@ import StatsSection from '../components/StatsSection'
 import StudentSpotlight from '../components/StudentSpotlight'
 import Reviews from '../components/Reviews'
 import Footer from '../components/Footer'
+import CostEstimator from '../components/dashboard/CostPlanner'
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
       <HowItWorks />
       <Countries />
       <Features />
+      <CostEstimator />
       <StudentSpotlight />
       <Reviews />
       <Footer />

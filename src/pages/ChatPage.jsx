@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Send, RefreshCw, AlertCircle } from 'lucide-react'
+import { Send, RefreshCw } from 'lucide-react'
 import ChatSidebar from '../components/chat/ChatSidebar'
 import MessageBubble from '../components/chat/MessageBubble'
 import TypingIndicator from '../components/chat/TypingIndicator'

@@ -176,7 +176,7 @@ export default function Reviews() {
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--blue-950)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rating</label>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    {[1,2,3,4,5].map(n => (
+                    {[1, 2, 3, 4, 5].map(n => (
                       <button key={n} onClick={() => setForm(p => ({ ...p, rating: n }))} style={{ background: 'none', padding: 2 }}>
                         <Star size={24} fill={n <= form.rating ? '#f59e0b' : 'none'} color="#f59e0b" />
                       </button>
