@@ -1,6 +1,6 @@
 <div align="center">
   <div style="background: white; width: 120px; height: 120px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <img src="https://storage.googleapis.com/mfc-files/809a7dc9-2182-4f7d-bb6f-42a98f7e71da/image.png" alt="Studytra Logo" width="100" />
+    <img src="public/studytra-logo.png" alt="Studytra Logo" width="100" />
   </div>
   
   # Studytra ✈️🎓
