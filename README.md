@@ -1,124 +1,105 @@
-# Studytra - Study Abroad Execution Platform
+<div align="center">
+  <div style="background: linear-gradient(135deg, #1a3a8c 0%, #2563eb 100%); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+    {/* SVG Logo Representation */}
+    <img src="public/favicon.ico" alt="Studytra Logo" width="50" style="filter: brightness(0) invert(1);" />
+  </div>
+  
+  # Studytra ✈️🎓
+  ### The Premium Study Abroad Execution Platform
 
-![Studytra](https://img.shields.io/badge/Status-In%20Development-blue?style=for-the-badge)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
-
-Welcome to **Studytra**, an ultra-premium, interactive platform designed to guide students through their study abroad journeys. It transforms dense, overwhelming overseas education requirements into an immersive, step-by-step 3D visual experience.
+  <p align="center">
+    Empowering students with precise guidance, hyper-accurate cost planning, and AI-driven insights to seamlessly transition to world-class universities in the <b>US, UK, Canada, Germany, and Australia</b>.
+  </p>
+</div>
 
 ---
 
-## 🚀 Project Overview
+## 📖 Overview
 
-Studytra is not just an informational website; it is an "execution platform." It assists prospective international students by providing targeted roadmaps, accurate cost estimations, and university tracking. The platform emphasizes a modern, high-end "Apple Glass" aesthetic, featuring 3D scrollytelling, deep parallax effects, and hyper-realistic university imagery.
+**Studytra** is not just an informational website; it is an intelligent, beautiful, and highly interactive execution platform designed to navigate the immense complexities of studying abroad. By prioritizing a **frictionless, Apple-style glassmorphism aesthetic** combined with raw, actionable data, Studytra elevates the traditional study abroad agency experience into the digital era.
+
+From highly-polished 3D scrollytelling interfaces to an advanced **AI Chat Assistant**, Studytra handles everything a prospective international student needs: budgets, roadmaps, university deadlines, and document preparation.
 
 ---
 
-## ✨ Features Implemented Currently
+## ✨ Core Features
 
-The following core features have been built into the React application:
+### 🤖 1. Advanced AI Chat Assistant (Core Component)
+The beating heart of Studytra is its contextual AI Assistant. 
+- **Personalized Counseling:** Ask natural language questions about visa processes, university rankings, and scholarship opportunities.
+- **Context-Aware:** The AI knows which country you are interested in and provides tailored, highly accurate responses (e.g., specific rules for the Canadian SDS or the German APS certificate).
 
-1. **Interactive 3D Scrollytelling (`Countries.jsx`)**
-   - Discards boring tabular data for a "gravity-defying" 3D scroll experience.
-   - Alternating split-pane layouts featuring 4K university campus photography (MIT, Oxford, TUM, UofT, Melbourne) paired with frosted glass information cards.
-   - Smooth CSS-based parallax physics layered over subtle gradient backgrounds.
-   - Dynamic progress indicators that sync with the user's scroll depth.
+### 🏷️ 2. Premium 3D Scrollytelling Experience
+- A stunning **"Antigravity" Split-Layout** presentation for exploring top destinations.
+- Features **4K parallax backgrounds** of elite universities (MIT, Oxford, TUM, UofT, Melbourne).
+- Utilizes CSS-native **glassmorphism** (heavy blur, high refraction, dynamic shadows) for a luxurious user interface.
 
-2. **30-Day Arrival Roadmaps (`RoadmapPage.jsx`)**
-   - A dedicated suite of tactical checklists for the critical first 30 days post-arrival in a new country.
-   - Features country-specific actions (e.g., Bank Account Setup, Local Visa Registration, SIM Cards).
-   - Provides PDF view and download functionalities.
+### 💰 3. Dynamic Cost Estimator & Budget Planner
+- **Real-Time Savings Engine:** Compare personal budgets against hyper-accurate living costs and tuition fees for specific countries.
+- **Visual Breakdowns:** Interactive charts displaying expected expenses (Housing, Food, Transport) with live currency exchange context.
 
-3. **Interactive Budget Planner (`BudgetPlanner.jsx`)**
-   - A robust cost estimator allowing students to set budgets and calculate savings.
-   - Includes a professional live-updating Currency Exchange ticker.
+### 🗺️ 4. 30-Day Arrival Roadmaps
+- Country-specific, day-by-day checklists covering the crucial first month abroad.
+- Features immediate access to actionable PDFs for setting up bank accounts, SIM cards, and local biometrics registration.
 
-4. **AI-Assisted Chat Experience (`ChatPage.jsx`)**
-   - A comprehensive, conversational interface allowing students to get personalized guidance on their study abroad queries.
-   - Context-aware UI that adapts based on the country the user has selected from the home page.
+### ✈️ 5. Integrated Flight Checker
+- A streamlined tool allowing students to instantly check flight availability, compare prices, and monitor booking windows tailored to university intake seasons (Fall, Spring, Winter).
 
-5. **Premium "Apple-Style" UI/UX**
-   - High refractive index glassmorphism components (`.glass-panel`).
-   - 3D tactile buttons that compress on click.
-   - Perfectly tuned typography (`Plus Jakarta Sans` & `DM Sans`).
+### 📄 6. Specialized SOP, CV & Resume Formats
+- Application requirements differ wildly by region. Studytra provides **country-specific document formats**:
+  - **USA:** Strict 1-page academic resumes and deeply personal Statements of Purpose.
+  - **Germany:** Highly structured Europass CVs and technical motivation letters.
+  - **UK:** Standardized 2-page academic CVs and course-focused personal statements.
+  - **Canada / Australia:** Formats optimized for dual academic/PR pathways.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend Framework:** React 18
-- **Build Tool:** Vite
-- **Routing:** React Router v6
-- **Styling:** Custom Vanilla CSS (Advanced Glassmorphism & Parallax Animations)
-- **Icons:** Lucide React
-- **Backend / DB (Planned/Partial):** Supabase
+Studytra is built on a modern, high-performance frontend ecosystem designed for extreme fluidity and visual fidelity:
+
+* **Framework:** React.js (via Vite)
+* **Styling & UI:** 
+  * Vanilla CSS with advanced Custom Properties (Tokens)
+  * Hardware-accelerated CSS animations (`transform`, `backdrop-filter`)
+  * Custom 3D perspective physics for hover and scroll mechanics
+* **Icons:** Lucide React
+* **Routing:** React Router v6
+* **Backend Integration / Auth:** Supabase (Ready)
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```text
-src/
-├── components/          # Reusable UI components
-│   ├── Countries.jsx    # The core 3D scrollytelling engine
-│   ├── Hero.jsx         # Landing page Hero section
-│   ├── Navbar.jsx       # Global navigation with dropdowns
-│   ├── ToggleExplore.jsx# Animated CTA triggers
-│   └── ...              # Other modular sections (Stats, Reviews, etc.)
-├── pages/               # Top-level route components
-│   ├── Homepage.jsx     # Main landing view
-│   ├── ChatPage.jsx     # AI Agent chat interface
-│   ├── BudgetPlanner.jsx# Cost and savings calculator
-│   ├── RoadmapPage.jsx  # Stage-by-stage arrival roadmaps
-│   └── Dashboard.jsx    # (In Progress) User profile dashboard
-├── constants/           # Static data dictionaries (e.g., countries.js)
-├── utils/               # Helper functions (e.g., supabase.js)
-├── App.jsx              # Main React Router configuration
-└── index.css            # Global design tokens and 3D animation keyframes
+studytra/
+├── public/                 # Static assets, 4K background images, icons
+├── src/
+│   ├── components/         # Reusable UI elements (Navbar, Cards, Buttons)
+│   │   ├── chat/           # AI Chat Assistant interfaces
+│   │   ├── dashboard/      # Budget planner and analytical components
+│   │   └── explore/        # Dynamic Scrollytelling sub-components
+│   ├── constants/          # Static data (Country data, costs, university lists)
+│   ├── pages/              # Main routing views (Homepage, ChatPage, RoadmapPage, BudgetPlanner)
+│   ├── utils/              # Helper functions (Supabase client, API wrappers)
+│   ├── App.jsx             # Core routing and application wrapper
+│   └── index.css           # Global design system, glassmorphism tokens, and keyframes
+└── package.json
 ```
 
 ---
 
-## ⚙️ Getting Started
+## 🚀 Future Improvements
 
-Follow these steps to run the Studytra platform locally.
+As Studytra evolves, the following enhancements are planned:
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd studytra
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **View the App:**
-   Open your browser and navigate to `http://localhost:5173`.
+1. **Live Flight API Integration:** Connect the Flight Checker directly to global GDS platforms (like Amadeus or Skyscanner APIs) for real-time ticket purchasing.
+2. **AI Document Grader:** Allow users to upload their SOPs and Resumes, utilizing the AI Assistant to score and suggest improvements based on historical university acceptance data.
+3. **User Authentication & Dashboard:** Complete the Supabase integration to allow users to save their flight searches, budget plans, and chat histories to personal user accounts.
+4. **Community Forums:** A secure, verified space for upcoming students to connect with alumni currently at their target universities.
 
 ---
 
-## 🔮 Future Improvements
-
-As development continues, the following features are planned:
-- **Supabase Integration:** Link the `ChatPage` and `Dashboard` to Supabase for persistent user profiles and chat history.
-- **Dynamic PDF Generation:** Currently, the Roadmap PDFs trigger a placeholder alert. This will be connected to a real PDF generation library (like `jspdf` or `@react-pdf/renderer`).
-- **Student Dashboard:** Complete the `/dashboard` route to let users track applications, visualize admission chances, and save favorite universities.
-- **Loan Integrations:** Build out the Loan Guide to compare providers like SBI, HDFC Credila, etc.
-
----
-
-### Author / Maintainer
-Developed with ❤️ by the Studytra Team.
+<p align="center">
+  <i>Designed with precision. Built for the ambitious global student.</i>
+</p>
