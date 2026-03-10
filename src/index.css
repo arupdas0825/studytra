@@ -110,3 +110,88 @@ img { max-width: 100%; display: block; }
   0%,100% { transform: translateY(0px); }
   50%      { transform: translateY(-8px); }
 }
+
+/* 3D Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.12),
+    0 10px 20px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 20px rgba(255, 255, 255, 0.3);
+  border-radius: var(--r-2xl);
+  overflow: hidden;
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+}
+
+/* --- The Disintegrate Transition --- */
+.static-grid-wrapper {
+  transition: transform 1.2s cubic-bezier(0.25, 1.2, 0.5, 1), opacity 1s ease, filter 1s ease;
+  transform-origin: top center;
+}
+
+.disintegrate {
+  transform: perspective(1200px) translateZ(-500px) translateY(-50px) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+/* --- Pulse Emerald Glow effect for Toggle --- */
+@keyframes emeraldGlow {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.emerald-toggle {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.9), rgba(16, 185, 129, 0.9));
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  animation: emeraldGlow 2.5s infinite;
+}
+
+.btn-3d {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+.btn-3d::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+}
+
+.btn-3d:hover::after {
+  opacity: 1;
+}
+
+.btn-3d:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+.btn-3d:active::after {
+  opacity: 0;
+}

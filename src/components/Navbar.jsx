@@ -8,7 +8,7 @@ const navLinks = [
   {
     label: 'Tools', href: '#',
     dropdown: [
-      { label: '🗺️ Roadmap Planner', href: '#roadmap', desc: 'Stage-by-stage visual roadmap' },
+      { label: '🗺️ 30-Day Roadmap', href: '/roadmap', desc: 'Stage-by-stage structural roadmap' },
       { label: '💰 Cost Estimator', href: '/budget', desc: 'Set your budget & calculate savings' },
       { label: '🏦 Loan Guide', href: '#loans', desc: 'Compare SBI, HDFC Credila & more' },
     ]
