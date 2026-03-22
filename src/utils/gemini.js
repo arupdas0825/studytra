@@ -1,13 +1,15 @@
+// src/utils/gemini.js
+// All API calls go through /api/gemini (Vercel serverless function)
+// Gemini API key never touches the browser
+
 import { STUDYTRA_KNOWLEDGE } from './studytraKnowledge.js'
 
-const MODEL = 'gemini-2.0-flash'
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+const PROXY_URL = '/api/gemini'   // ← same domain, no CORS, key stays server-side
 
 export async function callGemini(messages) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-
+  // Student profile from session storage
   const profileRaw = sessionStorage.getItem('studentProfile')
-  const profile = profileRaw ? JSON.parse(profileRaw) : null
+  const profile    = profileRaw ? JSON.parse(profileRaw) : null
   const profileCtx = profile ? `
 STUDENT PROFILE (personalize everything based on this):
 - Name: ${profile.fullName} (use first name)
@@ -19,12 +21,12 @@ STUDENT PROFILE (personalize everything based on this):
 - Dream Country: ${profile.dreamCountry}
 ` : ''
 
-  const isFirst = messages.length <= 1
+  const isFirst  = messages.length <= 1
   const systemPair = isFirst ? [
-    { role: 'user', parts: [{ text: `${STUDYTRA_KNOWLEDGE}${profileCtx}\nYou are Studytra AI. Confirm ready.` }] },
+    { role: 'user',  parts: [{ text: `${STUDYTRA_KNOWLEDGE}${profileCtx}\nYou are Studytra AI. Confirm ready.` }] },
     { role: 'model', parts: [{ text: 'Ready. I am Studytra AI.' }] },
   ] : [
-    { role: 'user', parts: [{ text: `You are Studytra AI, expert study abroad advisor for Indian students across Germany, USA, Canada, UK, and Australia.${profileCtx}` }] },
+    { role: 'user',  parts: [{ text: `You are Studytra AI, expert study abroad advisor for Indian students across Germany, USA, Canada, UK, and Australia.${profileCtx}` }] },
     { role: 'model', parts: [{ text: 'Continuing as Studytra AI.' }] },
   ]
 
@@ -35,17 +37,18 @@ STUDENT PROFILE (personalize everything based on this):
   }))
 
   const body = {
-    contents: [...systemPair, ...contents],
+    contents:         [...systemPair, ...contents],
     generationConfig: { temperature: 0.65, maxOutputTokens: 1800, topP: 0.9 },
     safetySettings: [
-      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
-      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
-      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
-      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH',        threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',  threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT',  threshold: 'BLOCK_ONLY_HIGH' },
     ],
   }
 
-  const res = await fetch(`${API_URL}?key=${apiKey}`, {
+  // Call proxy — NOT the Gemini API directly
+  const res = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -53,7 +56,7 @@ STUDENT PROFILE (personalize everything based on this):
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    const msg = err?.error?.message || ''
+    const msg = err?.error || ''
     if (msg.includes('quota') || msg.includes('RESOURCE_EXHAUSTED')) throw new Error('QUOTA_EXCEEDED')
     throw new Error(msg || `API Error ${res.status}`)
   }
