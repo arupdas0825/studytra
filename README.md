@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/studytra-logo.png" alt="Studytra" width="88" style="border-radius:16px;" />
+<img src="public/studytra-logo.png" alt="Studytra" width="88" />
 
 # Studytra
 
@@ -9,16 +9,18 @@
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 [![React Router](https://img.shields.io/badge/React_Router-v6-CA4245?style=flat-square&logo=reactrouter&logoColor=white)](https://reactrouter.com)
-[![Anthropic](https://img.shields.io/badge/Claude_AI-Sonnet_4-D97706?style=flat-square)](https://anthropic.com)
+[![Gemini](https://img.shields.io/badge/Gemini_2.0_Flash-AI-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
+[![Supabase](https://img.shields.io/badge/Supabase-Auth_%26_DB-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://studytra.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-0EA5A0?style=flat-square)](LICENSE)
 
 <p align="center">
   <b>Plan · Decide · Track · Execute</b><br/>
-  Structured guidance for Indian students targeting Germany, USA, Canada, UK & Australia —<br/>
+  Structured AI guidance for Indian students targeting Germany, USA, Canada, UK & Australia —<br/>
   from IELTS prep to landing at the airport. No consultant needed.
 </p>
 
-[Live Demo](#) · [Report Bug](issues) · [Request Feature](issues)
+**[Live Demo](https://studytra.vercel.app)** · [Report Bug](../../issues) · [Request Feature](../../issues)
 
 </div>
 
@@ -35,6 +37,7 @@
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Routing Map](#routing-map)
+- [Deployment](#deployment)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 
@@ -42,9 +45,9 @@
 
 ## Overview
 
-Studytra is a **client-side React SPA** that replaces the traditional study-abroad consultancy model with a self-serve, AI-assisted execution system. It covers the full student journey across five countries — Germany, USA, Canada, UK, and Australia — providing country-specific timelines, visa documentation, cost planning, loan comparison, and flight guidance in one unified interface.
+Studytra is a **production-deployed React SPA** that replaces the traditional study-abroad consultancy model with a self-serve, AI-assisted execution system. It covers the full student journey across five countries — Germany, USA, Canada, UK, and Australia — providing country-specific timelines, visa documentation, cost planning, loan comparison, and flight guidance in one unified interface.
 
-The platform is intentionally designed as a **no-login static MVP** — zero backend friction, instant value delivery. Monetization is handled through affiliate integrations (Skyscanner, bank loan referrals, OSHC providers) embedded naturally within the tool surface.
+The AI layer is powered by **Google Gemini 2.0 Flash** via a secure Vercel serverless proxy — the API key never touches the browser. Supabase handles authentication and persistent data storage.
 
 ---
 
@@ -53,94 +56,96 @@ The platform is intentionally designed as a **no-login static MVP** — zero bac
 ```
 Browser (React SPA)
 │
-├── React Router v6         — client-side routing, no SSR
-├── Context API             — global country selection + decision lock state
-├── Component Modules       — feature-isolated, lazy-loadable sections
+├── React Router v6              — client-side routing, SPA with vercel.json rewrites
+├── Context API + useState       — global country selection, decision lock, chat state
+├── Component Modules            — feature-isolated sections per dashboard module
 │
-├── Anthropic API           — direct browser → Claude Sonnet (dev/MVP only)
-│   └── System Prompt Layer — Stu persona + 5-country knowledge base injected per request
+├── /api/gemini.js               — Vercel Serverless Function (API key never exposed)
+│   └── Gemini 2.0 Flash         — AI assistant powered by Google Generative AI
 │
-└── Static Assets (public/) — PDFs, images, country data JSON
+├── Supabase                     — Auth (Google OAuth + Email) + Postgres DB
+│   ├── auth.users               — user identity
+│   ├── chat_sessions + messages — persistent AI chat history
+│   ├── decision_lock            — user's locked study plan
+│   └── cost_plans               — saved budget configurations
+│
+└── public/pdfs/                 — pre-generated country roadmap PDFs (ReportLab)
 ```
 
-> **Security note:** The Anthropic API key is accessed via `VITE_ANTHROPIC_API_KEY` and sent with `anthropic-dangerous-direct-browser-access: true`. This is acceptable for the MVP. Production deployment must proxy requests through a backend route (Node.js / Edge Function) to prevent key exposure.
+> **Security:** Gemini API key is stored as a Vercel environment variable (`GEMINI_API_KEY`). All AI requests are proxied through `/api/gemini` — the key is never included in the browser bundle. `VITE_` prefix is only used for Supabase public keys (anon key by design).
 
 ---
 
 ## Feature Modules
 
-### 🤖 AI Assistant — "Stu"
-A Claude-powered conversational assistant with a deeply structured system prompt containing verified 2026 data for all five countries. Not a generic chatbot — Stu is persona-engineered to behave as a senior who has personally completed the Germany APS, US F-1 visa, Canada GIC, UK CAS, and Australia CoE process.
+### 🤖 AI Assistant
+Powered by Gemini 2.0 Flash via a secure serverless proxy. The assistant is persona-engineered as "Studytra AI" — a knowledgeable guide for Indian students navigating the full study abroad process across 5 countries.
 
-**Architecture decisions:**
-- Full conversation history sent on every API call (stateless Claude sessions)
-- Student context (country, intake, stage, IELTS score) injected into the system prompt dynamically via `contextBuilder.js`
-- Onboarding flow collects profile in 4 steps before chat begins — reduces vague questions, improves response quality
-- Suggested prompt chips filtered per country to reduce cold-start friction
+**Implementation details:**
+- Full conversation history sent on every API call (Gemini is stateless)
+- Student profile (name, age, target country, degree, course) stored in `sessionStorage` and injected into every request via `studytraKnowledge.js`
+- System prompt pair injected at conversation start with full knowledge base
+- Last 10 messages sent to stay within token limits
+- `PLAN_LOCKED` structured output format for extracting plan data from AI responses
+- Quota exceeded error handled gracefully with user-facing message
 
 ### 📋 Student Execution Guides
-Downloadable PDF roadmaps (generated with ReportLab Python) for each country. Each PDF covers pre-departure requirements, post-arrival critical path (30-day), cost snapshots, and verified 2026 visa fees.
+Downloadable PDF roadmaps generated with Python ReportLab. Each PDF covers pre-departure requirements, post-arrival critical path, cost snapshots, and verified 2026 visa fees.
 
-### 💰 Cost Planner
-City-level monthly cost breakdown with live INR conversion. Inputs: country, city, rent, food, transport, insurance, tuition. Output: monthly total, yearly total, INR equivalent, loan gap analysis.
+Countries: 🇩🇪 Germany · 🇺🇸 USA · 🇨🇦 Canada · 🇬🇧 UK · 🇦🇺 Australia
+
+### 💰 Cost Planner & Budget Estimator
+City-level monthly cost breakdown with INR conversion. Inputs: country, city, rent, food, transport, insurance, tuition. Output: monthly total, yearly total, INR equivalent.
 
 ### 🏦 Loan Guidance
 Comparison engine for 6 Indian education loan providers with verified 2025–26 data:
 
-| Lender | Type | Rate Range | Max (Unsecured) |
-|--------|------|-----------|-----------------|
+| Lender | Type | Rate Range | Max Unsecured |
+|--------|------|-----------|---------------|
 | SBI Global Ed-Vantage | Public Bank | 9.15–11.15% | ₹50L |
 | Credila | NBFC | 9.75–13.0% | ₹75L |
 | ICICI Bank | Private Bank | 10.25–12.75% | ₹1 Cr |
 | Avanse | NBFC | 10.25–16.5% | ₹1.25 Cr |
 | Axis Bank | Private Bank | 11.0–14.0% | ₹1 Cr |
-| Bank of Baroda Baroda Scholar | Public Bank | 8.25–9.85% | ₹50L |
+| Bank of Baroda Scholar | Public Bank | 8.25–9.85% | ₹50L |
 
-Includes a live EMI calculator (compound interest, slider-based) and direct affiliate deep-links to each lender's loan application page.
+Includes a live EMI calculator with sliders and direct apply links to official bank pages.
 
 ### 🛂 Visa Guide
-Per-country, per-step visa breakdown with fees, required documents, and processing timelines. Germany: APS → Uni-Assist → Blocked Account → National D Visa. USA: I-20 → SEVIS → DS-160 → F-1 Interview. Canada: PAL → GIC → Study Permit. UK: CAS → IHS → eVisa. Australia: CoE → OSHC → GS Test → Subclass 500.
+Per-country, per-step visa breakdown with fees, required documents, and processing timelines.
 
-### 📅 Timeline
-Vertical roadmap with deadline-aware step statuses. Steps auto-populate from `constants/timeline.js` based on selected country and target intake month.
-
-### 🔒 Decision Lock
-Structured commitment form (country, degree, university, intake, target city). On submission, activates the progress tracker and populates the Overview dashboard. Stored in `localStorage` for persistence across sessions.
+### 📅 Timeline & Decision Lock
+Vertical roadmap with deadline-aware steps. Decision Lock commits the student to a specific plan and activates the progress tracker.
 
 ### ✈️ Flight Checker
-Travel summary card with suggested arrival window relative to course start date. Affiliate search buttons for Skyscanner, Google Flights, and direct airline websites. Pre-departure checklist with 20+ actionable items.
+Travel summary card with suggested arrival window. Affiliate search buttons for Skyscanner, Google Flights, and direct airline websites.
 
 ---
 
 ## AI System Design
 
 ```
-SYSTEM_PROMPT.js
+src/utils/studytraKnowledge.js
 │
-├── Persona Definition        — Stu, senior who studied abroad
-├── Personality Rules         — warm, direct, no vague answers, always give next action
-├── Student Context Block     — dynamically injected: country, degree, intake, stage, IELTS
-│
-├── Knowledge Base (5 countries)
-│   ├── Germany               — APS, Uni-Assist, Blocked Account (€11,904), §16b 140 days
-│   ├── USA                   — I-20, SEVIS $350, F-1 non-immigrant intent, OPT/STEM OPT
-│   ├── Canada                — PAL, GIC CAD$22,895, SDS discontinued, PGWP CIP codes
-│   ├── UK                    — CAS, IHS £776/yr, eVisa share codes, Graduate Route alert
-│   └── Australia             — GS Test, OSHC, AUD$29,710 proof, Subclass 485 age limit
-│
-├── Financial Guidance        — Indian bank loan comparison, Section 80E, EMI logic
-├── Language Test Guide       — IELTS / TOEFL / PTE / Duolingo acceptance matrix
-└── Response Rules            — format, forbidden phrases, always-end-with-next-action
+├── Platform Identity         — Studytra AI persona and behavior rules
+├── Student Profile Injection — name, age, target country, degree, course (sessionStorage)
+├── Knowledge Base            — Germany, USA, Canada, UK, Australia study abroad data
+│   ├── Visa processes        — APS, I-20/SEVIS, GIC/PAL, CAS/IHS, CoE/OSHC
+│   ├── Costs & timelines     — per-country verified 2026 data
+│   └── Post-study pathways   — OPT/STEM OPT, PGWP, Graduate Route, Subclass 485
+└── PLAN_LOCKED format        — structured JSON extraction from AI responses
+
+src/utils/gemini.js  →  /api/gemini (Vercel Function)  →  Gemini 2.0 Flash API
 ```
 
-**API call structure:**
+**Proxy call structure:**
 ```js
-POST https://api.anthropic.com/v1/messages
+// Browser calls the proxy — never Gemini directly
+POST /api/gemini
 {
-  model: "claude-sonnet-4-20250514",
-  max_tokens: 1500,
-  system: SYSTEM_PROMPT + "\n" + studentContextBlock,
-  messages: fullConversationHistory   // all prior turns included
+  contents: [...systemPair, ...recentMessages],  // last 10 messages
+  generationConfig: { temperature: 0.65, maxOutputTokens: 1800 },
+  safetySettings: [...]
 }
 ```
 
@@ -150,15 +155,16 @@ POST https://api.anthropic.com/v1/messages
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Framework | React 18 + Vite 5 | SPA, HMR, fast builds |
+| Framework | React 18 + Vite 5 | SPA, HMR, fast production builds |
 | Routing | React Router v6 | Client-side navigation |
-| State | Context API + useState | Global country/decision state |
-| Styling | Vanilla CSS + CSS Custom Properties | Design tokens, glassmorphism, animations |
+| State | Context API + useState + sessionStorage | Global + persistent state |
+| Styling | Vanilla CSS + Custom Properties | Design tokens, glassmorphism |
 | Icons | Lucide React | Consistent icon system |
-| AI | Anthropic Claude Sonnet 4 | AI Assistant (Stu) |
-| PDF Generation | Python ReportLab | Country roadmap PDFs |
-| Auth (planned) | Supabase | User accounts, saved plans |
-| Deployment | Vercel / Netlify | Static SPA hosting |
+| AI | Google Gemini 2.0 Flash | AI Assistant core |
+| AI Proxy | Vercel Serverless Function | Secure API key handling |
+| Auth & DB | Supabase | Google OAuth, email auth, Postgres |
+| PDF Generation | Python ReportLab | Country roadmap PDFs (local script) |
+| Deployment | Vercel | SPA hosting with serverless functions |
 
 ---
 
@@ -167,72 +173,78 @@ POST https://api.anthropic.com/v1/messages
 ```
 studytra/
 │
+├── api/
+│   └── gemini.js                          # Vercel serverless proxy — key server-side only
+│
 ├── public/
-│   ├── pdfs/                              # Generated country roadmap PDFs
+│   ├── pdfs/
 │   │   ├── Studytra_GERMANY_Roadmap_2026.pdf
 │   │   ├── Studytra_USA_Roadmap_2026.pdf
 │   │   ├── Studytra_CANADA_Roadmap_2026.pdf
 │   │   ├── Studytra_UK_Roadmap_2026.pdf
 │   │   └── Studytra_AUSTRALIA_Roadmap_2026.pdf
+│   ├── images/
 │   └── studytra-logo.png
 │
 ├── src/
-│   ├── ai/
-│   │   ├── SYSTEM_PROMPT.js               # Master AI persona + 5-country knowledge base
-│   │   ├── knowledgeBase/                 # Per-country structured data objects
-│   │   │   ├── germany.js
-│   │   │   ├── usa.js
-│   │   │   ├── canada.js
-│   │   │   ├── uk.js
-│   │   │   └── australia.js
-│   │   └── prompts/
-│   │       ├── suggestedPrompts.js        # Country-wise quick question chips
-│   │       └── contextBuilder.js          # Student profile → prompt injection
-│   │
-│   ├── api/
-│   │   └── claudeAPI.js                   # Anthropic API calls + error handling
-│   │
 │   ├── components/
 │   │   ├── Navbar.jsx                     # Fixed nav with Tools dropdown
-│   │   ├── chat/                          # AI Assistant UI components
-│   │   │   ├── AIAssistantPage.jsx        # Full chat layout (sidebar + chat panel)
-│   │   │   ├── OnboardingFlow.jsx         # 4-step profile collection
-│   │   │   └── MessageBubble.jsx
+│   │   ├── Hero.jsx
+│   │   ├── HowItWorks.jsx
+│   │   ├── Features.jsx
+│   │   ├── Countries.jsx
+│   │   ├── StatsSection.jsx
+│   │   ├── CurrencyExchange.jsx
+│   │   ├── StudentSpotlight.jsx
+│   │   ├── Reviews.jsx
+│   │   ├── Footer.jsx
+│   │   ├── OnboardingForm.jsx
+│   │   ├── ToggleExplore.jsx
+│   │   ├── TopLoader.jsx
+│   │   ├── chat/
+│   │   │   ├── ChatSidebar.jsx
+│   │   │   ├── MessageBubble.jsx
+│   │   │   └── TypingIndicator.jsx
 │   │   ├── dashboard/
 │   │   │   ├── Overview.jsx
 │   │   │   ├── Timeline.jsx
 │   │   │   ├── DecisionLock.jsx
 │   │   │   ├── VisaGuide.jsx
 │   │   │   ├── CostPlanner.jsx
-│   │   │   ├── LoanGuidance.jsx           # 6-bank comparison + EMI calculator
+│   │   │   ├── LoanGuidance.jsx
 │   │   │   ├── FlightChecker.jsx
 │   │   │   └── Sidebar.jsx
+│   │   ├── explore/
 │   │   └── tools/
-│   │       └── CountryRoadmapsSection.jsx # 5-country PDF download cards
+│   │       └── CountryRoadmapsSection.jsx
 │   │
 │   ├── constants/
-│   │   ├── countries.js                   # Country config (currency, rates, intakes)
-│   │   ├── timeline.js                    # Per-country roadmap steps
-│   │   ├── visaSteps.js                   # Visa docs, fees, processing times
-│   │   ├── costData.js                    # Monthly living costs per city
-│   │   └── loanData.js                    # Bank loan parameters
+│   │   └── countries.js
+│   │
+│   ├── hooks/
+│   │   └── useChat.js
 │   │
 │   ├── pages/
-│   │   ├── Homepage.jsx
+│   │   ├── HomePage.jsx
 │   │   ├── ChatPage.jsx
 │   │   ├── BudgetPlanner.jsx
 │   │   ├── Dashboard.jsx
 │   │   └── RoadmapPage.jsx
 │   │
-│   ├── App.jsx                            # Route definitions
-│   └── index.css                          # Global tokens, glassmorphism, keyframes
+│   ├── utils/
+│   │   ├── gemini.js                      # Gemini calls via /api/gemini proxy
+│   │   ├── studytraKnowledge.js           # Full AI knowledge base + system prompt
+│   │   └── supabase.js                    # Supabase client
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
 │
-├── scripts/
-│   └── generate_pdfs.py                   # ReportLab PDF generator (run locally)
-│
-├── .env                                   # VITE_ANTHROPIC_API_KEY=
-├── .env.example
+├── vercel.json                            # SPA routing rewrites
 ├── vite.config.js
+├── .env                                   # Local env vars (never committed)
+├── .env.example
 └── package.json
 ```
 
@@ -243,14 +255,15 @@ studytra/
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
-- Anthropic API key ([get one here](https://console.anthropic.com))
+- npm
+- Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey))
+- Supabase project ([create here](https://supabase.com))
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/studytra.git
+# Clone the repo
+git clone https://github.com/arupdas0825/studytra.git
 cd studytra
 
 # Install dependencies
@@ -258,9 +271,9 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Add your Anthropic API key to .env
+# Fill in your keys in .env
 
-# Start development server
+# Start dev server
 npm run dev
 ```
 
@@ -268,7 +281,7 @@ Open [http://localhost:5173](http://localhost:5173)
 
 ### PDF Generation (optional)
 
-The country roadmap PDFs are pre-generated and committed to `public/pdfs/`. To regenerate:
+PDFs are pre-built and committed to `public/pdfs/`. To regenerate:
 
 ```bash
 pip install reportlab
@@ -280,11 +293,21 @@ python scripts/generate_pdfs.py
 ## Environment Variables
 
 ```env
-# .env
-VITE_ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxx
+# .env — never commit this file
+
+# Gemini AI — NO VITE_ prefix, server-side only via /api/gemini
+GEMINI_API_KEY=AIzaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Supabase — VITE_ prefix required, public by design (RLS enforced)
+VITE_SUPABASE_URL=https://xxxxxxxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-> ⚠️ Never commit `.env` to version control. The `VITE_` prefix exposes this to the browser bundle — move to a backend proxy before production.
+| Variable | Used in | Browser exposed? |
+|----------|---------|-----------------|
+| `GEMINI_API_KEY` | `api/gemini.js` (server) | ❌ Never |
+| `VITE_SUPABASE_URL` | `src/utils/supabase.js` | ✅ Safe (public URL) |
+| `VITE_SUPABASE_ANON_KEY` | `src/utils/supabase.js` | ✅ Safe (RLS enforced) |
 
 ---
 
@@ -292,8 +315,8 @@ VITE_ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxx
 
 | Path | Component | Description |
 |------|-----------|-------------|
-| `/` | `Homepage` | Hero, country preview, cost calculator |
-| `/chat` | `ChatPage` | Stu AI Assistant with onboarding |
+| `/` | `HomePage` | Hero, countries, features, reviews |
+| `/chat` | `ChatPage` | Gemini AI assistant with onboarding |
 | `/dashboard` | `Dashboard` | Full dashboard with sidebar modules |
 | `/budget` | `BudgetPlanner` | Cost estimator + savings engine |
 | `/roadmap` | `RoadmapPage` | Visual timeline roadmap |
@@ -302,41 +325,70 @@ VITE_ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxx
 
 ---
 
+## Deployment
+
+Live at **[studytra.vercel.app](https://studytra.vercel.app)**
+
+### vercel.json
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+Required for React Router — prevents 404 on direct URL access or refresh.
+
+### Vercel Environment Variables
+Set these in Vercel Dashboard → Settings → Environment Variables:
+```
+GEMINI_API_KEY         → Production + Preview + Development
+VITE_SUPABASE_URL      → Production + Preview + Development
+VITE_SUPABASE_ANON_KEY → Production + Preview + Development
+```
+
+### Deploy
+```bash
+npm run build   # verify local build passes first
+git push        # Vercel auto-deploys on push to main
+```
+
+---
+
 ## Roadmap
 
-**v1.1 — Auth & Persistence**
-- [ ] Supabase integration — user accounts, saved decisions, chat history
-- [ ] Decision Lock synced to cloud, not just `localStorage`
+**v1.1 — Supabase Persistence**
+- [ ] Chat history saved per user session to Supabase
+- [ ] Decision Lock synced to cloud (not just localStorage)
+- [ ] Cost plans saved and loadable across devices
 
 **v1.2 — AI Upgrades**
-- [ ] RAG system — real-time context from official embassy pages via retrieval
-- [ ] Document Gap Finder — student uploads docs, AI identifies what's missing
-- [ ] SOP grader — AI scores draft SOP against top-admit examples
+- [ ] Document Gap Finder — upload docs, AI identifies what's missing
+- [ ] SOP grader — AI scores draft SOP with improvement suggestions
+- [ ] Scholarship finder — country + field → curated scholarship list
 
 **v1.3 — Live Data**
-- [ ] Skyscanner API integration for real-time flight prices
-- [ ] Exchange rate API (live EUR/USD/CAD/GBP/AUD → INR)
+- [ ] Exchange rate API — live EUR/USD/CAD/GBP/AUD → INR
 - [ ] IRCC/UKVI processing time tracker
+- [ ] University application deadline alerts
 
 **v2.0 — B2B**
 - [ ] White-label version for abroad consultancies
-- [ ] Admin dashboard for counselors to manage student pipelines
-- [ ] Webhook integration with university application portals
+- [ ] Counselor admin dashboard with student pipeline management
+- [ ] University portal webhook integrations
 
 ---
 
 ## Contributing
 
 ```bash
-# Create a feature branch
 git checkout -b feat/your-feature-name
 
-# Commit with conventional commits
 git commit -m "feat: add scholarship finder module"
-git commit -m "fix: correct IELTS band requirement for TU Munich"
-git commit -m "docs: update loan data for SBI 2026 rates"
+git commit -m "fix: correct blocked account amount for Germany 2026"
+git commit -m "docs: update SBI loan rate"
+git commit -m "chore: upgrade Gemini model version"
 
-# Push and open a PR
 git push origin feat/your-feature-name
 ```
 
@@ -349,5 +401,7 @@ git push origin feat/your-feature-name
 **Built for the ambitious Indian student. No consultant needed.**
 
 *Studytra — Plan. Decide. Track. Execute.*
+
+[studytra.vercel.app](https://studytra.vercel.app)
 
 </div>
