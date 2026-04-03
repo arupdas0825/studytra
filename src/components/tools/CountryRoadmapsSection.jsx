@@ -82,7 +82,7 @@ function CountryCard({ country }) {
           width: 52, height: 52, borderRadius: 14, background: country.color + '12',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <span style={{ fontSize: 28 }}>{country.flag}</span>
+          <span className="emoji-flag" style={{ fontSize: 28 }}>{country.flag}</span>
         </div>
         <div>
           <div style={{ fontWeight: 800, fontSize: 18, color: '#0F1C3F', letterSpacing: '-0.4px' }}>
