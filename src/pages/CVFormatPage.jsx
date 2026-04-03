@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CVTemplateView from '../components/tools/CVTemplateView'
@@ -30,28 +30,28 @@ const COUNTRIES = [
     keyMistake: 'Including a "Career Objective" section (not German style)',
   },
   {
-    id: 'usa',
-    name: 'USA',
-    flag: '🇺🇸',
-    color: '#b91c1c',
-    formatName: 'Academic Resume (1-page) or Academic CV (PhD)',
-    type: 'Resume for Masters | CV for PhD/Research',
-    length: '1 page strict (Masters/MS) | 2-3 pages (PhD)',
+    id: 'uk',
+    name: 'UK',
+    flag: '🇬🇧',
+    color: '#1d4ed8',
+    formatName: 'UK Academic CV',
+    type: 'Academic CV (not American-style resume)',
+    length: '2 pages standard',
     keyRequirements: [
-      'NO photo (illegal to request in US hiring/admissions)',
-      'NO date of birth, marital status, nationality',
-      'No "Objective" section — use a 2-line Summary instead',
-      'GPA must be included if above 3.5/4.0 or 8.5/10',
-      'Research experience prioritized over work experience',
-      'Publications, projects, and GitHub links are important',
-      'Font: Times New Roman or Garamond, 10-12pt',
+      'NO photo (not expected, can be seen as unprofessional)',
+      'Personal statement (4-6 lines) at the top — brief professional summary',
+      'UK date format: DD/MM/YYYY',
+      'Include nationality if relevant to scholarship eligibility',
+      'Referees: 2 academic referees listed by name (not "available on request")',
+      'Hobbies/Interests section is acceptable and common',
+      'Degree classification: First, 2:1, 2:2 — include if strong',
     ],
-    atsNotes: 'Most US university portals (Common App, Slate) use ATS. Use standard section headings. No tables, no columns, no text boxes. Save as .pdf (never .docx for submission).',
+    atsNotes: 'UCAS for undergrad uses its own system. Postgrad direct applications are human-reviewed. Clean 2-column layout acceptable.',
     sectionsOrder: [
-      'Contact Info', 'Education', 'Research Experience',
-      'Work Experience', 'Projects', 'Skills', 'Publications', 'Awards',
+      'Personal Info', 'Personal Statement', 'Education',
+      'Work Experience', 'Skills', 'Publications', 'Referees',
     ],
-    keyMistake: 'Submitting a 2-page resume for Masters programs',
+    keyMistake: 'Using an American 1-page resume for UK applications',
   },
   {
     id: 'canada',
@@ -76,30 +76,6 @@ const COUNTRIES = [
       'Skills', 'Projects', 'Volunteer', 'Awards', 'References',
     ],
     keyMistake: 'Not including co-op/internship experience',
-  },
-  {
-    id: 'uk',
-    name: 'UK',
-    flag: '🇬🇧',
-    color: '#1d4ed8',
-    formatName: 'UK Academic CV',
-    type: 'Academic CV (not American-style resume)',
-    length: '2 pages standard',
-    keyRequirements: [
-      'NO photo (not expected, can be seen as unprofessional)',
-      'Personal statement (4-6 lines) at the top — brief professional summary',
-      'UK date format: DD/MM/YYYY',
-      'Include nationality if relevant to scholarship eligibility',
-      'Referees: 2 academic referees listed by name (not "available on request")',
-      'Hobbies/Interests section is acceptable and common',
-      'Degree classification: First, 2:1, 2:2 — include if strong',
-    ],
-    atsNotes: 'UCAS for undergrad uses its own system. Postgrad direct applications are human-reviewed. Clean 2-column layout acceptable.',
-    sectionsOrder: [
-      'Personal Info', 'Personal Statement', 'Education',
-      'Work Experience', 'Skills', 'Publications', 'Referees',
-    ],
-    keyMistake: 'Using an American 1-page resume for UK applications',
   },
   {
     id: 'australia',
@@ -131,12 +107,24 @@ export default function CVFormatPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('germany')
   const [showTemplate, setShowTemplate] = useState(false)
+  const templateRef = useRef(null)
 
   const country = COUNTRIES.find(c => c.id === activeTab)
 
   const handleTabChange = (id) => {
     setActiveTab(id)
     setShowTemplate(false)
+  }
+
+  const handleToggleTemplate = () => {
+    setShowTemplate(prev => {
+      if (!prev) {
+        setTimeout(() => {
+          templateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+      }
+      return !prev
+    })
   }
 
   return (
@@ -162,17 +150,34 @@ export default function CVFormatPage() {
             background: '#EBF2FF', borderRadius: 100, padding: '5px 14px', marginBottom: 16,
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#1A56DB', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#1A56DB' }}>ATS-CERTIFIED · 5 COUNTRIES</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#1A56DB' }}>ACADEMIC CV · 4 COUNTRIES</span>
           </div>
           <h1 style={{
             fontSize: 'clamp(26px, 4vw, 44px)', fontWeight: 900,
             color: '#0F1C3F', letterSpacing: '-1.5px', margin: '0 0 12px', lineHeight: 1.1,
           }}>
-            CV & Resume Formats
+            CV Formats by Country
           </h1>
-          <p style={{ fontSize: 15, color: '#718096', maxWidth: 600, margin: '0 auto', lineHeight: 1.7 }}>
-            Country-specific templates built for ATS systems and university admission offices. View, copy, and print.
+          <p style={{ fontSize: 15, color: '#718096', maxWidth: 600, margin: '0 auto 0', lineHeight: 1.7 }}>
+            Academic CVs for university admissions — Europass (DE), UK Academic, Canadian, Australian
           </p>
+
+          {/* CV vs Resume callout */}
+          <div style={{
+            maxWidth: 640, margin: '24px auto 0',
+            background: '#EFF6FF', border: '1px solid #BFDBFE',
+            borderRadius: 14, padding: '16px 20px', textAlign: 'left',
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#1E40AF', marginBottom: 6 }}>
+              CV vs Resume — What's the difference?
+            </div>
+            <p style={{ fontSize: 12.5, color: '#3B5998', lineHeight: 1.7, margin: 0 }}>
+              <strong>CV (Curriculum Vitae):</strong> Comprehensive academic document, 2–3+ pages, used for university admissions in Germany, UK, Australia, Canada.
+              <br />
+              <strong>Resume:</strong> 1-page targeted document for job applications and some US/Canadian university programs. ATS-optimized.
+              {' '}<a href="/tools/resume-formats" style={{ color: '#1A56DB', fontWeight: 700, textDecoration: 'underline' }}>→ View Resume Formats</a>
+            </p>
+          </div>
         </div>
 
         {/* Country Tabs */}
@@ -194,7 +199,7 @@ export default function CVFormatPage() {
                 onMouseEnter={e => { if (activeTab !== c.id) e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none' }}
               >
-                <span style={{ fontSize: '1.1rem' }}>{c.flag}</span> {c.name}
+                <span className="hero-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span> {c.name}
               </button>
             ))}
           </div>
@@ -216,7 +221,7 @@ export default function CVFormatPage() {
               color: 'white',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-                <span style={{ fontSize: '2.4rem' }}>{country.flag}</span>
+                <span className="hero-flag" style={{ fontSize: '2.4rem' }}>{country.flag}</span>
                 <div>
                   <h2 style={{ fontSize: 24, fontWeight: 900, color: 'white', margin: 0, lineHeight: 1.2 }}>
                     {country.name}
@@ -303,7 +308,7 @@ export default function CVFormatPage() {
 
               {/* View Template Button */}
               <button
-                onClick={() => setShowTemplate(!showTemplate)}
+                onClick={handleToggleTemplate}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   background: showTemplate
@@ -322,12 +327,17 @@ export default function CVFormatPage() {
                 {showTemplate ? '✕ Hide Template' : '📄 View CV Template'}
               </button>
 
-              {/* Template View */}
-              {showTemplate && (
-                <div style={{ animation: 'fadeUp 0.3s ease forwards' }}>
-                  <CVTemplateView countryId={activeTab} />
-                </div>
-              )}
+              {/* Template View — animated expand/collapse with maxHeight */}
+              <div
+                ref={templateRef}
+                style={{
+                  overflow: 'hidden',
+                  maxHeight: showTemplate ? '9999px' : '0',
+                  transition: 'max-height 0.4s ease',
+                }}
+              >
+                <CVTemplateView countryId={activeTab} />
+              </div>
             </div>
           </div>
         </div>
@@ -346,6 +356,7 @@ export default function CVFormatPage() {
           </p>
           <button
             onClick={() => navigate('/chat')}
+            className="btn-primary"
             style={{
               background: 'linear-gradient(135deg, #1a3a8c 0%, #2563eb 100%)',
               color: '#fff', border: 'none', borderRadius: 10,

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
@@ -301,6 +301,7 @@ export default function SOPGuidePage() {
   const [activeTab, setActiveTab] = useState('germany')
   const [showStarter, setShowStarter] = useState(false)
   const [copied, setCopied] = useState(false)
+  const templateRef = useRef(null)
 
   const country = COUNTRIES.find(c => c.id === activeTab)
 
@@ -314,6 +315,18 @@ export default function SOPGuidePage() {
     navigator.clipboard.writeText(country.starterTemplate).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  const handleToggleStarter = () => {
+    setShowStarter(prev => {
+      if (!prev) {
+        setTimeout(() => {
+          templateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+      }
+      setCopied(false)
+      return !prev
     })
   }
 
@@ -372,7 +385,7 @@ export default function SOPGuidePage() {
                 onMouseEnter={e => { if (activeTab !== c.id) e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none' }}
               >
-                <span style={{ fontSize: '1.1rem' }}>{c.flag}</span> {c.name}
+                <span className="hero-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span> {c.name}
               </button>
             ))}
           </div>
@@ -387,6 +400,7 @@ export default function SOPGuidePage() {
               border: `1.5px solid ${country.color}30`,
               overflow: 'hidden',
               boxShadow: `0 8px 32px ${country.color}12`,
+              minWidth: 0,
             }}>
               {/* Card Header */}
               <div style={{
@@ -395,7 +409,7 @@ export default function SOPGuidePage() {
                 color: 'white',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-                  <span style={{ fontSize: '2.4rem' }}>{country.flag}</span>
+                  <span className="hero-flag" style={{ fontSize: '2.4rem' }}>{country.flag}</span>
                   <div>
                     <h2 style={{ fontSize: 24, fontWeight: 900, color: 'white', margin: 0, lineHeight: 1.2 }}>
                       {country.name}
@@ -524,7 +538,7 @@ export default function SOPGuidePage() {
 
                 {/* SOP Starter Template Toggle */}
                 <button
-                  onClick={() => { setShowStarter(!showStarter); setCopied(false) }}
+                  onClick={handleToggleStarter}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 8,
                     background: showStarter
@@ -543,26 +557,32 @@ export default function SOPGuidePage() {
                   {showStarter ? '✕ Hide Starter Template' : '📋 View SOP Starter Template'}
                 </button>
 
-                {/* Starter Template */}
-                {showStarter && (
-                  <div style={{ marginTop: 20, animation: 'fadeUp 0.3s ease forwards' }}>
+                {/* Starter Template — animated expand/collapse with maxHeight */}
+                <div
+                  ref={templateRef}
+                  style={{
+                    overflow: 'hidden',
+                    maxHeight: showStarter ? '9999px' : '0',
+                    transition: 'max-height 0.4s ease',
+                  }}
+                >
+                  <div style={{ marginTop: 20 }}>
                     <div style={{
                       position: 'relative',
-                      background: '#f8fafc',
+                      background: 'white',
                       border: '1px solid #e2e8f0',
-                      borderRadius: 12,
-                      overflow: 'hidden',
+                      borderRadius: 16,
                     }}>
                       {/* Copy button */}
                       <div style={{
                         display: 'flex', justifyContent: 'flex-end',
-                        padding: '10px 14px 0',
+                        padding: '12px 16px 0',
                         gap: 8,
                       }}>
                         <button
                           onClick={handleCopyStarter}
                           style={{
-                            background: copied ? '#059669' : 'white',
+                            background: copied ? '#059669' : '#f1f5f9',
                             color: copied ? 'white' : '#4a5568',
                             border: '1px solid #e2e8f0',
                             borderRadius: 8, padding: '6px 14px',
@@ -575,21 +595,20 @@ export default function SOPGuidePage() {
                       </div>
                       {/* Template content */}
                       <pre style={{
-                        padding: '16px 20px 20px',
+                        padding: '16px 24px 24px',
                         margin: 0,
-                        fontFamily: '"Courier New", "Consolas", "Monaco", monospace',
-                        fontSize: '0.8rem',
+                        fontFamily: '"Georgia", "Times New Roman", serif',
+                        fontSize: '13.5px',
                         lineHeight: 1.8,
-                        color: '#334155',
+                        color: '#1a1a2e',
                         whiteSpace: 'pre-wrap',
                         wordBreak: 'break-word',
-                        overflowX: 'auto',
                       }}>
                         {country.starterTemplate}
                       </pre>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
 
@@ -649,7 +668,7 @@ export default function SOPGuidePage() {
                     <tbody>
                       {COUNTRIES.map((c, i) => (
                         <tr key={c.id} style={{ borderTop: '1px solid #F0F3F8', background: i % 2 === 0 ? '#fff' : '#FAFBFD' }}>
-                          <td style={{ padding: '8px', fontWeight: 700, color: c.color, whiteSpace: 'nowrap' }}>{c.flag} {c.name}</td>
+                          <td style={{ padding: '8px', fontWeight: 700, color: c.color, whiteSpace: 'nowrap' }}>{c.name}</td>
                           <td style={{ padding: '8px', color: '#4A5568', fontSize: 10 }}>{c.localName.split(' ')[0]}</td>
                           <td style={{ padding: '8px', fontWeight: 600, color: '#0F1C3F', fontSize: 10 }}>{c.wordLimit.split('(')[0]}</td>
                         </tr>

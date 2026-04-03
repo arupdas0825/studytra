@@ -237,12 +237,12 @@ function renderSection(sec, font) {
   }
   if (sec.rows) {
     return (
-      <table style={{ width: '100%', fontSize: '0.85rem', marginBottom: 12, borderCollapse: 'collapse' }}>
+      <table style={{ width: '100%', fontSize: 'inherit', marginBottom: 12, borderCollapse: 'collapse', wordBreak: 'break-word' }}>
         <tbody>
           {sec.rows.map(([label, val], i) => (
-            <tr key={i}>
-              <td style={{ padding: '3px 12px 3px 0', fontWeight: 600, width: '35%', verticalAlign: 'top', color: '#1a1a1a' }}>{label}</td>
-              <td style={{ padding: '3px 0', color: '#444' }}>{val}</td>
+            <tr key={i} style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingBottom: 6 }}>
+              <td style={{ fontWeight: 600, color: '#1a1a1a' }}>{label}</td>
+              <td style={{ color: '#444' }}>{val}</td>
             </tr>
           ))}
         </tbody>
@@ -315,20 +315,24 @@ export default function CVTemplateView({ countryId }) {
 
   const handlePrint = () => window.print()
 
+  const isResume = tpl.title.includes('RESUME')
+
   return (
     <div style={{
       background: 'white',
       border: '1px solid #e2e8f0',
-      borderRadius: 12,
-      padding: '40px 44px',
+      borderRadius: 16,
+      padding: 'clamp(24px, 5vw, 48px) clamp(20px, 5vw, 48px)',
       fontFamily: tpl.font,
-      fontSize: 14,
-      color: '#1a1a1a',
-      maxWidth: 700,
-      margin: '20px auto',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-      lineHeight: 1.6,
+      fontSize: '13.5px',
+      color: '#1a1a2e',
+      maxWidth: 720,
+      margin: '24px auto 0',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+      lineHeight: 1.8,
       position: 'relative',
+      overflowX: 'auto',
+      wordBreak: 'break-word',
     }}>
       {/* Toolbar */}
       <div style={{
@@ -360,9 +364,9 @@ export default function CVTemplateView({ countryId }) {
 
       {/* Title */}
       <h3 style={{
-        textAlign: 'center', fontSize: '1.1rem', fontWeight: 700,
-        letterSpacing: '0.15em', marginBottom: 24, paddingBottom: 12,
-        borderBottom: '2px solid #1a1a1a', fontFamily: tpl.font,
+        textAlign: 'center', fontSize: isResume ? '1.25rem' : '1.1rem', fontWeight: 700,
+        letterSpacing: isResume ? '0.05em' : '0.15em', marginBottom: isResume ? 16 : 24, paddingBottom: 12,
+        borderBottom: isResume ? 'none' : '2px solid #1a1a1a', fontFamily: tpl.font,
         color: '#1a1a1a',
       }}>
         {tpl.title}
@@ -383,10 +387,10 @@ export default function CVTemplateView({ countryId }) {
 
       {/* Sections */}
       {tpl.sections.map((sec, i) => (
-        <div key={i} style={{ marginBottom: 20 }}>
+        <div key={i} style={{ marginBottom: isResume ? 12 : 20 }}>
           <div style={{
-            fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.1em',
-            borderBottom: '1px solid #d1d5db', paddingBottom: 4, marginBottom: 10,
+            fontSize: isResume ? '0.85rem' : '0.8rem', fontWeight: 700, letterSpacing: isResume ? '0.05em' : '0.1em',
+            borderBottom: isResume ? '1px solid #1a1a1a' : '1px solid #d1d5db', paddingBottom: 4, marginBottom: isResume ? 8 : 10,
             color: '#1a1a1a', textTransform: 'uppercase',
           }}>
             {sec.title}
