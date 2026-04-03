@@ -165,25 +165,23 @@ export default function Hero() {
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '10px',
+                gap: '12px',
                 flexWrap: 'wrap',
               }}>
                 {ROTATING[activeIdx].name}
-                <span style={{
+                <span className="hero-flag" style={{
                   fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
-                  fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
                   lineHeight: 1,
                 }}>{ROTATING[activeIdx].flag}</span>
-                <span style={{
-                  fontSize: '0.7em',
+                <span className="hero-badge" style={{
+                  fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)',
                   fontWeight: 700,
-                  color: '#2563eb',
-                  background: 'rgba(37, 99, 235, 0.12)',
-                  border: '1px solid rgba(37, 99, 235, 0.25)',
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  letterSpacing: '0.05em',
-                  lineHeight: 1.3,
+                  color: ROTATING[activeIdx].color,
+                  border: `2px solid ${ROTATING[activeIdx].color}40`,
+                  borderRadius: 8,
+                  padding: '4px 10px',
+                  letterSpacing: '0.06em',
+                  lineHeight: 1,
                   verticalAlign: 'middle',
                 }}>{ROTATING[activeIdx].code}</span>
               </span>
@@ -253,18 +251,18 @@ export default function Hero() {
             </div>
 
             {/* Available for */}
-            <div style={{ display: 'flex', gap: 10, marginTop: 32, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 32, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 500 }}>Available for:</span>
-              {COUNTRIES.map(c => (
-                <div key={c.id} title={c.name} style={{
+              {ROTATING.map(c => (
+                <div key={c.code} title={c.name} style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   background: 'white', border: '1px solid var(--gray-200)',
                   borderRadius: 'var(--r-full)', padding: '4px 10px',
                   fontSize: '0.78rem', fontWeight: 600, color: 'var(--blue-950)',
                   boxShadow: 'var(--shadow-xs)',
                 }}>
-                  <span style={{ fontSize: '1rem' }}>{c.flag}</span>
-                  <span>{c.name.split(' ')[0]}</span>
+                  <span className="hero-flag" style={{ fontSize: '0.9rem' }}>{c.flag}</span>
+                  <span>{c.code}</span>
                 </div>
               ))}
             </div>
@@ -350,7 +348,7 @@ export default function Hero() {
               opacity: cardFading ? 0 : 1,
               transition: 'opacity 0.4s ease',
             }}>
-              <span style={{ fontSize: '1.3rem' }}>{PLANS[cardIdx].flag}</span>
+              <span className="hero-flag" style={{ fontSize: '1.3rem' }}>{PLANS[cardIdx].flag}</span>
               <div>
                 <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--blue-900)' }}>{PLANS[cardIdx].country}</div>
                 <div style={{ fontSize: '0.62rem', color: 'var(--gray-400)' }}>{PLANS[cardIdx].intake}</div>
@@ -376,6 +374,8 @@ export default function Hero() {
 
       <style>{`
         @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 768px) { .hero-badge { display: none !important; } }
+        @media (min-width: 769px) { .hero-flag { display: none !important; } }
         @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>

@@ -77,7 +77,7 @@ export default function Countries() {
               background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)',
               borderRadius: 99, padding: '6px 16px', marginBottom: 20, width: 'fit-content',
             }}>
-              <span style={{ fontSize: '1.1rem' }}>{c.flag}</span>
+              <span className="emoji-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span>
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'white', letterSpacing: '0.08em' }}>{code} {c.name}</span>
             </div>
 

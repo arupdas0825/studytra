@@ -368,7 +368,7 @@ export default function OnboardingForm({ onClose }) {
                         display: 'flex', alignItems: 'center', gap: 6,
                       }}
                     >
-                      <span style={{ fontSize: '1rem' }}>{c.flag}</span>
+                      <span className="emoji-flag" style={{ fontSize: '1rem' }}>{c.flag}</span>
                       {c.name}
                     </button>
                   ))}
