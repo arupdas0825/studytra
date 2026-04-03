@@ -54,7 +54,7 @@ export default function RoadmapPage() {
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '3rem', lineHeight: 1 }}>{c.flag}</span>
+                <span className="emoji-flag" style={{ fontSize: '3rem', lineHeight: 1 }}>{c.flag}</span>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: 'var(--blue-950)' }}>{c.name}</h3>
                   <span style={{ color: 'var(--gray-400)', fontSize: '0.85rem', fontWeight: 600 }}>Arrival Checklist</span>

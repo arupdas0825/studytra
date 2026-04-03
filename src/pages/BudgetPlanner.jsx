@@ -111,7 +111,7 @@ function RateTicker({ rates }) {
                             borderBottom: '1px solid var(--gray-100)',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ fontSize: '1.1rem' }}>{c.flag}</span>
+                                <span className="emoji-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span>
                                 <div>
                                     <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--blue-950)' }}>{c.currency}</div>
                                     <div style={{ fontSize: '0.65rem', color: 'var(--gray-400)' }}>{c.name}</div>
@@ -239,7 +239,7 @@ export default function BudgetPlanner() {
                             color: countryId === c.id ? c.color : 'var(--gray-500)',
                             cursor: 'pointer', transition: 'all 0.2s',
                         }}>
-                            <span style={{ fontSize: '1.1rem' }}>{c.flag}</span>{c.name}
+                            <span className="emoji-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span>{c.name}
                         </button>
                     ))}
                 </div>
