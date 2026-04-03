@@ -5,11 +5,11 @@ import { COUNTRIES } from '../constants/countries'
 
 // Country display names with emoji
 const ROTATING = [
-  { name: 'Germany 🇩🇪', color: '#1a3a8c' },
-  { name: 'United States 🇺🇸', color: '#b91c1c' },
-  { name: 'Canada 🇨🇦', color: '#c2410c' },
-  { name: 'United Kingdom 🇬🇧', color: '#1d4ed8' },
-  { name: 'Australia 🇦🇺', color: '#059669' },
+  { name: 'Germany', flag: '🇩🇪', code: 'DE', color: '#1a3a8c' },
+  { name: 'United States', flag: '🇺🇸', code: 'US', color: '#b91c1c' },
+  { name: 'Canada', flag: '🇨🇦', code: 'CA', color: '#c2410c' },
+  { name: 'United Kingdom', flag: '🇬🇧', code: 'GB', color: '#1d4ed8' },
+  { name: 'Australia', flag: '🇦🇺', code: 'AU', color: '#059669' },
 ]
 
 // Active Plan card data for all 5 countries
@@ -163,9 +163,29 @@ export default function Hero() {
                 transform: animating ? 'translateY(-10px)' : 'translateY(0)',
                 opacity: animating ? 0 : 1,
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'block',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                flexWrap: 'wrap',
               }}>
                 {ROTATING[activeIdx].name}
+                <span style={{
+                  fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
+                  fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+                  lineHeight: 1,
+                }}>{ROTATING[activeIdx].flag}</span>
+                <span style={{
+                  fontSize: '0.7em',
+                  fontWeight: 700,
+                  color: '#2563eb',
+                  background: 'rgba(37, 99, 235, 0.12)',
+                  border: '1px solid rgba(37, 99, 235, 0.25)',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  letterSpacing: '0.05em',
+                  lineHeight: 1.3,
+                  verticalAlign: 'middle',
+                }}>{ROTATING[activeIdx].code}</span>
               </span>
             </div>
 

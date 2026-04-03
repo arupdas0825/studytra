@@ -67,7 +67,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.65;
@@ -82,7 +82,7 @@ h1,h2,h3,h4,h5 {
 }
 
 a { text-decoration: none; color: inherit; }
-button { cursor: pointer; border: none; outline: none; font-family: 'DM Sans', sans-serif; }
+button { cursor: pointer; border: none; outline: none; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
 img { max-width: 100%; display: block; }
 
 .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }

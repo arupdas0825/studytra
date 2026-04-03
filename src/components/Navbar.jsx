@@ -20,6 +20,8 @@ const navLinks = [
         desc: 'Set your budget & calculate savings',
       },
       { label: '🏦 Loan Guide', href: '/loans', desc: 'Compare SBI, HDFC Credila & more' },
+      { label: '📄 CV & Resume Formats', href: '/tools/cv-formats', desc: 'ATS-certified templates for all 5 countries' },
+      { label: '✍️ SOP Guide', href: '/tools/sop-guide', desc: 'Country-specific SOP formats & writing guide' },
     ],
   },
   { label: 'Reviews', href: '#reviews' },
