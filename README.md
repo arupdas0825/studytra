@@ -120,8 +120,11 @@ Vertical roadmap with deadline-aware steps. Decision Lock commits the student to
 ### ✈️ Flight Checker
 Travel summary card with suggested arrival window. Affiliate search buttons for Skyscanner, Google Flights, and direct airline websites.
 
-### 📄 CV & Resume Formats
-Country-specific ATS-certified CV templates for Germany (Europass), USA (Academic Resume), Canada, UK, and Australia. Includes key requirements, ATS formatting notes, and downloadable examples.
+### 📄 CV Formats
+Academic and detailed CV templates for Germany (Europass), UK, Canada, and Australia. Includes key requirements, formatting notes, and downloadable examples.
+
+### 📄 Resume Formats
+ATS-certified, concise 1-page Resume templates specifically formulated for USA, Canada, UK, and Australia. Built to pass Applicant Tracking Systems.
 
 ### ✍️ Statement of Purpose (SOP) Guide
 Country-specific SOP formats, word limits, structure, and what admission committees actually want to read. Includes copy-pasteable starter templates and universal tips.
@@ -331,7 +334,8 @@ VITE_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxxxxxxxxxxxxxxx
 | `/roadmap` | `RoadmapPage` | Visual timeline roadmap |
 | `/tools/execution-guides` | `CountryRoadmapsSection` | PDF download cards |
 | `/loans` | `LoanGuidance` | Bank comparison + EMI calculator |
-| `/tools/cv-formats` | `CVFormatPage` | Country-specific CV templates |
+| `/tools/cv-formats` | `CVFormatPage` | Academic CV templates (Germany, UK, etc.) |
+| `/tools/resume-formats`| `ResumeFormatPage` | ATS-optimized Resume templates (USA, etc.) |
 | `/tools/sop-guide` | `SOPGuidePage` | SOP guide and starter templates |
 
 ---
