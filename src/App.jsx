@@ -8,6 +8,7 @@ import CountryRoadmapsSection from './components/tools/CountryRoadmapsSection'
 import LoanGuidance from './components/dashboard/LoanGuidance'
 import CVFormatPage from './pages/CVFormatPage'
 import SOPGuidePage from './pages/SOPGuidePage'
+import ResumeFormatPage from './pages/ResumeFormatPage'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/tools/execution-guides" element={<CountryRoadmapsSection />} />
       <Route path="/loans"                  element={<LoanGuidance />} />
       <Route path="/tools/cv-formats"       element={<CVFormatPage />} />
+      <Route path="/tools/resume-formats"   element={<ResumeFormatPage />} />
       <Route path="/tools/sop-guide"        element={<SOPGuidePage />} />
       <Route path="*" element={
         <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>

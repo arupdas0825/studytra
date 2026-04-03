@@ -20,7 +20,8 @@ const navLinks = [
         desc: 'Set your budget & calculate savings',
       },
       { label: '🏦 Loan Guide', href: '/loans', desc: 'Compare SBI, HDFC Credila & more' },
-      { label: '📄 CV & Resume Formats', href: '/tools/cv-formats', desc: 'ATS-certified templates for all 5 countries' },
+      { label: '📄 CV Formats', href: '/tools/cv-formats', desc: 'Academic CVs for Germany, UK, Canada, Australia' },
+      { label: '📋 Resume Formats', href: '/tools/resume-formats', desc: 'ATS resumes for USA, Canada, UK, Australia' },
       { label: '✍️ SOP Guide', href: '/tools/sop-guide', desc: 'Country-specific SOP formats & writing guide' },
     ],
   },
@@ -76,46 +77,18 @@ export default function Navbar() {
             textDecoration: 'none',
           }}
         >
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 12,
-              background: 'linear-gradient(135deg, #1a3a8c 0%, #2563eb 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(26,58,140,0.35)',
+          <img 
+            src="/studytra-logo.png" 
+            alt="Studytra Logo" 
+            style={{ 
+              width: 40, 
+              height: 40, 
+              borderRadius: 12, 
+              boxShadow: '0 4px 14px rgba(26,58,140,0.35)', 
               flexShrink: 0,
-            }}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <polygon
-                points="12,3 22,8 12,13 2,8"
-                fill="white"
-                opacity="0.95"
-              />
-              <path
-                d="M6 10.5v4.5c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-                strokeLinecap="round"
-              />
-              <path
-                d="M19 16.5 l-3.5-2 -5.5 3 1-4L7 11l4.5-.5L13 7l1.5 3.5L19 11l-2.5 1.5z"
-                fill="#93c5fd"
-                stroke="white"
-                strokeWidth="0.4"
-              />
-            </svg>
-          </div>
+              objectFit: 'contain'
+            }} 
+          />
           <span
             style={{
               fontFamily: 'Plus Jakarta Sans, sans-serif',
