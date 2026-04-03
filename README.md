@@ -120,6 +120,12 @@ Vertical roadmap with deadline-aware steps. Decision Lock commits the student to
 ### ✈️ Flight Checker
 Travel summary card with suggested arrival window. Affiliate search buttons for Skyscanner, Google Flights, and direct airline websites.
 
+### 📄 CV & Resume Formats
+Country-specific ATS-certified CV templates for Germany (Europass), USA (Academic Resume), Canada, UK, and Australia. Includes key requirements, ATS formatting notes, and downloadable examples.
+
+### ✍️ Statement of Purpose (SOP) Guide
+Country-specific SOP formats, word limits, structure, and what admission committees actually want to read. Includes copy-pasteable starter templates and universal tips.
+
 ---
 
 ## AI System Design
@@ -216,7 +222,8 @@ studytra/
 │   │   │   └── Sidebar.jsx
 │   │   ├── explore/
 │   │   └── tools/
-│   │       └── CountryRoadmapsSection.jsx
+│   │       ├── CountryRoadmapsSection.jsx
+│   │       └── CVTemplateView.jsx
 │   │
 │   ├── constants/
 │   │   └── countries.js
@@ -229,7 +236,9 @@ studytra/
 │   │   ├── ChatPage.jsx
 │   │   ├── BudgetPlanner.jsx
 │   │   ├── Dashboard.jsx
-│   │   └── RoadmapPage.jsx
+│   │   ├── RoadmapPage.jsx
+│   │   ├── CVFormatPage.jsx
+│   │   └── SOPGuidePage.jsx
 │   │
 │   ├── utils/
 │   │   ├── gemini.js                      # Gemini calls via /api/gemini proxy
@@ -322,6 +331,8 @@ VITE_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxxxxxxxxxxxxxxx
 | `/roadmap` | `RoadmapPage` | Visual timeline roadmap |
 | `/tools/execution-guides` | `CountryRoadmapsSection` | PDF download cards |
 | `/loans` | `LoanGuidance` | Bank comparison + EMI calculator |
+| `/tools/cv-formats` | `CVFormatPage` | Country-specific CV templates |
+| `/tools/sop-guide` | `SOPGuidePage` | SOP guide and starter templates |
 
 ---
 
