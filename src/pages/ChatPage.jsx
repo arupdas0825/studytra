@@ -324,18 +324,18 @@ export default function ChatPage() {
       <div style={{ 
         display: 'flex', 
         height: '100vh', 
-        background: '#050914', 
+        background: 'var(--bg-primary)', 
         overflow: 'hidden',
         position: 'relative'
       }}>
         {/* Glowing Background Mesh Overlays */}
         <div style={{
-          position: 'absolute', width: 400, height: 400, background: '#4f8ef7',
+          position: 'absolute', width: 400, height: 400, background: 'var(--primary)',
           borderRadius: '50%', filter: 'blur(150px)', opacity: 0.06, top: '10%', left: '20%',
           pointerEvents: 'none', zIndex: 0
         }} />
         <div style={{
-          position: 'absolute', width: 400, height: 400, background: '#7c3aed',
+          position: 'absolute', width: 400, height: 400, background: 'var(--primary-dark)',
           borderRadius: '50%', filter: 'blur(150px)', opacity: 0.06, bottom: '15%', right: '20%',
           pointerEvents: 'none', zIndex: 0
         }} />
@@ -366,27 +366,27 @@ export default function ChatPage() {
           {/* Header */}
           <div style={{
             padding: '16px 28px', 
-            background: 'rgba(15, 33, 53, 0.7)',
+            background: 'var(--navbar-bg)',
             backdropFilter: 'blur(12px)',
-            borderBottom: '1px solid rgba(79, 142, 247, 0.15)',
+            borderBottom: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
             <div>
               <div style={{ 
-                fontFamily: 'Plus Jakarta Sans', 
+                fontFamily: 'Plus Jakarta Sans, sans-serif', 
                 fontWeight: 800, 
                 fontSize: '1rem', 
-                color: '#f0f4ff' 
+                color: 'var(--text-primary)' 
               }}>
                 {lockedPlan ? `${lockedPlan.country} Plan · ${lockedPlan.degree}` : 'Studytra AI Planner'}
               </div>
               <div style={{
-                fontSize: '0.74rem', color: loading ? '#f59e0b' : '#10b981',
+                fontSize: '0.74rem', color: loading ? 'var(--accent-warning)' : 'var(--accent-success)',
                 display: 'flex', alignItems: 'center', gap: 5, marginTop: 3,
               }}>
                 <div style={{
                   width: 6, height: 6, borderRadius: '50%',
-                  background: loading ? '#f59e0b' : '#10b981',
+                  background: loading ? 'var(--accent-warning)' : 'var(--accent-success)',
                   animation: loading ? 'pulse-ring 1s infinite' : 'none',
                 }} />
                 {loading ? 'Studytra AI is thinking...' : 'Online · Ready to plan'}
@@ -444,29 +444,29 @@ export default function ChatPage() {
               <div style={{ textAlign: 'center', margin: 'auto', padding: '40px' }}>
                 <div style={{
                   width: 56, height: 56, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                  background: 'var(--gradient-main)',
                   margin: '0 auto 16px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem',
-                  boxShadow: '0 0 20px rgba(79, 142, 247, 0.3)'
+                  boxShadow: 'var(--shadow-sm)'
                 }}>🎓</div>
-                <p style={{ color: '#94a3b8', fontSize: '0.88rem' }}>Studytra AI is analyzing details...</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>Studytra AI is analyzing details...</p>
               </div>
             )}
 
             {error && (
               <div style={{
-                background: 'rgba(15, 33, 53, 0.8)', border: '1px solid rgba(239, 68, 68, 0.25)',
+                background: 'var(--bg-card)', border: '1px solid var(--border-hover)',
                 borderRadius: 16, padding: '24px',
                 maxWidth: 420, margin: '20px auto', textAlign: 'center',
                 boxShadow: 'var(--shadow-md)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-                  <ShieldAlert size={36} color="#ef4444" />
+                  <ShieldAlert size={36} color="var(--accent-error)" />
                 </div>
-                <h3 style={{ fontSize: '1rem', color: '#f0f4ff', marginBottom: 8 }}>
+                <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: 8 }}>
                   {error === 'QUOTA_EXCEEDED' ? 'AI limit reached' : 'Connection timeout'}
                 </h3>
-                <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: 20, lineHeight: 1.6 }}>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.6 }}>
                   {error === 'QUOTA_EXCEEDED'
                     ? 'Our servers are experiencing high traffic from study abroad students. Please wait 30 seconds and try again.'
                     : 'We could not reach the AI server. Verify your internet and trigger a quick retry.'}
@@ -483,8 +483,8 @@ export default function ChatPage() {
                   }} 
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 7,
-                    background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
-                    color: 'white', padding: '10px 22px', borderRadius: 10,
+                    background: 'var(--gradient-main)',
+                    color: 'var(--text-inverse, white)', padding: '10px 22px', borderRadius: 10,
                     fontSize: '0.84rem', fontWeight: 700, cursor: 'pointer'
                   }}
                 >
@@ -509,9 +509,9 @@ export default function ChatPage() {
                     setTimeout(() => inputRef.current?.focus(), 50) 
                   }} 
                   style={{
-                    background: 'rgba(15, 33, 53, 0.6)', 
-                    color: '#4f8ef7',
-                    border: '1px solid rgba(79, 142, 247, 0.2)',
+                    background: 'var(--bg-card)', 
+                    color: 'var(--primary)',
+                    border: '1px solid var(--border)',
                     borderRadius: 'var(--r-full)', 
                     padding: '6px 14px',
                     fontSize: '0.76rem', 
@@ -521,14 +521,14 @@ export default function ChatPage() {
                     transition: 'all 0.15s',
                   }}
                   onMouseEnter={e => { 
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)'
-                    e.currentTarget.style.color = '#ffffff'
+                    e.currentTarget.style.background = 'var(--gradient-main)'
+                    e.currentTarget.style.color = 'var(--text-inverse, #ffffff)'
                     e.currentTarget.style.borderColor = 'transparent'
                   }}
                   onMouseLeave={e => { 
-                    e.currentTarget.style.background = 'rgba(15, 33, 53, 0.6)'
-                    e.currentTarget.style.color = '#4f8ef7'
-                    e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.2)'
+                    e.currentTarget.style.background = 'var(--bg-card)'
+                    e.currentTarget.style.color = 'var(--primary)'
+                    e.currentTarget.style.borderColor = 'var(--border)'
                   }}
                 >
                   {r}
@@ -540,19 +540,26 @@ export default function ChatPage() {
           {/* Sticky Input Bar */}
           <div style={{ 
             padding: '14px 28px 20px', 
-            background: 'rgba(15, 33, 53, 0.7)',
+            background: 'var(--navbar-bg)',
             backdropFilter: 'blur(12px)',
-            borderTop: '1px solid rgba(79, 142, 247, 0.15)' 
+            borderTop: '1px solid var(--border)' 
           }}>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', maxWidth: 860, margin: '0 auto' }}>
-              <div style={{
-                flex: 1,
-                border: `1.5px solid ${input ? 'rgba(79, 142, 247, 0.4)' : 'rgba(79, 142, 247, 0.15)'}`,
+            <div style={{ 
+              maxWidth: 860, 
+              margin: '0 auto', 
+              display: 'flex', 
+              gap: 12, 
+              alignItems: 'flex-end' 
+            }}>
+              <div style={{ 
+                flex: 1, 
+                display: 'flex', 
+                border: `1.5px solid ${input ? 'var(--primary)' : 'var(--border-default)'}`,
                 borderRadius: 12, 
                 overflow: 'hidden',
-                background: '#050914', 
+                background: 'var(--bg-input)', 
                 transition: 'all 0.2s',
-                boxShadow: input ? '0 0 10px rgba(79, 142, 247, 0.1)' : 'none'
+                boxShadow: input ? 'var(--shadow-xs)' : 'none'
               }}>
                 <textarea 
                   ref={inputRef} 
@@ -577,7 +584,7 @@ export default function ChatPage() {
                     resize: 'none', 
                     fontSize: '0.9rem', 
                     fontFamily: 'Inter, sans-serif',
-                    color: '#f0f4ff', 
+                    color: 'var(--text-primary)', 
                     lineHeight: 1.5, 
                     maxHeight: 120, 
                     overflowY: 'auto',
@@ -594,34 +601,26 @@ export default function ChatPage() {
                 style={{
                   width: 48, height: 48, borderRadius: 12, flexShrink: 0,
                   background: input.trim() && !loading
-                    ? 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)'
-                    : 'rgba(79, 142, 247, 0.1)',
+                    ? 'var(--gradient-main)'
+                    : 'var(--theme-icon-bg)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'all 0.2s',
-                  cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-                  boxShadow: input.trim() && !loading ? '0 4px 16px rgba(124,58,237,0.3)' : 'none',
+                  cursor: 'pointer',
                   border: 'none'
                 }}
               >
-                <Send size={16} color={input.trim() && !loading ? '#ffffff' : 'rgba(79, 142, 247, 0.4)'} />
+                <Send size={16} color={input.trim() && !loading ? 'var(--text-inverse, #ffffff)' : 'var(--text-muted)'} />
               </button>
             </div>
             
             {/* Character Count & Tip footer strip */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              maxWidth: 860, 
-              margin: '6px auto 0',
-              padding: '0 4px'
-            }}>
-              <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
-                Enter to send · Shift+Enter for new line
+            <div style={{ maxWidth: 860, margin: '6px auto 0', display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                AI responses can take a few seconds. For best results, specify degree & Intake.
               </span>
               <span style={{ 
                 fontSize: '0.68rem', 
-                color: input.length > 900 ? '#ef4444' : '#64748b',
+                color: input.length > 900 ? 'var(--accent-error)' : 'var(--text-muted)',
                 fontWeight: input.length > 900 ? 700 : 400
               }}>
                 {input.length} / 1000

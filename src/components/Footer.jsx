@@ -26,7 +26,7 @@ export default function Footer() {
     <>
       {/* ── Premium CTA Banner Block ── */}
       <section style={{
-        background: '#050914',
+        background: 'var(--bg-primary)',
         padding: '90px 24px',
         position: 'relative',
         overflow: 'hidden',
@@ -125,7 +125,7 @@ export default function Footer() {
 
       {/* ── Footer Section ── */}
       <footer style={{ 
-        background: '#050914', 
+        background: 'var(--bg-primary)', 
         color: '#f0f4ff', 
         padding: '72px 24px 36px',
         borderTop: '1px solid rgba(79, 142, 247, 0.12)'

@@ -17,7 +17,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, onSignOut, prof
       {/* ── Desktop Sidebar ── */}
       <aside className="db-sidebar-desktop" style={{
         width: 260,
-        background: '#0d1b2a',
+        background: 'var(--bg-secondary)',
         borderRight: '1px solid rgba(79, 142, 247, 0.15)',
         display: 'flex',
         flexDirection: 'column',
@@ -147,7 +147,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, onSignOut, prof
         bottom: 0,
         left: 0,
         right: 0,
-        background: '#0d1b2a',
+        background: 'var(--bg-secondary)',
         borderTop: '1px solid rgba(79, 142, 247, 0.15)',
         display: 'none',
         justifyContent: 'space-around',

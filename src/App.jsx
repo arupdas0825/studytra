@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -17,9 +18,10 @@ import CountriesPage from './pages/CountriesPage'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <Routes>
+    <ThemeProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <Routes>
           {/* Public routes */}
           <Route path="/"                       element={<LandingPage />} />
           <Route path="/app"                    element={<HomePage />} />
@@ -49,13 +51,14 @@ export default function App() {
           <Route path="/tools/resume-formats"   element={<ResumeFormatPage />} />
           
           <Route path="*" element={
-            <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', background: '#050914', color: '#f1f5f9', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <h2>404 - Page Not Found</h2>
-              <a href="/" style={{ color: '#3b82f6', marginTop: 12, fontWeight: 700 }}>Go Home</a>
+              <a href="/" style={{ color: 'var(--accent-primary)', marginTop: 12, fontWeight: 700 }}>Go Home</a>
             </div>
           } />
         </Routes>
       </ToastProvider>
     </AuthProvider>
+  </ThemeProvider>
   )
 }

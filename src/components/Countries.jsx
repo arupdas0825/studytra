@@ -20,7 +20,7 @@ export default function Countries() {
   return (
     <section id="countries" style={{
       padding: '100px 24px',
-      background: '#050914',
+      background: 'var(--bg-primary)',
       position: 'relative',
       overflow: 'hidden'
     }}>

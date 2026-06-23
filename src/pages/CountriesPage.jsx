@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 
 export default function CountriesPage() {
   return (
-    <div style={{ background: '#050914', minHeight: '100vh', overflowX: 'hidden' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', overflowX: 'hidden' }}>
       <Navbar />
       <div style={{ paddingTop: 78 }}>
         <Countries />

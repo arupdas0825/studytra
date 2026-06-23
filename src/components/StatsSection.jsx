@@ -121,9 +121,9 @@ export default function StatsSection() {
 
   return (
     <section ref={ref} style={{
-      background: '#0d1b2a',
-      borderTop: '1px solid rgba(79, 142, 247, 0.15)',
-      borderBottom: '1px solid rgba(79, 142, 247, 0.15)',
+      background: 'var(--bg-secondary)',
+      borderTop: '1px solid var(--border-default)',
+      borderBottom: '1px solid var(--border-default)',
     }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }} className="stats-grid">

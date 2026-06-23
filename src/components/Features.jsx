@@ -11,9 +11,9 @@ const featuresList = [
     link: '/chat',
     mockup: (
       <div style={{
-        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
-        padding: 20, fontFamily: 'monospace', fontSize: '0.78rem', color: '#f0f4ff',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)', width: '100%', maxWidth: 360, margin: '0 auto'
+        background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 16,
+        padding: 20, fontFamily: 'monospace', fontSize: '0.78rem', color: 'var(--text-primary)',
+        boxShadow: 'var(--shadow-card)', width: '100%', maxWidth: 360, margin: '0 auto'
       }}>
         <div style={{ display: 'flex', gap: 6, marginBottom: 14, borderBottom: '1px solid rgba(79, 142, 247, 0.12)', paddingBottom: 8 }}>
           <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
@@ -43,8 +43,8 @@ const featuresList = [
     link: '/budget',
     mockup: (
       <div style={{
-        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
-        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 16,
+        padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -53,7 +53,7 @@ const featuresList = [
         </div>
         <div style={{ height: 6, background: 'rgba(79, 142, 247, 0.15)', borderRadius: 99, position: 'relative', marginBottom: 16 }}>
           <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '55%', background: '#4f8ef7', borderRadius: 99 }} />
-          <div style={{ position: 'absolute', top: -4, left: '55%', width: 14, height: 14, borderRadius: '50%', background: '#4f8ef7', border: '2.5px solid #0d1b2a' }} />
+          <div style={{ position: 'absolute', top: -4, left: '55%', width: 14, height: 14, borderRadius: '50%', background: '#4f8ef7', border: '2.5px solid var(--bg-card)' }} />
         </div>
         <div style={{ borderTop: '1px solid rgba(79, 142, 247, 0.12)', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Total in INR:</span>
@@ -70,8 +70,8 @@ const featuresList = [
     link: '/tools/sop-guide',
     mockup: (
       <div style={{
-        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
-        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 16,
+        padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.76rem'
       }}>
         <div style={{ fontWeight: 700, borderBottom: '1px solid rgba(79, 142, 247, 0.15)', paddingBottom: 6, marginBottom: 10, color: '#4f8ef7' }}>
@@ -96,8 +96,8 @@ const featuresList = [
     link: '/loans',
     mockup: (
       <div style={{
-        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
-        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 16,
+        padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.74rem'
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -132,8 +132,8 @@ const featuresList = [
     link: '/tools/execution-guides',
     mockup: (
       <div style={{
-        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
-        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        background: 'var(--bg-card)', border: '1px solid var(--border-card)', borderRadius: 16,
+        padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.76rem',
         display: 'flex', flexDirection: 'column', gap: 10
       }}>
@@ -176,8 +176,8 @@ export default function Features() {
   return (
     <section id="features" style={{
       padding: '100px 24px',
-      background: '#050914',
-      borderTop: '1px solid rgba(79, 142, 247, 0.12)'
+      background: 'var(--bg-primary)',
+      borderTop: '1px solid var(--border-default)'
     }}>
       <div className="container">
         
@@ -190,7 +190,7 @@ export default function Features() {
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 'var(--r-full)',
             marginBottom: 16
           }}>Features</span>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.6rem)', fontWeight: 800, color: '#f0f4ff', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.6rem)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             Built for Execution.
           </h2>
           <p style={{ color: '#94a3b8', fontSize: '1rem', maxWidth: 480, margin: '12px auto 0', lineHeight: 1.6 }}>

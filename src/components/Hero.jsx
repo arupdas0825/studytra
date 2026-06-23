@@ -121,7 +121,7 @@ export default function Hero() {
   return (
     <section style={{
       minHeight: '100vh',
-      background: '#050914',
+      background: 'var(--bg-primary)',
       display: 'flex',
       alignItems: 'center',
       padding: '120px 24px 80px',
@@ -159,7 +159,7 @@ export default function Hero() {
                 <Sparkles size={11} color="white" />
                 <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'white', letterSpacing: '0.07em' }}>AI-POWERED</span>
               </div>
-              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#f0f4ff' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 Study Abroad Simplified
               </span>
             </div>
@@ -167,7 +167,7 @@ export default function Hero() {
             {/* Headline */}
             <h1 style={{
               fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
-              fontWeight: 800, color: '#f0f4ff',
+              fontWeight: 800, color: 'var(--text-primary)',
               marginBottom: 14, lineHeight: 1.08,
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               letterSpacing: '-0.03em'
@@ -183,7 +183,7 @@ export default function Hero() {
 
             {/* Subtext */}
             <p style={{
-              fontSize: '1.05rem', color: '#94a3b8',
+              fontSize: '1.05rem', color: 'var(--text-secondary)',
               lineHeight: 1.75, maxWidth: 540, marginBottom: 32,
             }}>
               AI-powered study abroad planning for Indian students targeting Europe, USA, Canada & more. 
@@ -210,21 +210,21 @@ export default function Hero() {
                 onClick={() => document.querySelector('#countries')?.scrollIntoView({ behavior: 'smooth' })} 
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  background: 'rgba(255, 255, 255, 0.03)', color: '#f0f4ff',
+                  background: 'var(--theme-icon-bg)', color: 'var(--text-primary)',
                   padding: '15px 30px', borderRadius: 'var(--r-sm)',
                   fontSize: '0.96rem', fontWeight: 700,
-                  border: '1px solid rgba(79, 142, 247, 0.2)', transition: 'all 0.2s',
+                  border: '1px solid var(--border-default)', transition: 'all 0.2s',
                   cursor: 'pointer'
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)'; e.currentTarget.style.transform = 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--theme-icon-hover)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--theme-icon-bg)'; e.currentTarget.style.transform = 'none' }}
               >
                 <Play size={14} fill="#f0f4ff" /> Watch Demo
               </button>
             </div>
 
             {/* Trust Badges */}
-            <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', borderTop: '1px solid rgba(79, 142, 247, 0.15)', paddingTop: 28 }}>
+            <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', borderTop: '1px solid var(--border-default)', paddingTop: 28 }}>
               {[
                 { label: '🎓 AI-Powered' },
                 { label: '🌍 6+ Countries' },
@@ -232,7 +232,7 @@ export default function Hero() {
               ].map(badge => (
                 <div key={badge.label} style={{
                   display: 'flex', alignItems: 'center', gap: 6,
-                  fontSize: '0.86rem', fontWeight: 600, color: '#f0f4ff'
+                  fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)'
                 }}>
                   {badge.label}
                 </div>
@@ -257,14 +257,14 @@ export default function Hero() {
             }}>
               {/* Header */}
               <div style={{
-                background: 'linear-gradient(135deg, #0d1b2a 0%, #050914 100%)',
+                background: 'var(--gradient-card)',
                 padding: '20px 24px',
-                borderBottom: '1px solid rgba(79, 142, 247, 0.15)',
+                borderBottom: '1px solid var(--border-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <div>
                   <div style={{ fontSize: '0.62rem', color: '#94a3b8', letterSpacing: '0.1em', marginBottom: 4, fontWeight: 700 }}>ACTIVE ROADMAP</div>
-                  <div style={{ color: '#f0f4ff', fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '0.95rem' }}>
+                  <div style={{ color: 'var(--text-primary)', fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '0.95rem' }}>
                     {PLANS[cardIdx].title}
                   </div>
                 </div>
@@ -289,14 +289,14 @@ export default function Hero() {
                     <div style={{
                       width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
                       background: item.done ? '#10b981' : item.active ? '#4f8ef7' : 'rgba(79, 142, 247, 0.1)',
-                      border: item.active ? '2.5px solid #050914' : 'none',
+                      border: item.active ? '2.5px solid var(--bg-primary)' : 'none',
                       boxShadow: item.active ? '0 0 0 4px rgba(79, 142, 247, 0.25)' : 'none',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.6rem', color: 'white', fontWeight: 700
                     }}>
                       {item.done && '✓'}
                     </div>
-                    <span style={{ fontSize: '0.86rem', fontWeight: 700, color: item.pending ? '#64748b' : '#f0f4ff' }}>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 700, color: item.pending ? 'var(--text-muted)' : 'var(--text-primary)' }}>
                       {item.stage}
                     </span>
                     {item.done && <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#10b981', fontWeight: 800 }}>Done</span>}

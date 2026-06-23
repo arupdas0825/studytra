@@ -90,7 +90,7 @@ export default function Timeline({ profile, completedSteps, onToggleStep }) {
                 <button
                   onClick={() => onToggleStep(step.id)}
                   style={{
-                    background: '#050914', border: 'none', padding: 0, cursor: 'pointer',
+                    background: 'var(--bg-primary)', border: 'none', padding: 0, cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%'
                   }}
                 >
@@ -99,7 +99,7 @@ export default function Timeline({ profile, completedSteps, onToggleStep }) {
                   ) : (
                     <div style={{
                       width: 18, height: 18, borderRadius: '50%',
-                      border: '2.5px solid #4f8ef7', background: '#050914',
+                      border: '2.5px solid #4f8ef7', background: 'var(--bg-primary)',
                       boxShadow: '0 0 6px rgba(79,142,247,0.2)'
                     }} />
                   )}

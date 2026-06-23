@@ -120,7 +120,7 @@ export default function Dashboard() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#050914',
+        background: 'var(--bg-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -142,7 +142,7 @@ export default function Dashboard() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#050914',
+        background: 'var(--bg-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -183,7 +183,7 @@ export default function Dashboard() {
             <Landmark size={28} color="#f0f4ff" />
           </div>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f0f4ff', margin: '0 0 10px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 10px' }}>
             Studytra Dashboard
           </h2>
           <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: 30 }}>
@@ -250,13 +250,13 @@ export default function Dashboard() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#050914',
+        background: 'var(--bg-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
         fontFamily: "'Plus Jakarta Sans', sans-serif",
-        color: '#f0f4ff',
+        color: 'var(--text-primary)',
         textAlign: 'center'
       }}>
         <div style={{
@@ -297,8 +297,8 @@ export default function Dashboard() {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      background: '#050914',
-      color: '#f0f4ff',
+      background: 'var(--bg-primary)',
+      color: 'var(--text-primary)',
       fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
       {/* Sidebar navigation */}

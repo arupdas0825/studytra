@@ -4,6 +4,45 @@ import { Menu, X, ChevronDown, LogOut, User as UserIcon, LayoutDashboard, Messag
 import { useAuth } from '../context/AuthContext'
 import AuthModal from './auth/AuthModal'
 import { useToast } from '../context/ToastContext'
+import { useTheme } from '../context/ThemeContext'
+
+const SunIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+)
+
+const MoonIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+)
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle-btn"
+      title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+    </button>
+  )
+}
+
 
 const navLinks = [
   { label: 'How It Works', href: '/#how-it-works' },
@@ -90,11 +129,11 @@ export default function Navbar() {
           right: 0,
           zIndex: 1000,
           background: scrolled
-            ? 'rgba(5, 9, 20, 0.85)'
-            : 'rgba(5, 9, 20, 0.65)',
+            ? 'var(--navbar-bg)'
+            : 'var(--glass-bg)',
           backdropFilter: 'blur(16px)',
           borderBottom: scrolled
-            ? '1px solid rgba(79, 142, 247, 0.15)'
+            ? '1px solid var(--navbar-border)'
             : '1px solid transparent',
           transition: 'all 0.3s ease',
         }}
@@ -135,7 +174,7 @@ export default function Navbar() {
                 fontFamily: 'Plus Jakarta Sans, sans-serif',
                 fontWeight: 800,
                 fontSize: '1.25rem',
-                color: '#f0f4ff',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.03em',
               }}
             >
@@ -162,8 +201,8 @@ export default function Navbar() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 4,
-                      background: toolsDropdownOpen ? 'rgba(79, 142, 247, 0.1)' : 'none',
-                      color: toolsDropdownOpen ? '#4f8ef7' : '#94a3b8',
+                      background: toolsDropdownOpen ? 'var(--theme-icon-hover)' : 'none',
+                      color: toolsDropdownOpen ? 'var(--accent-primary)' : 'var(--text-secondary)',
                       padding: '8px 14px',
                       borderRadius: 'var(--r-sm)',
                       fontSize: '0.88rem',
@@ -197,10 +236,10 @@ export default function Navbar() {
                     >
                       <div
                         style={{
-                          background: '#0f2135',
+                          background: 'var(--bg-card)',
                           borderRadius: 'var(--r-lg)',
                           boxShadow: 'var(--shadow-xl)',
-                          border: '1px solid rgba(79, 142, 247, 0.15)',
+                          border: '1px solid var(--border-default)',
                           padding: 8,
                           animation: 'fadeUp 0.18s ease',
                         }}
@@ -216,14 +255,14 @@ export default function Navbar() {
                               transition: 'background 0.15s',
                               textDecoration: 'none',
                             }}
-                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)')}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--theme-icon-hover)')}
                             onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                           >
                             <div
                               style={{
                                 fontSize: '0.88rem',
                                 fontWeight: 700,
-                                color: '#f0f4ff',
+                                color: 'var(--text-primary)',
                                 marginBottom: 2,
                               }}
                             >
@@ -232,7 +271,7 @@ export default function Navbar() {
                             <div
                               style={{
                                 fontSize: '0.75rem',
-                                color: '#94a3b8',
+                                color: 'var(--text-secondary)',
                               }}
                             >
                               {item.desc}
@@ -252,16 +291,16 @@ export default function Navbar() {
                     borderRadius: 'var(--r-sm)',
                     fontSize: '0.88rem',
                     fontWeight: 600,
-                    color: '#94a3b8',
+                    color: 'var(--text-secondary)',
                     transition: 'all 0.2s',
                     textDecoration: 'none',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.color = '#4f8ef7'
-                    e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'
+                    e.currentTarget.style.color = 'var(--accent-primary)'
+                    e.currentTarget.style.background = 'var(--theme-icon-hover)'
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.color = '#94a3b8'
+                    e.currentTarget.style.color = 'var(--text-secondary)'
                     e.currentTarget.style.background = 'none'
                   }}
                 >
@@ -277,16 +316,16 @@ export default function Navbar() {
                   borderRadius: 'var(--r-sm)',
                   fontSize: '0.88rem',
                   fontWeight: 600,
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
                   transition: 'all 0.2s',
                   textDecoration: 'none',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = '#4f8ef7'
-                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'
+                  e.currentTarget.style.color = 'var(--accent-primary)'
+                  e.currentTarget.style.background = 'var(--theme-icon-hover)'
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = '#94a3b8'
+                  e.currentTarget.style.color = 'var(--text-secondary)'
                   e.currentTarget.style.background = 'none'
                 }}
               >
@@ -297,6 +336,7 @@ export default function Navbar() {
 
           {/* ── Auth State Buttons ── */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <ThemeToggle />
             {user ? (
               <div style={{ position: 'relative' }} ref={avatarDropdownRef}>
                 {/* User Avatar Circle */}
@@ -310,8 +350,8 @@ export default function Navbar() {
                       height: 38,
                       borderRadius: '50%',
                       cursor: 'pointer',
-                      border: '2px solid #4f8ef7',
-                      boxShadow: '0 0 10px rgba(79,142,247,0.3)',
+                      border: '2px solid var(--primary)',
+                      boxShadow: 'var(--shadow-sm)',
                       objectFit: 'cover'
                     }}
                   />
@@ -322,15 +362,15 @@ export default function Navbar() {
                       width: 38,
                       height: 38,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                      background: 'var(--gradient-main)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#f0f4ff',
+                      color: 'var(--text-inverse, #ffffff)',
                       fontWeight: 700,
                       fontSize: '0.9rem',
                       cursor: 'pointer',
-                      boxShadow: '0 0 10px rgba(79,142,247,0.3)',
+                      boxShadow: 'var(--shadow-sm)',
                     }}
                   >
                     {getInitials()}
@@ -341,34 +381,34 @@ export default function Navbar() {
                 {avatarDropdownOpen && (
                   <div style={{
                     position: 'absolute', top: '110%', right: 0,
-                    width: 240, background: 'rgba(15, 33, 53, 0.95)',
-                    backdropFilter: 'blur(20px)', border: '1px solid rgba(79, 142, 247, 0.18)',
+                    width: 240, background: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px)', border: '1px solid var(--border)',
                     borderRadius: 16, padding: '14px', zIndex: 1000,
                     boxShadow: 'var(--shadow-xl)',
                     animation: 'avatarDropdownFadeUp 0.18s ease'
                   }}>
                     {/* User info */}
-                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(79,142,247,0.1)' }}>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f0f4ff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {user.displayName || "Studytra Student"}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
                         {user.email}
                       </div>
                     </div>
 
                     {/* Navigation links */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
-                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(79,142,247,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <LayoutDashboard size={14} color="#4f8ef7" />
+                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <LayoutDashboard size={14} color="var(--primary)" />
                         <span>Dashboard</span>
                       </a>
-                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(79,142,247,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <MessageSquare size={14} color="#7c3aed" />
+                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <MessageSquare size={14} color="var(--accent)" />
                         <span>My Chats</span>
                       </a>
-                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(79,142,247,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <Settings size={14} color="#94a3b8" />
+                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <Settings size={14} color="var(--text-muted)" />
                         <span>Planning Home</span>
                       </a>
                     </div>
@@ -396,24 +436,22 @@ export default function Navbar() {
               <button
                 onClick={() => setAuthModalOpen(true)}
                 style={{
-                  background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
-                  color: 'white',
+                  background: 'var(--gradient-main)',
+                  color: 'var(--text-inverse, white)',
                   padding: '10px 20px',
                   borderRadius: 'var(--r-sm)',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  boxShadow: '0 4px 16px rgba(79,142,247,0.25)',
+                  boxShadow: 'var(--shadow-button)',
                   transition: 'all 0.2s',
                   border: 'none',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-1px)'
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(79,142,247,0.35)'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.transform = 'none'
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(79,142,247,0.25)'
                 }}
               >
                 Sign In
@@ -426,9 +464,9 @@ export default function Navbar() {
               style={{ background: 'none', padding: 6, display: 'none', border: 'none', cursor: 'pointer' }}
             >
               {menuOpen ? (
-                <X size={22} color="#f0f4ff" />
+                <X size={22} color="var(--text-primary)" />
               ) : (
-                <Menu size={22} color="#f0f4ff" />
+                <Menu size={22} color="var(--text-primary)" />
               )}
             </button>
           </div>
@@ -438,14 +476,20 @@ export default function Navbar() {
         {menuOpen && (
           <div
             style={{
-              background: '#0d1b2a',
-              borderTop: '1px solid rgba(79, 142, 247, 0.15)',
+              background: 'var(--bg-secondary)',
+              borderTop: '1px solid var(--border)',
               padding: '16px 24px 24px',
               display: 'flex',
               flexDirection: 'column',
               gap: 4,
             }}
           >
+            {/* Mobile Theme Toggle Row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 8px', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>Theme</span>
+              <ThemeToggle />
+            </div>
+
             {navLinks.map(link =>
               link.dropdown ? (
                 <div key={link.label}>
@@ -453,7 +497,7 @@ export default function Navbar() {
                     style={{
                       fontSize: '0.72rem',
                       fontWeight: 700,
-                      color: '#64748b',
+                      color: 'var(--text-muted)',
                       padding: '12px 8px 6px',
                       textTransform: 'uppercase',
                       letterSpacing: '0.08em',
@@ -471,7 +515,7 @@ export default function Navbar() {
                         padding: '10px 8px',
                         fontSize: '0.92rem',
                         fontWeight: 600,
-                        color: '#f0f4ff',
+                        color: 'var(--text-primary)',
                         textDecoration: 'none',
                       }}
                     >
@@ -489,8 +533,8 @@ export default function Navbar() {
                     padding: '12px 8px',
                     fontSize: '1rem',
                     fontWeight: 600,
-                    color: '#f0f4ff',
-                    borderBottom: '1px solid rgba(79, 142, 247, 0.08)',
+                    color: 'var(--text-primary)',
+                    borderBottom: '1px solid var(--border)',
                     textDecoration: 'none',
                   }}
                 >
@@ -508,8 +552,8 @@ export default function Navbar() {
                     padding: '12px 8px',
                     fontSize: '1rem',
                     fontWeight: 600,
-                    color: '#4f8ef7',
-                    borderBottom: '1px solid rgba(79, 142, 247, 0.08)',
+                    color: 'var(--primary)',
+                    borderBottom: '1px solid var(--border)',
                     textDecoration: 'none',
                   }}
                 >
@@ -544,8 +588,8 @@ export default function Navbar() {
                 }}
                 style={{
                   marginTop: 12,
-                  background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
-                  color: 'white',
+                  background: 'var(--gradient-main)',
+                  color: 'var(--text-inverse, white)',
                   padding: 13,
                   borderRadius: 'var(--r-sm)',
                   fontWeight: 700,

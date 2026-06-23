@@ -7,9 +7,48 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useTheme } from '../context/ThemeContext'
 import AuthModal from '../components/auth/AuthModal'
 import { COUNTRIES } from '../constants/countries'
 import '../styles/landing.css'
+
+const SunIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+)
+
+const MoonIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+)
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle-btn"
+      title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+    </button>
+  )
+}
+
 
 // Reusable CountUp Component using IntersectionObserver
 function CountUp({ target, suffix = '', duration = 1500 }) {
@@ -121,9 +160,9 @@ export default function LandingPage() {
       ══════════════════════════════ */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-        background: scrolled ? 'rgba(4, 8, 15, 0.92)' : 'rgba(4, 8, 15, 0.65)',
+        background: scrolled ? 'var(--navbar-bg)' : 'var(--glass-bg)',
         backdropFilter: 'blur(20px)',
-        borderBottom: scrolled ? '1px solid rgba(59, 130, 246, 0.15)' : '1px solid transparent',
+        borderBottom: scrolled ? '1px solid var(--navbar-border)' : '1px solid transparent',
         transition: 'all 0.3s ease',
         height: 72,
         display: 'flex', alignItems: 'center'
@@ -133,28 +172,28 @@ export default function LandingPage() {
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
             <div style={{
               width: 38, height: 38, borderRadius: 11,
-              background: 'linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%)',
+              background: 'var(--gradient-main)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)'
+              boxShadow: 'var(--shadow-sm)'
             }}>
               <Compass size={18} color="white" />
             </div>
             <span style={{
               fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 800,
-              fontSize: '1.25rem', color: '#f1f5f9', letterSpacing: '-0.02em'
+              fontSize: '1.25rem', color: 'var(--text-primary)', letterSpacing: '-0.02em'
             }}>Studytra</span>
           </a>
 
           {/* Center Links (Desktop) */}
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} className="desk-nav">
-            <a href="#how-it-works" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#3b82f6'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>How It Works</a>
-            <a href="#countries" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#3b82f6'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>Countries</a>
+            <a href="#how-it-works" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = 'var(--accent-primary)'} onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}>How It Works</a>
+            <a href="#countries" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = 'var(--accent-primary)'} onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}>Countries</a>
             
             {/* Tools Dropdown */}
             <div style={{ position: 'relative' }} onMouseEnter={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
               <button style={{
                 display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none',
-                padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: dropdownOpen ? '#3b82f6' : '#94a3b8',
+                padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: dropdownOpen ? 'var(--accent-primary)' : 'var(--text-secondary)',
                 cursor: 'pointer', transition: 'color 0.2s'
               }}>
                 Tools <ChevronDown size={14} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
@@ -165,31 +204,32 @@ export default function LandingPage() {
                   paddingTop: 8, minWidth: 260, zIndex: 999
                 }}>
                   <div style={{
-                    background: '#0c1a2e', borderRadius: 16, border: '1px solid rgba(59, 130, 246, 0.15)',
-                    padding: 8, boxShadow: 'var(--glow-card)'
+                    background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
+                    padding: 8, boxShadow: 'var(--shadow-xl)'
                   }}>
-                    <a href="/budget" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#f1f5f9' }}>💰 Budget Estimator</div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>Evaluate living costs in INR with live rates.</div>
+                    <a href="/budget" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>💰 Budget Estimator</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>Evaluate living costs in INR with live rates.</div>
                     </a>
-                    <a href="/tools/sop-guide" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#f1f5f9' }}>✍️ SOP Writing Framework</div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>Country-specific structures and samples.</div>
+                    <a href="/tools/sop-guide" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>✍️ SOP Writing Framework</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>Country-specific structures and samples.</div>
                     </a>
-                    <a href="/loans" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#f1f5f9' }}>🏦 Education Loan Advisor</div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: 2 }}>Compare interest rates and checklists.</div>
+                    <a href="/loans" style={{ display: 'block', padding: '10px 14px', borderRadius: 10, textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>🏦 Education Loan Advisor</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>Compare interest rates and checklists.</div>
                     </a>
                   </div>
                 </div>
               )}
             </div>
 
-            <a href="#reviews" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: '#94a3b8', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = '#3b82f6'} onMouseLeave={e => e.target.style.color = '#94a3b8'}>Reviews</a>
+            <a href="#reviews" style={{ padding: '8px 16px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={e => e.target.style.color = 'var(--accent-primary)'} onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}>Reviews</a>
           </div>
 
           {/* Right Action buttons */}
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <ThemeToggle />
             {user ? (
               <div style={{ position: 'relative' }} ref={avatarDropdownRef}>
                 {/* User Avatar Circle */}
@@ -203,8 +243,8 @@ export default function LandingPage() {
                       height: 38,
                       borderRadius: '50%',
                       cursor: 'pointer',
-                      border: '2px solid #3b82f6',
-                      boxShadow: '0 0 10px rgba(59,130,246,0.3)',
+                      border: '2px solid var(--primary)',
+                      boxShadow: 'var(--shadow-sm)',
                       objectFit: 'cover'
                     }}
                   />
@@ -215,15 +255,15 @@ export default function LandingPage() {
                       width: 38,
                       height: 38,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%)',
+                      background: 'var(--gradient-main)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#f1f5f9',
+                      color: 'var(--text-inverse, #ffffff)',
                       fontWeight: 700,
                       fontSize: '0.9rem',
                       cursor: 'pointer',
-                      boxShadow: '0 0 10px rgba(59,130,246,0.3)',
+                      boxShadow: 'var(--shadow-sm)',
                     }}
                   >
                     {getInitials()}
@@ -234,35 +274,35 @@ export default function LandingPage() {
                 {avatarDropdownOpen && (
                   <div style={{
                     position: 'absolute', top: '120%', right: 0,
-                    width: 240, background: 'rgba(12, 26, 46, 0.96)',
-                    backdropFilter: 'blur(20px)', border: '1px solid rgba(59, 130, 246, 0.18)',
+                    width: 240, background: 'var(--bg-card)',
+                    backdropFilter: 'blur(20px)', border: '1px solid var(--border)',
                     borderRadius: 16, padding: '14px', zIndex: 1000,
-                    boxShadow: 'var(--glow-card)',
+                    boxShadow: 'var(--shadow-xl)',
                     animation: 'avatarDropdownFadeUp 0.18s ease',
                     textAlign: 'left'
                   }}>
                     {/* User info */}
-                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(59,130,246,0.1)' }}>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {user.displayName || "Studytra Student"}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
                         {user.email}
                       </div>
                     </div>
 
                     {/* Navigation links */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
-                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <LayoutDashboard size={14} color="#3b82f6" />
+                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <LayoutDashboard size={14} color="var(--primary)" />
                         <span>Dashboard</span>
                       </a>
-                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <MessageSquare size={14} color="#7c3aed" />
+                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <MessageSquare size={14} color="var(--accent)" />
                         <span>My Chats</span>
                       </a>
-                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <Settings size={14} color="#94a3b8" />
+                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <Settings size={14} color="var(--text-muted)" />
                         <span>Planning Home</span>
                       </a>
                     </div>
@@ -303,7 +343,7 @@ export default function LandingPage() {
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} 
               className="burger"
             >
-              {mobileMenuOpen ? <X size={24} color="#f1f5f9" /> : <Menu size={24} color="#f1f5f9" />}
+              {mobileMenuOpen ? <X size={24} color="var(--text-primary)" /> : <Menu size={24} color="var(--text-primary)" />}
             </button>
           </div>
         </div>
@@ -312,34 +352,40 @@ export default function LandingPage() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div style={{
-          position: 'fixed', top: 72, left: 0, right: 0, background: '#080f1a',
-          borderBottom: '1px solid rgba(59, 130, 246, 0.15)', padding: '20px 24px',
+          position: 'fixed', top: 72, left: 0, right: 0, background: 'var(--bg-secondary)',
+          borderBottom: '1px solid var(--border-default)', padding: '20px 24px',
           display: 'flex', flexDirection: 'column', gap: 16, zIndex: 999,
-          boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+          boxShadow: 'var(--shadow-lg)'
         }}>
-          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>How It Works</a>
-          <a href="#countries" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>Countries</a>
-          <a href="/budget" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>💰 Budget Estimator</a>
-          <a href="/tools/sop-guide" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>✍️ SOP Guide</a>
-          <a href="/loans" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>🏦 Loan Guide</a>
-          <a href="#reviews" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>Reviews</a>
+          {/* Mobile Theme Toggle Row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 8px', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>Theme</span>
+            <ThemeToggle />
+          </div>
+
+          <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>How It Works</a>
+          <a href="#countries" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>Countries</a>
+          <a href="/budget" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>💰 Budget Estimator</a>
+          <a href="/tools/sop-guide" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>✍️ SOP Guide</a>
+          <a href="/loans" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>🏦 Loan Guide</a>
+          <a href="#reviews" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>Reviews</a>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
             {user ? (
               <div style={{
-                background: 'rgba(59, 130, 246, 0.05)',
-                border: '1px solid rgba(59, 130, 246, 0.15)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
                 borderRadius: 12,
                 padding: '12px',
                 marginBottom: 8
               }}>
-                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f1f5f9' }}>{user.displayName || "Studytra Student"}</div>
-                <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: 12 }}>{user.email}</div>
+                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)' }}>{user.displayName || "Studytra Student"}</div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: 12 }}>{user.email}</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <a href="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: '#3b82f6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <a href="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <LayoutDashboard size={14} /> Dashboard
                   </a>
-                  <a href="/chat" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: '#7c3aed', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <a href="/chat" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: 'var(--accent)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <MessageSquare size={14} /> My Chats
                   </a>
                   <button onClick={() => { setMobileMenuOpen(false); handleSignOut(); }} style={{
@@ -387,41 +433,37 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <h1 style={{
-              fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', fontWeight: 800,
-              lineHeight: 1.1, color: '#f1f5f9', marginBottom: 12
-            }}>
-              Plan Your Future<br />
-              <span className="gradient-text">Abroad with AI.</span>
-            </h1>
-
-            <h3 style={{
-              fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: 700,
-              color: '#a78bfa', marginBottom: 20
-            }}>
-              Zero Confusion. Zero Consultancy Fees.
-            </h3>
-
-            <p style={{
-              fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.7,
-              maxWidth: 560, marginBottom: 36
-            }}>
-              Studytra gives Indian students a personalized roadmap to study in Europe, USA, Canada & more — with real-time AI guidance, checklists, budget tools, and writing guides. All 100% free.
-            </p>
-
-            {/* Trust Pills */}
-            <div style={{
-              display: 'flex', gap: 14, flexWrap: 'wrap',
-              fontSize: '0.84rem', fontWeight: 600, color: '#cbd5e1',
-              marginBottom: 36, borderBottom: '1px solid rgba(59,130,246,0.1)',
-              paddingBottom: 16, width: '100%', maxWidth: 500
-            }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🎓 AI Chatbot</span>
-              <span style={{ color: 'rgba(59,130,246,0.2)' }}>|</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🌍 6 Destinations</span>
-              <span style={{ color: 'rgba(59,130,246,0.2)' }}>|</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>✅ 100% Free Forever</span>
-            </div>
+             <h1 className="text-display" style={{
+               color: 'var(--text-primary)', marginBottom: 12
+             }}>
+               Your Dream University.<br />
+               <span className="gradient-text hero-accent">All in One Place.</span>
+             </h1>
+ 
+             <h3 className="text-h3" style={{
+               color: 'var(--accent-secondary)', marginBottom: 20
+             }}>
+               Zero Confusion. Zero Consultancy Fees.
+             </h3>
+ 
+             <p className="text-body-lg" style={{
+               maxWidth: 560, marginBottom: 36
+             }}>
+               Studytra gives Indian students a personalized roadmap to study in Europe, USA, Canada & more — with real-time AI guidance, checklists, budget tools, and writing guides. All 100% free.
+             </p>
+ 
+             {/* Trust Pills */}
+             <div className="text-label" style={{
+               display: 'flex', gap: 14, flexWrap: 'wrap',
+               marginBottom: 36, borderBottom: '1px solid var(--border-default)',
+               paddingBottom: 16, width: '100%', maxWidth: 500
+             }}>
+               <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🎓 AI Chatbot</span>
+               <span style={{ color: 'rgba(59,130,246,0.2)' }}>|</span>
+               <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🌍 6 Destinations</span>
+               <span style={{ color: 'rgba(59,130,246,0.2)' }}>|</span>
+               <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>✅ 100% Free Forever</span>
+             </div>
 
             {/* CTAs */}
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', width: '100%' }}>

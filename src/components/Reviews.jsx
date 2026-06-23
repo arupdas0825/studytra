@@ -120,8 +120,8 @@ export default function Reviews() {
   return (
     <section id="reviews" ref={ref} style={{
       padding: '100px 24px',
-      background: '#050914',
-      borderTop: '1px solid rgba(79, 142, 247, 0.12)'
+      background: 'var(--bg-primary)',
+      borderTop: '1px solid var(--border-default)'
     }}>
       <div className="container">
         
@@ -134,7 +134,7 @@ export default function Reviews() {
             letterSpacing: '0.1em', textTransform: 'uppercase',
             padding: '5px 14px', borderRadius: 'var(--r-full)', marginBottom: 16,
           }} className="reveal">Reviews</span>
-          <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', color: '#f0f4ff', fontWeight: 800, transitionDelay: '0.1s', fontFamily: 'Plus Jakarta Sans' }}>
+          <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', color: 'var(--text-primary)', fontWeight: 800, transitionDelay: '0.1s', fontFamily: 'Plus Jakarta Sans' }}>
             What Students Say About Studytra
           </h2>
           <div className="reveal" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 12, transitionDelay: '0.15s' }}>
@@ -250,27 +250,27 @@ export default function Reviews() {
           <div style={{
             position: 'fixed', inset: 0, zIndex: 9999,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: 20, background: 'rgba(5, 9, 20, 0.8)',
+            padding: 20, background: 'var(--bg-overlay)',
             backdropFilter: 'blur(8px)',
             animation: 'fadeIn 0.25s ease'
           }}>
             <div style={{
-              background: '#0d1b2a', borderRadius: 24,
+              background: 'var(--bg-card)', borderRadius: 24,
               padding: '36px 32px', maxWidth: 540, width: '100%',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-              border: '1px solid rgba(79, 142, 247, 0.18)',
+              boxShadow: 'var(--shadow-card)',
+              border: '1px solid var(--border-card)',
               animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}>
               {done ? (
                 <div style={{ textAlign: 'center', padding: '30px 0' }}>
                   <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>🎉</div>
-                  <h3 style={{ fontFamily: 'Plus Jakarta Sans', color: '#f0f4ff', fontWeight: 800, fontSize: '1.4rem', marginBottom: 8 }}>Thank You!</h3>
+                  <h3 style={{ fontFamily: 'Plus Jakarta Sans', color: 'var(--text-primary)', fontWeight: 800, fontSize: '1.4rem', marginBottom: 8 }}>Thank You!</h3>
                   <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.5 }}>Your review has been saved to Supabase and is now live on our landing page.</p>
                 </div>
               ) : (
                 <>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                    <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '1.2rem', color: '#f0f4ff', margin: 0 }}>
+                    <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-primary)', margin: 0 }}>
                       Share Your Experience
                     </h3>
                     <button onClick={() => setShowForm(false)} style={{

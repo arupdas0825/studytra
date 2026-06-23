@@ -37,30 +37,30 @@ export default function ChatSidebar({
   return (
     <div style={{
       width: 300, flexShrink: 0,
-      background: 'rgba(15, 33, 53, 0.65)',
+      background: 'var(--bg-secondary, rgba(15, 33, 53, 0.65))',
       backdropFilter: 'blur(16px)',
-      borderRight: '1px solid rgba(79, 142, 247, 0.15)',
+      borderRight: '1px solid var(--border)',
       display: 'flex', flexDirection: 'column',
       height: '100vh',
       position: 'sticky', top: 0,
-      color: '#f0f4ff'
+      color: 'var(--text-primary)'
     }} className="chat-sidebar">
 
       {/* Top Header Logo */}
       <div style={{
         padding: '20px 20px 16px',
-        borderBottom: '1px solid rgba(79, 142, 247, 0.12)',
+        borderBottom: '1px solid var(--border)',
       }}>
         <button onClick={onBack} style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          background: 'none', color: '#94a3b8',
+          background: 'none', color: 'var(--text-muted)',
           fontSize: '0.82rem', fontWeight: 600,
           marginBottom: 16,
           transition: 'color 0.2s',
           cursor: 'pointer'
         }}
-          onMouseEnter={e => e.currentTarget.style.color = '#4f8ef7'}
-          onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
         >
           <ArrowLeft size={15} /> Back to Home
         </button>
@@ -68,15 +68,15 @@ export default function ChatSidebar({
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 36, height: 36, borderRadius: 10,
-            background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+            background: 'var(--gradient-main)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(79, 142, 247, 0.3)'
+            boxShadow: 'var(--shadow-sm)'
           }}>
             <GraduationCap size={18} color="white" />
           </div>
           <span style={{
             fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 800,
-            fontSize: '1.2rem', color: '#f0f4ff',
+            fontSize: '1.2rem', color: 'var(--text-primary)',
           }}>Studytra AI</span>
         </div>
       </div>
@@ -139,12 +139,12 @@ export default function ChatSidebar({
           </div>
         ) : (
           <div style={{
-            background: 'rgba(15, 33, 53, 0.4)', borderRadius: 16,
-            padding: '16px', textAlign: 'center', border: '1px solid rgba(79, 142, 247, 0.1)'
+            background: 'var(--bg-card)', borderRadius: 16,
+            padding: '16px', textAlign: 'center', border: '1px solid var(--border)'
           }}>
-            <MapPin size={18} color="#4f8ef7" style={{ marginBottom: 8 }} />
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f0f4ff', marginBottom: 4 }}>No Profile Linked</div>
-            <p style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.5 }}>
+            <MapPin size={18} color="var(--primary)" style={{ marginBottom: 8 }} />
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>No Profile Linked</div>
+            <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
               Onboarding form was bypassed. Complete it to set profile.
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function ChatSidebar({
         <div>
           <div style={{
             fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
-            color: '#64748b', textTransform: 'uppercase', marginBottom: 10,
+            color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 10,
           }}>Quick Actions</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {quickChips.map(chip => (
@@ -162,13 +162,13 @@ export default function ChatSidebar({
                 key={chip.label}
                 onClick={() => onQuickAction && onQuickAction(chip.prompt)}
                 style={{
-                  background: 'rgba(79, 142, 247, 0.05)',
-                  border: '1px solid rgba(79, 142, 247, 0.12)',
+                  background: 'var(--theme-icon-bg)',
+                  border: '1px solid var(--border)',
                   borderRadius: 10,
                   padding: '9px 12px',
                   textAlign: 'left',
                   fontSize: '0.76rem',
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
                   cursor: 'pointer',
                   fontWeight: 600,
                   transition: 'all 0.2s',
@@ -177,17 +177,17 @@ export default function ChatSidebar({
                   gap: 6
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.12)';
-                  e.currentTarget.style.borderColor = '#4f8ef7';
-                  e.currentTarget.style.color = '#f0f4ff';
+                  e.currentTarget.style.background = 'var(--theme-icon-hover)';
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  e.currentTarget.style.color = 'var(--text-primary)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.05)';
-                  e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.12)';
-                  e.currentTarget.style.color = '#94a3b8';
+                  e.currentTarget.style.background = 'var(--theme-icon-bg)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
               >
-                <Sparkles size={11} color="#4f8ef7" style={{ flexShrink: 0 }} />
+                <Sparkles size={11} color="var(--primary)" style={{ flexShrink: 0 }} />
                 <span>{chip.label}</span>
               </button>
             ))}
@@ -198,22 +198,22 @@ export default function ChatSidebar({
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 180 }}>
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            marginBottom: 10, borderTop: '1px solid rgba(79, 142, 247, 0.08)', paddingTop: 14
+            marginBottom: 10, borderTop: '1px solid var(--border)', paddingTop: 14
           }}>
             <span style={{
               fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
-              color: '#64748b', textTransform: 'uppercase'
+              color: 'var(--text-muted)', textTransform: 'uppercase'
             }}>Chat History</span>
 
             <button
               onClick={onNewChat}
               style={{
-                background: 'rgba(79, 142, 247, 0.1)',
-                border: '1px solid rgba(79, 142, 247, 0.2)',
+                background: 'var(--theme-icon-bg)',
+                border: '1px solid var(--border)',
                 borderRadius: 6,
                 padding: '3px 8px',
                 fontSize: '0.68rem',
-                color: '#4f8ef7',
+                color: 'var(--primary)',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
@@ -221,8 +221,8 @@ export default function ChatSidebar({
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(79, 142, 247, 0.2)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--theme-icon-bg)'}
             >
               <Plus size={11} /> New
             </button>
@@ -231,7 +231,7 @@ export default function ChatSidebar({
           {user ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
               {chatSessions.length === 0 ? (
-                <div style={{ padding: '16px 8px', textAlign: 'center', color: '#64748b', fontSize: '0.72rem' }}>
+                <div style={{ padding: '16px 8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.72rem' }}>
                   No saved conversations.
                 </div>
               ) : (
@@ -244,10 +244,10 @@ export default function ChatSidebar({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        background: isActive ? 'rgba(79, 142, 247, 0.15)' : 'transparent',
+                        background: isActive ? 'var(--theme-icon-hover)' : 'transparent',
                         borderRadius: 10,
                         padding: '2px 8px',
-                        border: `1px solid ${isActive ? 'rgba(79, 142, 247, 0.25)' : 'transparent'}`,
+                        border: `1px solid ${isActive ? 'var(--primary)' : 'transparent'}`,
                         transition: 'all 0.15s'
                       }}
                     >
@@ -257,7 +257,7 @@ export default function ChatSidebar({
                           flex: 1,
                           textAlign: 'left',
                           background: 'none',
-                          color: isActive ? '#f0f4ff' : '#94a3b8',
+                          color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                           fontSize: '0.76rem',
                           fontWeight: isActive ? 700 : 500,
                           padding: '8px 4px',
@@ -270,7 +270,7 @@ export default function ChatSidebar({
                           gap: 6
                         }}
                       >
-                        <MessageSquare size={12} color={isActive ? '#4f8ef7' : '#64748b'} />
+                        <MessageSquare size={12} color={isActive ? 'var(--primary)' : 'var(--text-muted)'} />
                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{session.title || 'Untitled Chat'}</span>
                       </button>
 
@@ -284,7 +284,7 @@ export default function ChatSidebar({
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#64748b',
+                          color: 'var(--text-muted)',
                           cursor: 'pointer',
                           padding: '6px',
                           borderRadius: 6,
@@ -294,7 +294,7 @@ export default function ChatSidebar({
                           transition: 'color 0.15s, background 0.15s'
                         }}
                         onMouseEnter={e => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)' }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#64748b'; e.currentTarget.style.background = 'none' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'none' }}
                       >
                         <Trash2 size={11} />
                       </button>
@@ -305,14 +305,14 @@ export default function ChatSidebar({
             </div>
           ) : (
             <div style={{
-              background: 'rgba(79, 142, 247, 0.04)',
+              background: 'var(--theme-icon-bg)',
               borderRadius: 12,
               padding: '12px',
               textAlign: 'center',
-              border: '1px dashed rgba(79, 142, 247, 0.15)',
+              border: '1px dashed var(--border)',
               marginTop: 4
             }}>
-              <p style={{ fontSize: '0.7rem', color: '#64748b', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 Sign in to save chat sessions and access them later from your sidebar!
               </p>
             </div>
@@ -323,33 +323,33 @@ export default function ChatSidebar({
       {/* Bottom User Profile Section */}
       <div style={{
         padding: '14px 20px',
-        borderTop: '1px solid rgba(79, 142, 247, 0.12)',
+        borderTop: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(5, 9, 20, 0.4)'
+        background: 'var(--navbar-bg)'
       }}>
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
             <div style={{
               width: 32, height: 32, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+              background: 'var(--gradient-main)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.78rem', fontWeight: 700, color: 'white', flexShrink: 0
+              fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-inverse, white)', flexShrink: 0
             }}>
               {user.email?.charAt(0).toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#f0f4ff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {user.user_metadata?.full_name || user.email?.split('@')[0]}
               </div>
-              <div style={{ fontSize: '0.64rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {user.email}
               </div>
             </div>
           </div>
         ) : (
-          <p style={{ fontSize: '0.7rem', color: '#64748b', lineHeight: 1.45, margin: 0 }}>
+          <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.45, margin: 0 }}>
             ⚡ Powered by Gemini 2.0 Pro
           </p>
         )}
