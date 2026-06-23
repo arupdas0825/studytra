@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  User, GraduationCap, MapPin, Calendar, 
-  BookOpen, LogOut, ArrowRight, ArrowLeft, 
-  Check, DollarSign, Search, Award
+  GraduationCap, LogOut, ArrowRight, ArrowLeft, 
+  Check, DollarSign, Search, Award, X
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
@@ -41,7 +40,7 @@ const FIELDS_OF_STUDY = [
   "Medicine / Healthcare"
 ]
 
-export default function PremiumOnboardingModal({ isOpen, isDismissible = true, onClose }) {
+export default function PremiumOnboardingModal({ isOpen, isDismissible = false, onClose }) {
   const { user, saveOnboardingData, logout } = useAuth()
   const { showSuccess, showError } = useToast()
 
@@ -59,7 +58,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
     age: '',
     gender: '',
     educationLevel: '',
-    institution: '',
+    university: '',
     fieldOfStudy: '',
     semester: '',
     cgpa: '',
@@ -112,7 +111,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
     else if (isNaN(form.age) || +form.age < 15 || +form.age > 50) errs.age = 'Enter a valid age (15-50)'
     if (!form.gender) errs.gender = 'Please select your gender'
     if (!form.educationLevel) errs.educationLevel = 'Please select your education level'
-    if (!form.institution.trim()) errs.institution = 'Institution is required'
+    if (!form.university.trim()) errs.university = 'University / School is required'
     if (!form.fieldOfStudy.trim()) errs.fieldOfStudy = 'Field of study is required'
     if (form.cgpa && (isNaN(form.cgpa) || +form.cgpa < 0 || +form.cgpa > 10)) errs.cgpa = 'CGPA must be between 0 and 10'
     
@@ -170,41 +169,33 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
     }
   }
 
-  // Filter study fields based on search input
   const filteredFields = FIELDS_OF_STUDY.filter(f => 
     f.toLowerCase().includes(searchField.toLowerCase())
   )
 
   return (
     <div style={styles.overlay}>
-      {/* Background blur meshes */}
-      <div style={styles.glowOverlay1} />
-      <div style={styles.glowOverlay2} />
-
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        exit={{ opacity: 0, scale: 0.96, y: 15 }}
         transition={{ type: 'spring', duration: 0.5 }}
         style={styles.modalCard}
       >
-        {/* Modal Top Bar */}
-        <div style={styles.topBar}>
-          <div style={styles.logoGroup}>
-            <div style={styles.logoIcon}>🎓</div>
-            <div>
-              <div style={styles.logoText}>Studytra AI</div>
-              <div style={styles.logoSubtext}>Premium Onboarding</div>
-            </div>
-          </div>
-          <button onClick={handleLogout} style={styles.logoutBtn} title="Sign Out">
-            <LogOut size={16} />
-            <span>Sign Out</span>
+        {/* Dismiss Button */}
+        {isDismissible && onClose && (
+          <button onClick={onClose} style={styles.dismissBtn} aria-label="Close modal">
+            <X size={20} />
           </button>
-        </div>
+        )}
 
-        {/* Modal Header */}
-        <div style={styles.header}>
+        {/* Top Header Section */}
+        <div style={styles.topHeader}>
+          {/* Top Center Badge */}
+          <div style={styles.iconCircle}>
+            <GraduationCap size={32} color="#2563EB" />
+          </div>
+
           <h2 style={styles.title}>Let's Personalize Your Plan</h2>
           <p style={styles.subtitle}>
             {step === 1 
@@ -212,40 +203,39 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
               : "Step 2 of 2 — Study Abroad Goal"
             }
           </p>
-          <div style={styles.subtext}>
-            Complete this to unlock your personalized study abroad roadmap and dashboard.
+
+          {/* Progress Bar */}
+          <div style={styles.progressBarWrapper}>
+            <div style={styles.progressBarBg}>
+              <motion.div 
+                initial={{ width: '0%' }}
+                animate={{ width: step === 1 ? '50%' : '100%' }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                style={styles.progressBarActive}
+              />
+            </div>
+            <span style={styles.progressText}>{step === 1 ? '50%' : '100%'}</span>
           </div>
+
+          <p style={styles.introText}>
+            Complete this to unlock your personalized roadmap & study dashboard.
+          </p>
         </div>
 
-        {/* Premium Progress Bar */}
-        <div style={styles.progressBarBg}>
-          <motion.div 
-            initial={{ width: '0%' }}
-            animate={{ width: step === 1 ? '50%' : '100%' }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
-            style={styles.progressBarActive}
-          />
-        </div>
-
-        {/* Form Container */}
+        {/* Scroll Container */}
         <div style={styles.scrollContainer}>
           <AnimatePresence mode="wait">
             {step === 1 ? (
               <motion.div
                 key="step1"
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, x: 12 }}
+                transition={{ duration: 0.25 }}
                 style={styles.formStep}
               >
-                <div style={styles.sectionHeader}>
-                  <User size={16} style={{ color: '#2563eb' }} />
-                  <span>Personal Information</span>
-                </div>
-
+                {/* Full Name & Age Grid */}
                 <div style={styles.grid2}>
-                  {/* Full Name */}
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Full Name *</label>
                     <input 
@@ -255,13 +245,12 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('fullName', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.fullName ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.fullName ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     />
                     {errors.fullName && <span style={styles.errorText}>{errors.fullName}</span>}
                   </div>
 
-                  {/* Age */}
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Age *</label>
                     <input 
@@ -271,158 +260,151 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('age', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.age ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.age ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     />
                     {errors.age && <span style={styles.errorText}>{errors.age}</span>}
                   </div>
                 </div>
 
-                {/* Gender Options */}
+                {/* Gender Selectable Cards */}
                 <div style={styles.fieldGroup}>
                   <label style={styles.label}>Gender *</label>
-                  <div style={styles.genderRow}>
-                    {['Male', 'Female', 'Other'].map(g => (
-                      <label 
-                        key={g} 
-                        style={{
-                          ...styles.genderCard,
-                          ...(form.gender === g ? styles.genderCardSelected : {})
-                        }}
-                      >
-                        <input 
-                          type="radio" 
-                          name="gender" 
-                          value={g} 
-                          checked={form.gender === g}
-                          onChange={() => updateField('gender', g)}
-                          style={styles.hiddenRadio}
-                        />
-                        <span style={styles.genderDot}>
-                          {form.gender === g && <span style={styles.genderDotInner} />}
-                        </span>
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>{g}</span>
-                      </label>
-                    ))}
+                  <div style={styles.genderGrid}>
+                    {['Male', 'Female', 'Other'].map(g => {
+                      const isSelected = form.gender === g;
+                      return (
+                        <div 
+                          key={g} 
+                          onClick={() => updateField('gender', g)}
+                          style={{
+                            ...styles.genderCard,
+                            ...(isSelected ? styles.genderCardSelected : {})
+                          }}
+                        >
+                          <div style={{
+                            ...styles.genderCardDot,
+                            ...(isSelected ? styles.genderCardDotSelected : {})
+                          }} />
+                          <span style={{ fontSize: '0.92rem', fontWeight: 600, color: isSelected ? '#2563EB' : '#0F172A' }}>{g}</span>
+                        </div>
+                      )
+                    })}
                   </div>
                   {errors.gender && <span style={styles.errorText}>{errors.gender}</span>}
                 </div>
 
-                {/* Education Level (Premium selectable cards) */}
+                {/* Education Level Premium Selectable Cards */}
                 <div style={styles.fieldGroup}>
                   <label style={styles.label}>Education Level *</label>
-                  <div style={styles.eduCardGrid}>
+                  <div style={styles.eduGrid}>
                     {EDUCATION_LEVELS.map(edu => {
                       const isSelected = form.educationLevel === edu.id;
                       return (
-                        <div 
+                        <motion.div 
                           key={edu.id}
+                          whileHover={{ y: -1, boxShadow: '0 4px 12px rgba(15,23,42,0.04)' }}
+                          whileTap={{ scale: 0.99 }}
                           onClick={() => updateField('educationLevel', edu.id)}
                           style={{
                             ...styles.eduCard,
                             ...(isSelected ? styles.eduCardSelected : {})
                           }}
                         >
-                          <div style={styles.eduCardCheck}>
-                            {isSelected ? (
-                              <div style={styles.checkBubble}><Check size={10} color="white" /></div>
-                            ) : (
-                              <div style={styles.uncheckBubble} />
-                            )}
-                          </div>
                           <div style={styles.eduCardContent}>
-                            <div style={styles.eduCardTitle}>{edu.label}</div>
+                            <div style={{
+                              ...styles.eduCardTitle,
+                              color: isSelected ? '#2563EB' : '#0F172A'
+                            }}>{edu.label}</div>
                             <div style={styles.eduCardDesc}>{edu.desc}</div>
                           </div>
-                        </div>
+                          <div style={{
+                            ...styles.eduCardCheck,
+                            ...(isSelected ? styles.eduCardCheckSelected : {})
+                          }}>
+                            {isSelected && <Check size={12} color="white" />}
+                          </div>
+                        </motion.div>
                       )
                     })}
                   </div>
                   {errors.educationLevel && <span style={styles.errorText}>{errors.educationLevel}</span>}
                 </div>
 
-                {/* Institution & Field of Study */}
-                <div style={{ ...styles.sectionHeader, marginTop: 24, display: 'flex', gap: 8, alignItems: 'center', fontWeight: 700, fontSize: '0.95rem' }}>
-                  <GraduationCap size={16} style={{ color: '#2563eb' }} />
-                  <span>Academic Details</span>
+                {/* University Field */}
+                <div style={styles.fieldGroup}>
+                  <label style={styles.label}>Current School / College / University *</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Brainware University" 
+                    value={form.university}
+                    onChange={(e) => updateField('university', e.target.value)}
+                    style={{
+                      ...styles.input,
+                      borderColor: errors.university ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
+                    }}
+                  />
+                  {errors.university && <span style={styles.errorText}>{errors.university}</span>}
                 </div>
 
-                <div style={styles.grid2}>
-                  {/* Current School/University */}
-                  <div style={styles.fieldGroup}>
-                    <label style={styles.label}>Current University / College / School *</label>
+                {/* Field of Study (Searchable Dropdown) */}
+                <div style={styles.fieldGroup} ref={dropdownRef}>
+                  <label style={styles.label}>Field of Study *</label>
+                  <div style={styles.searchableWrapper}>
                     <input 
                       type="text" 
-                      placeholder="e.g. Brainware University" 
-                      value={form.institution}
-                      onChange={(e) => updateField('institution', e.target.value)}
+                      placeholder="Search or type field of study..." 
+                      value={searchField !== '' ? searchField : form.fieldOfStudy}
+                      onFocus={() => setShowFieldDropdown(true)}
+                      onChange={(e) => {
+                        setSearchField(e.target.value)
+                        updateField('fieldOfStudy', e.target.value)
+                        setShowFieldDropdown(true)
+                      }}
                       style={{
                         ...styles.input,
-                        borderColor: errors.institution ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        paddingRight: 45,
+                        borderColor: errors.fieldOfStudy ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     />
-                    {errors.institution && <span style={styles.errorText}>{errors.institution}</span>}
-                  </div>
-
-                  {/* Field of Study (Searchable Dropdown) */}
-                  <div style={styles.fieldGroup} ref={dropdownRef}>
-                    <label style={styles.label}>Field of Study *</label>
-                    <div style={styles.searchableWrapper}>
-                      <input 
-                        type="text" 
-                        placeholder="Search or type field of study..." 
-                        value={searchField !== '' ? searchField : form.fieldOfStudy}
-                        onFocus={() => setShowFieldDropdown(true)}
-                        onChange={(e) => {
-                          setSearchField(e.target.value)
-                          updateField('fieldOfStudy', e.target.value)
-                          setShowFieldDropdown(true)
-                        }}
-                        style={{
-                          ...styles.input,
-                          paddingRight: 35,
-                          borderColor: errors.fieldOfStudy ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
-                        }}
-                      />
-                      <Search size={15} style={styles.searchIcon} />
-                      
-                      {showFieldDropdown && (
-                        <div style={styles.dropdownList}>
-                          {filteredFields.length > 0 ? (
-                            filteredFields.map(f => (
-                              <div 
-                                key={f}
-                                onClick={() => {
-                                  handleFieldChange(f)
-                                  setShowFieldDropdown(false)
-                                }}
-                                style={styles.dropdownItem}
-                              >
-                                {f}
-                              </div>
-                            ))
-                          ) : (
+                    <Search size={18} style={styles.searchIcon} />
+                    
+                    {showFieldDropdown && (
+                      <div style={styles.dropdownList}>
+                        {filteredFields.length > 0 ? (
+                          filteredFields.map(f => (
                             <div 
+                              key={f}
                               onClick={() => {
-                                handleFieldChange(searchField)
+                                handleFieldChange(f)
                                 setShowFieldDropdown(false)
                               }}
-                              style={{...styles.dropdownItem, color: '#2563eb', fontWeight: 600}}
+                              style={styles.dropdownItem}
                             >
-                              Add "{searchField}"
+                              {f}
                             </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    {errors.fieldOfStudy && <span style={styles.errorText}>{errors.fieldOfStudy}</span>}
+                          ))
+                        ) : (
+                          <div 
+                            onClick={() => {
+                              handleFieldChange(searchField)
+                              setShowFieldDropdown(false)
+                            }}
+                            style={{...styles.dropdownItem, color: '#2563EB', fontWeight: 600}}
+                          >
+                            Add "{searchField}"
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+                  {errors.fieldOfStudy && <span style={styles.errorText}>{errors.fieldOfStudy}</span>}
                 </div>
 
+                {/* Semester & CGPA Grid */}
                 <div style={styles.grid2}>
-                  {/* Semester */}
                   <div style={styles.fieldGroup}>
-                    <label style={styles.label}>Current Semester (1-8)</label>
+                    <label style={styles.label}>Current Semester (If applicable)</label>
                     <select 
                       value={form.semester} 
                       onChange={(e) => updateField('semester', e.target.value)}
@@ -435,18 +417,17 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                     </select>
                   </div>
 
-                  {/* CGPA */}
                   <div style={styles.fieldGroup}>
-                    <label style={styles.label}>Current CGPA (Optional)</label>
+                    <label style={styles.label}>Current CGPA (If applicable)</label>
                     <input 
                       type="number" 
                       step="0.01" 
-                      placeholder="e.g. 8.1" 
+                      placeholder="e.g. 8.5" 
                       value={form.cgpa}
                       onChange={(e) => updateField('cgpa', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.cgpa ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.cgpa ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     />
                     {errors.cgpa && <span style={styles.errorText}>{errors.cgpa}</span>}
@@ -456,26 +437,23 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
             ) : (
               <motion.div
                 key="step2"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, x: 12 }}
+                transition={{ duration: 0.25 }}
                 style={styles.formStep}
               >
-                <div style={styles.sectionHeader}>
-                  <MapPin size={16} style={{ color: '#2563eb' }} />
-                  <span>Target Goals & Budget</span>
-                </div>
-
-                {/* Country List cards */}
+                {/* Target Country Selectable Cards */}
                 <div style={styles.fieldGroup}>
                   <label style={styles.label}>Target Country *</label>
                   <div style={styles.countryGrid}>
                     {COUNTRIES.map(country => {
                       const isSelected = form.targetCountry === country.id;
                       return (
-                        <div
+                        <motion.div
                           key={country.id}
+                          whileHover={{ y: -1, boxShadow: '0 4px 12px rgba(15,23,42,0.04)' }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => updateField('targetCountry', country.id)}
                           style={{
                             ...styles.countryCard,
@@ -483,19 +461,24 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                           }}
                         >
                           <span style={styles.countryFlag}>{country.flag}</span>
-                          <span style={styles.countryName}>{country.label}</span>
+                          <span style={{
+                            ...styles.countryName,
+                            color: isSelected ? '#2563EB' : '#0F172A'
+                          }}>{country.label}</span>
                           {isSelected && (
-                            <span style={styles.countryCheck}><Check size={12} color="white" /></span>
+                            <div style={styles.countryCheck}>
+                              <Check size={10} color="white" />
+                            </div>
                           )}
-                        </div>
+                        </motion.div>
                       )
                     })}
                   </div>
                   {errors.targetCountry && <span style={styles.errorText}>{errors.targetCountry}</span>}
                 </div>
 
+                {/* Target Degree, Intake, English Level Grid */}
                 <div style={styles.grid3}>
-                  {/* Degree Goal */}
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Target Degree *</label>
                     <select 
@@ -503,7 +486,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('targetDegree', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.targetDegree ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.targetDegree ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     >
                       <option value="">Select Degree</option>
@@ -514,7 +497,6 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                     {errors.targetDegree && <span style={styles.errorText}>{errors.targetDegree}</span>}
                   </div>
 
-                  {/* Intake Year */}
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Target Intake *</label>
                     <select 
@@ -522,7 +504,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('targetIntake', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.targetIntake ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.targetIntake ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     >
                       <option value="">Select Intake</option>
@@ -533,7 +515,6 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                     {errors.targetIntake && <span style={styles.errorText}>{errors.targetIntake}</span>}
                   </div>
 
-                  {/* English level */}
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>English Level *</label>
                     <select 
@@ -541,7 +522,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('englishLevel', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.englishLevel ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
+                        borderColor: errors.englishLevel ? 'var(--accent-error, #ef4444)' : 'rgba(15,23,42,.08)'
                       }}
                     >
                       <option value="">Select Level</option>
@@ -553,10 +534,10 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                   </div>
                 </div>
 
-                {/* Budget Range (Selectable premium chips) */}
+                {/* Budget Range Selectable Chips */}
                 <div style={styles.fieldGroup}>
                   <label style={styles.label}>Budget Range *</label>
-                  <div style={styles.budgetRow}>
+                  <div style={styles.budgetGrid}>
                     {['₹5L–10L', '₹10L–20L', '₹20L–30L', '₹30L+'].map(b => {
                       const isSelected = form.budgetRange === b;
                       return (
@@ -568,7 +549,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                             ...(isSelected ? styles.budgetChipSelected : {})
                           }}
                         >
-                          <DollarSign size={13} style={isSelected ? { color: 'white' } : { color: '#64748b' }} />
+                          <DollarSign size={14} style={{ color: isSelected ? '#2563EB' : '#64748B' }} />
                           <span>{b}</span>
                         </div>
                       )
@@ -577,11 +558,11 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                   {errors.budgetRange && <span style={styles.errorText}>{errors.budgetRange}</span>}
                 </div>
 
-                {/* Trust banner */}
+                {/* Security Trust Banner */}
                 <div style={styles.trustBanner}>
-                  <Award size={18} style={{ color: '#d97706', flexShrink: 0 }} />
-                  <span style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                    Studytra AI uses your profile data strictly to compute your university matches, budget forecasts, and personalized visa checklists.
+                  <Award size={18} style={{ color: '#d97706', flexShrink: 0, marginTop: 1 }} />
+                  <span style={{ fontSize: '0.82rem', color: '#64748B', lineHeight: 1.4 }}>
+                    Studytra AI uses your profile data strictly to compute your university matches, budget forecasts, and visa checklists. We never share your data.
                   </span>
                 </div>
               </motion.div>
@@ -589,48 +570,63 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
           </AnimatePresence>
         </div>
 
-        {/* Modal Buttons */}
-        <div style={styles.footerButtons}>
-          {step === 2 && (
+        {/* Buttons Footer */}
+        <div style={styles.buttonsFooter}>
+          {step === 2 ? (
             <button 
               onClick={() => setStep(1)} 
               disabled={submitting}
               style={styles.backBtn}
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={18} />
               <span>Back</span>
+            </button>
+          ) : (
+            <button onClick={handleLogout} style={styles.signOutBtn}>
+              <LogOut size={16} />
+              <span>Sign Out</span>
             </button>
           )}
 
           {step === 1 ? (
-            <button 
+            <motion.button 
+              whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(37, 99, 235, 0.25)' }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleNext} 
-              style={styles.nextBtn}
+              style={styles.continueBtn}
             >
-              <span>Next Step</span>
-              <ArrowRight size={16} />
-            </button>
+              <span>Continue</span>
+              <ArrowRight size={18} />
+            </motion.button>
           ) : (
-            <button 
+            <motion.button 
+              whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(37, 99, 235, 0.25)' }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSubmit} 
               disabled={submitting}
-              style={styles.submitBtn}
+              style={styles.continueBtn}
             >
               {submitting ? (
                 <>
-                  <span className="spinner" style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.2)', borderTopColor: 'white' }} />
+                  <span className="spinner" style={styles.spinner} />
                   <span>Saving Plan...</span>
                 </>
               ) : (
                 <>
                   <span>Unlock My Dashboard</span>
-                  <Check size={16} />
+                  <Check size={18} />
                 </>
               )}
-            </button>
+            </motion.button>
           )}
         </div>
       </motion.div>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }
@@ -640,163 +636,134 @@ const styles = {
     position: 'fixed',
     inset: 0,
     zIndex: 9999,
-    background: 'var(--bg-overlay)',
-    backdropFilter: 'blur(20px)',
+    background: 'rgba(252, 252, 253, 0.82)',
+    backdropFilter: 'blur(16px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    padding: 24,
+    fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
     overflowY: 'auto'
-  },
-  glowOverlay1: {
-    position: 'absolute',
-    width: 400,
-    height: 400,
-    background: 'var(--accent-primary)',
-    borderRadius: '50%',
-    filter: 'blur(160px)',
-    opacity: 0.08,
-    top: '10%',
-    left: '15%',
-    pointerEvents: 'none'
-  },
-  glowOverlay2: {
-    position: 'absolute',
-    width: 400,
-    height: 400,
-    background: '#7c3aed',
-    borderRadius: '50%',
-    filter: 'blur(160px)',
-    opacity: 0.06,
-    bottom: '10%',
-    right: '15%',
-    pointerEvents: 'none'
   },
   modalCard: {
     width: '100%',
-    maxWidth: 680,
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 24,
-    padding: '32px 32px 28px',
-    boxShadow: 'var(--shadow-card)',
+    maxWidth: 900,
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 32,
+    padding: '48px 48px 40px',
+    boxShadow: '0 20px 60px rgba(15, 23, 42, 0.08)',
     position: 'relative',
     zIndex: 10,
     display: 'flex',
     flexDirection: 'column',
-    maxHeight: '92vh',
+    maxHeight: '94vh',
     overflow: 'hidden'
   },
-  topBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottom: '1px solid var(--border-default)'
-  },
-  logoGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10
-  },
-  logoIcon: {
-    fontSize: '1.4rem'
-  },
-  logoText: {
-    fontSize: '0.9rem',
-    fontWeight: 800,
-    color: 'var(--text-primary)',
-    letterSpacing: '0.5px'
-  },
-  logoSubtext: {
-    fontSize: '0.7rem',
-    color: 'var(--text-secondary)'
-  },
-  logoutBtn: {
-    background: 'rgba(239, 68, 68, 0.08)',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
-    borderRadius: 12,
-    color: 'var(--accent-error, #ef4444)',
-    padding: '8px 14px',
-    fontSize: '0.8rem',
-    fontWeight: 600,
+  dismissBtn: {
+    position: 'absolute',
+    top: 24,
+    right: 24,
+    width: 40,
+    height: 40,
+    borderRadius: '50%',
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    color: '#64748B',
     display: 'flex',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.2s',
+    '&:hover': {
+      background: '#F8FAFC',
+      color: '#0F172A'
+    }
   },
-  header: {
+  topHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     textAlign: 'center',
-    marginBottom: 20
+    marginBottom: 32
+  },
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: '50%',
+    background: '#EFF6FF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16
   },
   title: {
-    fontSize: '1.5rem',
+    fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
     fontWeight: 800,
-    color: 'var(--text-primary)',
-    margin: '0 0 6px',
-    fontFamily: 'Playfair Display, serif'
+    color: '#0F172A',
+    margin: '0 0 8px',
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    letterSpacing: '-0.03em',
+    lineHeight: 1.15
   },
   subtitle: {
-    fontSize: '0.9rem',
+    fontSize: '1rem',
     fontWeight: 700,
-    color: 'var(--accent-primary)',
-    margin: '0 0 8px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
+    color: '#64748B',
+    margin: '0 0 16px',
+    letterSpacing: '-0.01em'
   },
-  subtext: {
-    fontSize: '0.8rem',
-    color: 'var(--text-secondary)',
-    lineHeight: 1.4,
-    maxWidth: 480,
-    margin: '0 auto'
+  progressBarWrapper: {
+    width: '100%',
+    maxWidth: 420,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16
   },
   progressBarBg: {
-    width: '100%',
-    height: 6,
-    background: 'var(--border-default)',
+    flex: 1,
+    height: 8,
+    background: 'rgba(15, 23, 42, 0.04)',
     borderRadius: 10,
-    marginBottom: 24,
     overflow: 'hidden'
   },
   progressBarActive: {
     height: '100%',
-    background: 'var(--gradient-main)',
+    background: 'linear-gradient(90deg, #2563EB 0%, #3B82F6 100%)',
     borderRadius: 10
+  },
+  progressText: {
+    fontSize: '0.8rem',
+    fontWeight: 700,
+    color: '#2563EB',
+    width: 32,
+    textAlign: 'right'
+  },
+  introText: {
+    fontSize: '0.92rem',
+    color: '#64748B',
+    lineHeight: 1.5,
+    maxWidth: 520,
+    margin: 0
   },
   scrollContainer: {
     flex: 1,
     overflowY: 'auto',
-    paddingRight: 4,
-    marginBottom: 24,
-    minHeight: 100
+    paddingRight: 6,
+    marginBottom: 32,
+    minHeight: 120
   },
   formStep: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 20
-  },
-  sectionHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    fontSize: '0.9rem',
-    fontWeight: 800,
-    color: 'var(--text-primary)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    borderLeft: '3px solid var(--accent-primary)',
-    paddingLeft: 8,
-    marginBottom: 4
+    gap: 24
   },
   grid2: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    gap: 16,
-    '@media (max-width: 580px)': {
+    gap: 20,
+    '@media (max-width: 640px)': {
       gridTemplateColumns: '1fr'
     }
   },
@@ -804,142 +771,157 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
     gap: 16,
-    '@media (max-width: 580px)': {
+    '@media (max-width: 768px)': {
       gridTemplateColumns: '1fr'
     }
   },
   fieldGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 6
+    gap: 8
   },
   label: {
-    fontSize: '0.8rem',
+    fontSize: '0.88rem',
     fontWeight: 700,
-    color: 'var(--text-secondary)'
+    color: '#0F172A'
   },
   input: {
-    background: 'var(--bg-input)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 12,
-    padding: '12px 16px',
-    color: 'var(--text-primary)',
-    fontSize: '0.9rem',
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 16,
+    padding: '0 20px',
+    height: 56,
+    color: '#0F172A',
+    fontSize: '0.96rem',
+    fontWeight: 500,
     outline: 'none',
-    transition: 'all 0.2s'
+    transition: 'all 0.25s',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box',
+    '&:focus': {
+      borderColor: '#2563EB',
+      boxShadow: '0 0 0 4px rgba(37, 99, 235, 0.08)'
+    }
   },
   select: {
-    background: 'var(--bg-input)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 12,
-    padding: '12px 16px',
-    color: 'var(--text-primary)',
-    fontSize: '0.9rem',
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 16,
+    padding: '0 20px',
+    height: 56,
+    color: '#0F172A',
+    fontSize: '0.96rem',
+    fontWeight: 500,
     outline: 'none',
     cursor: 'pointer',
-    appearance: 'none',
-    transition: 'all 0.2s'
+    transition: 'all 0.25s',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box'
   },
-  genderRow: {
-    display: 'flex',
-    gap: 12
+  genderGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: 16,
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr'
+    }
   },
   genderCard: {
-    flex: 1,
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 12,
-    padding: '12px 16px',
+    gap: 12,
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 16,
+    padding: '0 20px',
+    height: 56,
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.25s',
+    userSelect: 'none'
   },
   genderCardSelected: {
-    border: '1px solid var(--accent-primary)',
-    background: 'rgba(37, 99, 235, 0.08)'
+    borderColor: '#2563EB',
+    background: 'rgba(37, 99, 235, 0.04)',
+    boxShadow: '0 0 0 1px #2563EB'
   },
-  hiddenRadio: {
-    display: 'none'
-  },
-  genderDot: {
+  genderCardDot: {
     width: 16,
     height: 16,
     borderRadius: '50%',
-    border: '2px solid var(--text-secondary)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    border: '2px solid rgba(15, 23, 42, 0.15)',
+    transition: 'all 0.25s',
     flexShrink: 0
   },
-  genderDotInner: {
-    width: 8,
-    height: 8,
-    borderRadius: '50%',
-    background: 'var(--accent-primary)'
+  genderCardDotSelected: {
+    borderColor: '#2563EB',
+    borderWidth: 5
   },
-  eduCardGrid: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10
+  eduGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: 16,
+    '@media (max-width: 640px)': {
+      gridTemplateColumns: '1fr'
+    }
   },
   eduCard: {
     display: 'flex',
     alignItems: 'center',
-    gap: 14,
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 14,
-    padding: '12px 16px',
+    justifyContent: 'space-between',
+    gap: 16,
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 18,
+    padding: '18px 24px',
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.25s',
+    userSelect: 'none',
+    boxShadow: '0 2px 4px rgba(15,23,42,0.01)'
   },
   eduCardSelected: {
-    border: '1px solid var(--accent-primary)',
-    background: 'rgba(37, 99, 235, 0.08)'
-  },
-  eduCardCheck: {
-    flexShrink: 0
-  },
-  checkBubble: {
-    width: 18,
-    height: 18,
-    borderRadius: '50%',
-    background: 'var(--accent-primary)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  uncheckBubble: {
-    width: 18,
-    height: 18,
-    borderRadius: '50%',
-    border: '2px solid var(--border-default)'
+    borderColor: '#2563EB',
+    background: 'rgba(37, 99, 235, 0.04)',
+    boxShadow: '0 0 0 1px #2563EB'
   },
   eduCardContent: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 2
+    gap: 4
   },
   eduCardTitle: {
-    fontSize: '0.9rem',
+    fontSize: '0.98rem',
     fontWeight: 700,
-    color: 'var(--text-primary)'
+    color: '#0F172A'
   },
   eduCardDesc: {
-    fontSize: '0.72rem',
-    color: 'var(--text-secondary)'
+    fontSize: '0.8rem',
+    color: '#64748B',
+    lineHeight: 1.3
+  },
+  eduCardCheck: {
+    width: 22,
+    height: 22,
+    borderRadius: '50%',
+    border: '2px solid rgba(15, 23, 42, 0.12)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    transition: 'all 0.2s'
+  },
+  eduCardCheckSelected: {
+    background: '#2563EB',
+    borderColor: '#2563EB'
   },
   searchableWrapper: {
     position: 'relative'
   },
   searchIcon: {
     position: 'absolute',
-    right: 14,
+    right: 20,
     top: '50%',
     transform: 'translateY(-50%)',
-    color: 'var(--text-secondary)',
+    color: '#64748B',
     pointerEvents: 'none'
   },
   dropdownList: {
@@ -947,33 +929,34 @@ const styles = {
     top: '100%',
     left: 0,
     right: 0,
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 12,
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 16,
     marginTop: 6,
     maxHeight: 200,
     overflowY: 'auto',
     zIndex: 99999,
-    boxShadow: 'var(--shadow-card)'
+    boxShadow: '0 10px 30px rgba(15,23,42,0.08)'
   },
   dropdownItem: {
-    padding: '10px 16px',
-    fontSize: '0.85rem',
-    color: 'var(--text-primary)',
+    padding: '14px 20px',
+    fontSize: '0.92rem',
+    color: '#0F172A',
     cursor: 'pointer',
     transition: 'all 0.15s',
-    borderBottom: '1px solid var(--border-default)'
+    borderBottom: '1px solid rgba(15,23,42,0.03)'
   },
   errorText: {
-    fontSize: '0.72rem',
-    color: 'var(--accent-error, #ef4444)',
-    marginTop: 2
+    fontSize: '0.78rem',
+    color: '#EF4444',
+    marginTop: 2,
+    fontWeight: 500
   },
   countryGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: 12,
-    '@media (max-width: 580px)': {
+    gap: 16,
+    '@media (max-width: 768px)': {
       gridTemplateColumns: 'repeat(2, 1fr)'
     }
   },
@@ -983,90 +966,132 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: 8,
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 14,
-    padding: '16px 10px',
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 18,
+    padding: '20px 12px',
     cursor: 'pointer',
     textAlign: 'center',
-    transition: 'all 0.2s'
+    transition: 'all 0.25s',
+    userSelect: 'none'
   },
   countryCardSelected: {
-    border: '1px solid var(--accent-primary)',
-    background: 'rgba(37, 99, 235, 0.08)',
-    boxShadow: '0 4px 15px rgba(37,99,235,0.1)'
+    borderColor: '#2563EB',
+    background: 'rgba(37, 99, 235, 0.04)',
+    boxShadow: '0 0 0 1px #2563EB'
   },
   countryFlag: {
-    fontSize: '1.6rem'
+    fontSize: '2rem'
   },
   countryName: {
-    fontSize: '0.8rem',
-    fontWeight: 700,
-    color: 'var(--text-primary)'
+    fontSize: '0.88rem',
+    fontWeight: 700
   },
   countryCheck: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 16,
-    height: 16,
+    top: 10,
+    right: 10,
+    width: 18,
+    height: 18,
     borderRadius: '50%',
-    background: 'var(--accent-primary)',
+    background: '#2563EB',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  budgetRow: {
-    display: 'flex',
-    gap: 10,
-    flexWrap: 'wrap'
+  budgetGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: 16,
+    '@media (max-width: 640px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)'
+    }
   },
   budgetChip: {
-    flex: 1,
-    minWidth: '100px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    padding: '12px 14px',
-    borderRadius: 12,
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-default)',
+    height: 54,
+    borderRadius: 16,
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
     cursor: 'pointer',
-    fontSize: '0.85rem',
+    fontSize: '0.92rem',
     fontWeight: 700,
-    color: 'var(--text-primary)',
-    transition: 'all 0.2s'
+    color: '#0F172A',
+    transition: 'all 0.25s',
+    userSelect: 'none'
   },
   budgetChipSelected: {
-    background: 'var(--accent-primary)',
-    borderColor: 'var(--accent-primary)',
-    color: 'var(--text-inverse, #ffffff)'
+    borderColor: '#2563EB',
+    background: 'rgba(37, 99, 235, 0.04)',
+    color: '#2563EB',
+    boxShadow: '0 0 0 1px #2563EB'
   },
   trustBanner: {
     display: 'flex',
     alignItems: 'flex-start',
     gap: 12,
-    background: 'rgba(217, 119, 6, 0.04)',
-    border: '1px solid rgba(217, 119, 6, 0.15)',
-    borderRadius: 14,
-    padding: '12px 16px',
-    marginTop: 10
+    background: '#FEF3C7',
+    border: '1px solid #FCD34D',
+    borderRadius: 18,
+    padding: '16px 20px',
+    marginTop: 8
   },
-  footerButtons: {
+  buttonsFooter: {
     display: 'flex',
     justifyContent: 'space-between',
-    gap: 14,
-    borderTop: '1px solid var(--border-default)',
-    paddingTop: 20
+    gap: 16,
+    borderTop: '1px solid rgba(15, 23, 42, 0.06)',
+    paddingTop: 32
   },
   backBtn: {
-    background: 'var(--bg-secondary)',
-    border: '1px solid var(--border-default)',
-    borderRadius: 12,
-    color: 'var(--text-secondary)',
-    padding: '12px 24px',
-    fontSize: '0.9rem',
+    background: '#FFFFFF',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    borderRadius: 16,
+    color: '#64748B',
+    padding: '0 28px',
+    height: 56,
+    fontSize: '0.96rem',
+    fontWeight: 700,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    '&:hover': {
+      background: '#F8FAFC',
+      color: '#0F172A'
+    }
+  },
+  signOutBtn: {
+    background: 'rgba(239, 68, 68, 0.04)',
+    border: '1px solid rgba(239, 68, 68, 0.1)',
+    borderRadius: 16,
+    color: '#EF4444',
+    padding: '0 24px',
+    height: 56,
+    fontSize: '0.92rem',
+    fontWeight: 700,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    '&:hover': {
+      background: 'rgba(239, 68, 68, 0.08)'
+    }
+  },
+  continueBtn: {
+    marginLeft: 'auto',
+    background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
+    border: 'none',
+    borderRadius: 16,
+    color: '#ffffff',
+    padding: '0 32px',
+    height: 56,
+    fontSize: '0.96rem',
     fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
@@ -1074,36 +1099,13 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.2s'
   },
-  nextBtn: {
-    marginLeft: 'auto',
-    background: 'var(--accent-primary)',
-    border: 'none',
-    borderRadius: 12,
-    color: '#ffffff',
-    padding: '12px 24px',
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    boxShadow: 'var(--shadow-button)'
-  },
-  submitBtn: {
-    marginLeft: 'auto',
-    background: 'var(--gradient-main)',
-    border: 'none',
-    borderRadius: 12,
-    color: '#ffffff',
-    padding: '12px 24px',
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    boxShadow: 'var(--shadow-button)'
+  spinner: {
+    width: 20,
+    height: 20,
+    borderRadius: '50%',
+    border: '2px solid rgba(255,255,255,0.2)',
+    borderTopColor: 'white',
+    animation: 'spin 0.8s linear infinite',
+    marginRight: 6
   }
 }

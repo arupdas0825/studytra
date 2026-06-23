@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MessageSquare, Calculator, BookOpen, Landmark, Calendar, ArrowRight } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const featuresList = [
   {
@@ -15,16 +16,16 @@ const featuresList = [
         padding: 20, fontFamily: 'monospace', fontSize: '0.78rem', color: 'var(--text-primary)',
         boxShadow: 'var(--shadow-card)', width: '100%', maxWidth: 360, margin: '0 auto'
       }}>
-        <div style={{ display: 'flex', gap: 6, marginBottom: 14, borderBottom: '1px solid rgba(79, 142, 247, 0.12)', paddingBottom: 8 }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 14, borderBottom: '1px solid var(--border-default)', paddingBottom: 8 }}>
           <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
           <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
           <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ alignSelf: 'flex-end', background: '#4f8ef7', padding: '8px 12px', borderRadius: '12px 12px 2px 12px', maxWidth: '80%' }}>
+          <div style={{ alignSelf: 'flex-end', background: 'var(--accent-primary)', color: 'white', padding: '8px 12px', borderRadius: '12px 12px 2px 12px', maxWidth: '80%' }}>
             How do I apply to TU Wien?
           </div>
-          <div style={{ alignSelf: 'flex-start', background: '#0f2135', border: '1px solid rgba(79,142,247,0.1)', padding: '8px 12px', borderRadius: '12px 12px 12px 2px', maxWidth: '85%' }}>
+          <div style={{ alignSelf: 'flex-start', background: 'var(--bg-primary)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '8px 12px', borderRadius: '12px 12px 12px 2px', maxWidth: '85%' }}>
             <strong>Studytra AI:</strong><br />
             1. Language: English or German B2<br />
             2. App Window: June - Aug<br />
@@ -47,17 +48,17 @@ const featuresList = [
         padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-          <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Rent & Utilities</span>
-          <span style={{ fontWeight: 800, fontSize: '0.88rem', color: '#4f8ef7' }}>€550 / mo</span>
+        <div style={{ display: 'flex', justifycontent: 'space-between', justifyContent: 'space-between', marginBottom: 12 }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Rent & Utilities</span>
+          <span style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--accent-primary)' }}>€550 / mo</span>
         </div>
-        <div style={{ height: 6, background: 'rgba(79, 142, 247, 0.15)', borderRadius: 99, position: 'relative', marginBottom: 16 }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '55%', background: '#4f8ef7', borderRadius: 99 }} />
-          <div style={{ position: 'absolute', top: -4, left: '55%', width: 14, height: 14, borderRadius: '50%', background: '#4f8ef7', border: '2.5px solid var(--bg-card)' }} />
+        <div style={{ height: 6, background: 'rgba(37, 99, 235, 0.08)', borderRadius: 99, position: 'relative', marginBottom: 16 }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '55%', background: 'var(--accent-primary)', borderRadius: 99 }} />
+          <div style={{ position: 'absolute', top: -4, left: '55%', width: 14, height: 14, borderRadius: '50%', background: 'var(--accent-primary)', border: '2.5px solid var(--bg-card)' }} />
         </div>
-        <div style={{ borderTop: '1px solid rgba(79, 142, 247, 0.12)', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Total in INR:</span>
-          <strong style={{ fontSize: '0.88rem', color: '#10b981' }}>≈ ₹49,775 / month</strong>
+        <div style={{ borderTop: '1px solid var(--border-default)', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Total in INR:</span>
+          <strong style={{ fontSize: '0.88rem', color: 'var(--accent-success)' }}>≈ ₹49,775 / month</strong>
         </div>
       </div>
     )
@@ -74,14 +75,14 @@ const featuresList = [
         padding: 20, color: 'var(--text-primary)', boxShadow: 'var(--shadow-card)',
         width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.76rem'
       }}>
-        <div style={{ fontWeight: 700, borderBottom: '1px solid rgba(79, 142, 247, 0.15)', paddingBottom: 6, marginBottom: 10, color: '#4f8ef7' }}>
+        <div style={{ fontWeight: 700, borderBottom: '1px solid var(--border-default)', paddingBottom: 6, marginBottom: 10, color: 'var(--accent-primary)' }}>
           SOP Paragraph Structure
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ background: 'rgba(79, 142, 247, 0.08)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid #4f8ef7' }}>
+          <div style={{ background: 'rgba(37, 99, 235, 0.04)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid var(--accent-primary)', color: 'var(--text-primary)' }}>
             <strong>Para 1: Fit & Focus</strong> — Mention specific labs, professors, or curriculum highlights.
           </div>
-          <div style={{ background: 'rgba(124, 58, 237, 0.08)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid #7c3aed' }}>
+          <div style={{ background: 'rgba(124, 58, 237, 0.04)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid #7c3aed', color: 'var(--text-primary)' }}>
             <strong>Para 2: Academic Projects</strong> — Describe bachelor thesis details and metrics.
           </div>
         </div>
@@ -102,22 +103,22 @@ const featuresList = [
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(79, 142, 247, 0.15)', textAlign: 'left', color: '#94a3b8' }}>
+            <tr style={{ borderBottom: '1px solid var(--border-default)', textAlign: 'left', color: 'var(--text-secondary)' }}>
               <th style={{ paddingBottom: 6 }}>Bank</th>
               <th style={{ paddingBottom: 6 }}>Interest</th>
               <th style={{ paddingBottom: 6 }}>No-Collateral</th>
             </tr>
           </thead>
           <tbody>
-            <tr style={{ borderBottom: '1px solid rgba(79, 142, 247, 0.08)' }}>
-              <td style={{ padding: '8px 0', fontWeight: 700 }}>SBI Scholar</td>
-              <td style={{ padding: '8px 0', color: '#34d399' }}>8.05%</td>
-              <td style={{ padding: '8px 0' }}>Up to ₹40L</td>
+            <tr style={{ borderBottom: '1px solid var(--border-default)' }}>
+              <td style={{ padding: '8px 0', fontWeight: 700, color: 'var(--text-primary)' }}>SBI Scholar</td>
+              <td style={{ padding: '8px 0', color: 'var(--accent-success)', fontWeight: 700 }}>8.05%</td>
+              <td style={{ padding: '8px 0', color: 'var(--text-secondary)' }}>Up to ₹40L</td>
             </tr>
             <tr>
-              <td style={{ padding: '8px 0', fontWeight: 700 }}>HDFC Credila</td>
-              <td style={{ padding: '8px 0', color: '#34d399' }}>9.50%+</td>
-              <td style={{ padding: '8px 0' }}>Flexible</td>
+              <td style={{ padding: '8px 0', fontWeight: 700, color: 'var(--text-primary)' }}>HDFC Credila</td>
+              <td style={{ padding: '8px 0', color: 'var(--accent-success)', fontWeight: 700 }}>9.50%+</td>
+              <td style={{ padding: '8px 0', color: 'var(--text-secondary)' }}>Flexible</td>
             </tr>
           </tbody>
         </table>
@@ -138,16 +139,16 @@ const featuresList = [
         display: 'flex', flexDirection: 'column', gap: 10
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
-          <span style={{ textDecoration: 'line-through', color: '#64748b' }}>Take IELTS / GRE</span>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', background: 'var(--accent-success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
+          <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>Take IELTS / GRE</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
-          <span style={{ textDecoration: 'line-through', color: '#64748b' }}>Apply for APS Certificate</span>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', background: 'var(--accent-success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
+          <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)' }}>Apply for APS Certificate</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #4f8ef7' }} />
-          <span style={{ fontWeight: 700, color: '#4f8ef7' }}>Secure Blocked Account</span>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', border: '2.5px solid var(--accent-primary)' }} />
+          <span style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>Secure Blocked Account</span>
         </div>
       </div>
     )
@@ -156,6 +157,7 @@ const featuresList = [
 
 export default function Features() {
   const navigate = useNavigate()
+  const { user, setAuthModalOpen } = useAuth()
   const ref = useRef(null)
 
   useEffect(() => {
@@ -173,6 +175,15 @@ export default function Features() {
     return () => obs.disconnect()
   }, [])
 
+  const handleOpenTool = (e, link) => {
+    if (!user) {
+      e.preventDefault()
+      setAuthModalOpen(true)
+    } else {
+      navigate(link)
+    }
+  }
+
   return (
     <section id="features" style={{
       padding: '100px 24px',
@@ -184,8 +195,8 @@ export default function Features() {
         {/* Section Header */}
         <div style={{ textAlign: 'center', marginBottom: 80 }}>
           <span style={{
-            display: 'inline-block', background: 'rgba(79, 142, 247, 0.1)',
-            border: '1px solid rgba(79, 142, 247, 0.2)', color: '#4f8ef7',
+            display: 'inline-block', background: 'rgba(37, 99, 235, 0.05)',
+            border: '1px solid rgba(37, 99, 235, 0.12)', color: 'var(--accent-primary)',
             fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 'var(--r-full)',
             marginBottom: 16
@@ -193,7 +204,7 @@ export default function Features() {
           <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.6rem)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             Built for Execution.
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '1rem', maxWidth: 480, margin: '12px auto 0', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: 480, margin: '12px auto 0', lineHeight: 1.6 }}>
             Every tool you need to plan your study abroad journey independently, without hiring consultancies.
           </p>
         </div>
@@ -226,25 +237,25 @@ export default function Features() {
                 }}>
                   <div style={{
                     width: 46, height: 46, borderRadius: 12,
-                    background: 'rgba(79, 142, 247, 0.1)',
-                    border: '1px solid rgba(79, 142, 247, 0.2)',
+                    background: 'rgba(37, 99, 235, 0.05)',
+                    border: '1px solid rgba(37, 99, 235, 0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                   }}>
-                    <Icon size={20} color="#4f8ef7" />
+                    <Icon size={20} color="var(--accent-primary)" />
                   </div>
                   <h3 style={{
-                    fontSize: '1.4rem', fontWeight: 800, color: '#f0f4ff',
+                    fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)',
                     fontFamily: 'Plus Jakarta Sans', margin: 0
                   }}>{f.title}</h3>
                   <p style={{
-                    color: '#94a3b8', fontSize: '0.94rem', lineHeight: 1.7, margin: 0
+                    color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.7, margin: 0
                   }}>{f.desc}</p>
                   
                   <button
-                    onClick={() => navigate(f.link)}
+                    onClick={(e) => handleOpenTool(e, f.link)}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 6,
-                      background: 'none', color: '#4f8ef7', border: 'none',
+                      background: 'none', color: 'var(--accent-primary)', border: 'none',
                       fontSize: '0.88rem', fontWeight: 700, cursor: 'pointer',
                       padding: '4px 0', width: 'fit-content', transition: 'all 0.2s'
                     }}
@@ -260,11 +271,11 @@ export default function Features() {
                   order: isEven ? 2 : 1,
                   display: 'flex',
                   justifyContent: 'center',
-                  background: 'rgba(15, 33, 53, 0.3)',
-                  border: '1px solid rgba(79, 142, 247, 0.1)',
+                  background: '#FFFFFF',
+                  border: '1px solid var(--border-default)',
                   borderRadius: 24,
                   padding: '48px 24px',
-                  boxShadow: 'inset 0 0 20px rgba(79, 142, 247, 0.05)',
+                  boxShadow: 'var(--shadow-card)',
                   position: 'relative'
                 }}>
                   {f.mockup}

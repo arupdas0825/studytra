@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Wallet, GraduationCap, Briefcase } from 'lucide-react'
 import { COUNTRIES } from '../constants/countries'
+import { useAuth } from '../context/AuthContext'
 
 export default function Countries() {
   const navigate = useNavigate()
+  const { user, setAuthModalOpen } = useAuth()
 
   // Tuition helper mapping since it differs in raw data
   const getTuition = (c) => {
@@ -17,17 +19,27 @@ export default function Countries() {
     return 'Affordable'
   }
 
+  const handleCountryClick = (e, countryName) => {
+    if (!user) {
+      e.preventDefault()
+      setAuthModalOpen(true)
+    } else {
+      navigate(`/chat?country=${encodeURIComponent(countryName)}`)
+    }
+  }
+
   return (
     <section id="countries" style={{
       padding: '100px 24px',
-      background: 'var(--bg-primary)',
+      background: '#FFFFFF',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      borderTop: '1px solid var(--border-default)'
     }}>
       {/* Background Glow */}
       <div style={{
         position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)',
-        width: 600, height: 600, background: 'radial-gradient(circle, rgba(79, 142, 247, 0.05) 0%, transparent 70%)',
+        width: 600, height: 600, background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
 
@@ -36,9 +48,9 @@ export default function Countries() {
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <span style={{
             display: 'inline-block',
-            background: 'rgba(79, 142, 247, 0.1)',
-            border: '1px solid rgba(79, 142, 247, 0.2)',
-            color: '#4f8ef7',
+            background: 'rgba(37, 99, 235, 0.05)',
+            border: '1px solid rgba(37, 99, 235, 0.12)',
+            color: 'var(--accent-primary)',
             fontSize: '0.72rem',
             fontWeight: 700,
             letterSpacing: '0.1em',
@@ -52,13 +64,13 @@ export default function Countries() {
           <h2 style={{
             fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
             fontWeight: 800,
-            color: '#f0f4ff',
+            color: 'var(--text-primary)',
             fontFamily: 'Plus Jakarta Sans, sans-serif'
           }}>
             Explore Top Study Destinations
           </h2>
           <p style={{
-            color: '#94a3b8',
+            color: 'var(--text-secondary)',
             fontSize: '1rem',
             maxWidth: 520,
             margin: '12px auto 0',
@@ -77,33 +89,32 @@ export default function Countries() {
           {COUNTRIES.map((c) => (
             <div
               key={c.id}
-              onClick={() => navigate(`/chat?country=${encodeURIComponent(c.name)}`)}
+              onClick={(e) => handleCountryClick(e, c.name)}
               className="country-hover-card"
               style={{
-                background: 'rgba(15, 33, 53, 0.6)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(79, 142, 247, 0.15)',
+                background: '#FFFFFF',
+                border: '1px solid var(--border-default)',
                 borderRadius: 20,
                 padding: '30px 24px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                boxShadow: 'var(--shadow-card)',
                 cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                transition: 'all 0.25s ease',
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
                 overflow: 'hidden'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-8px)'
-                e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.4)'
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(79, 142, 247, 0.18)'
+                e.currentTarget.style.transform = 'translateY(-6px)'
+                e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.15)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
                 const btn = e.currentTarget.querySelector('.explore-btn')
                 if (btn) btn.style.opacity = '1'
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.15)'
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)'
+                e.currentTarget.style.borderColor = 'var(--border-default)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-card)'
                 const btn = e.currentTarget.querySelector('.explore-btn')
                 if (btn) btn.style.opacity = '0'
               }}
@@ -113,10 +124,10 @@ export default function Countries() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{c.flag}</span>
                   <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f0f4ff', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
                       {c.name}
                     </h3>
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 500 }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
                       {c.tagline}
                     </span>
                   </div>
@@ -128,10 +139,10 @@ export default function Countries() {
                 
                 {/* Tuition Fee */}
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <GraduationCap size={16} color="#4f8ef7" />
+                  <GraduationCap size={16} color="var(--accent-primary)" />
                   <div style={{ fontSize: '0.86rem' }}>
-                    <span style={{ color: '#94a3b8' }}>Tuition: </span>
-                    <strong style={{ color: '#f0f4ff', fontWeight: 600 }}>{getTuition(c)}</strong>
+                    <span style={{ color: 'var(--text-secondary)' }}>Tuition: </span>
+                    <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{getTuition(c)}</strong>
                   </div>
                 </div>
 
@@ -139,26 +150,26 @@ export default function Countries() {
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   <Wallet size={16} color="#7c3aed" />
                   <div style={{ fontSize: '0.86rem' }}>
-                    <span style={{ color: '#94a3b8' }}>Living: </span>
-                    <strong style={{ color: '#f0f4ff', fontWeight: 600 }}>{c.costRange}</strong>
-                    <span style={{ color: '#64748b', fontSize: '0.75rem', marginLeft: 6 }}>({c.costINR.replace('≈ ', '')})</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Living: </span>
+                    <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{c.costRange}</strong>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 6 }}>({c.costINR.replace('≈ ', '')})</span>
                   </div>
                 </div>
 
                 {/* Work Permit */}
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <Briefcase size={16} color="#10b981" />
+                  <Briefcase size={16} color="var(--accent-success)" />
                   <div style={{ fontSize: '0.86rem' }}>
-                    <span style={{ color: '#94a3b8' }}>Work Permit: </span>
-                    <strong style={{ color: '#f0f4ff', fontWeight: 600 }}>{c.workAllowed}</strong>
+                    <span style={{ color: 'var(--text-secondary)' }}>Work Permit: </span>
+                    <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{c.workAllowed}</strong>
                   </div>
                 </div>
 
               </div>
 
               {/* Bottom Explore Button (revealed on hover) */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(79, 142, 247, 0.12)', paddingTop: 16 }}>
-                <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-default)', paddingTop: 16 }}>
+                <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
                   Top Uni: {c.topUnis[0]}
                 </span>
                 <span 
@@ -169,7 +180,7 @@ export default function Countries() {
                     gap: 4,
                     fontSize: '0.84rem',
                     fontWeight: 700,
-                    color: '#4f8ef7',
+                    color: 'var(--accent-primary)',
                     opacity: 0,
                     transition: 'opacity 0.25s ease'
                   }}

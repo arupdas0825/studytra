@@ -4,7 +4,10 @@ import {
   signInWithPopup,
   signOut,
   signInWithRedirect,
-  getRedirectResult
+  getRedirectResult,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile
 } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider, appleProvider } from "../lib/firebase";
@@ -16,6 +19,7 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // On mount — check redirect result (for mobile compatibility)
   useEffect(() => {
@@ -108,7 +112,8 @@ export function AuthProvider({ children }) {
         age: onboardingData.age || "",
         gender: onboardingData.gender || "",
         educationLevel: onboardingData.educationLevel || "",
-        institution: onboardingData.institution || "",
+        university: onboardingData.university || onboardingData.institution || "",
+        institution: onboardingData.university || onboardingData.institution || "", // Compatibility
         fieldOfStudy: onboardingData.fieldOfStudy || "",
         semester: onboardingData.semester || "",
         cgpa: onboardingData.cgpa || "",
@@ -119,6 +124,7 @@ export function AuthProvider({ children }) {
         budgetRange: onboardingData.budgetRange || "",
         onboardingCompleted: true,
         onboardingComplete: true, // Legacy compatibility
+        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
       
@@ -216,14 +222,33 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  // Sign in with email
+  function loginWithEmail(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  // Register with email
+  async function registerWithEmail(email, password, name) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(userCredential.user, { displayName: name });
+    const profile = await fetchOrCreateUserProfile(userCredential.user);
+    setUserProfile(profile);
+    setUser(userCredential.user);
+    return userCredential.user;
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
       userProfile,
       loading,
       authError,
+      authModalOpen,
+      setAuthModalOpen,
       signInWithGoogle,
       signInWithApple,
+      loginWithEmail,
+      registerWithEmail,
       saveStudyPlan,
       saveOnboardingData,
       logout

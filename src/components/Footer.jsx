@@ -1,8 +1,11 @@
 import React from 'react'
 import { GraduationCap, Twitter, Linkedin, Instagram, Github, ArrowRight } from 'lucide-react'
 import { COUNTRIES } from '../constants/countries'
+import { useAuth } from '../context/AuthContext'
 
 export default function Footer() {
+  const { user, setAuthModalOpen } = useAuth()
+
   const cols = {
     Platform: [
       { label: 'Admission Roadmap', href: '/chat' },
@@ -22,6 +25,14 @@ export default function Footer() {
     ],
   }
 
+  const handleLinkClick = (e, href) => {
+    // If it's not a hash/anchor link and the user is a guest, intercept.
+    if (!href.startsWith('/#') && !user) {
+      e.preventDefault()
+      setAuthModalOpen(true)
+    }
+  }
+
   return (
     <>
       {/* ── Premium CTA Banner Block ── */}
@@ -30,25 +41,24 @@ export default function Footer() {
         padding: '90px 24px',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(79, 142, 247, 0.15)'
+        borderTop: '1px solid var(--border-default)'
       }}>
         {/* Glow rings */}
         <div style={{
-          position: 'absolute', width: 450, height: 450, background: '#4f8ef7',
-          borderRadius: '50%', filter: 'blur(150px)', opacity: 0.08, top: '-80px', left: '10%',
+          position: 'absolute', width: 450, height: 450, background: 'rgba(37, 99, 235, 0.05)',
+          borderRadius: '50%', filter: 'blur(150px)', opacity: 0.8, top: '-80px', left: '10%',
           pointerEvents: 'none'
         }} />
         <div style={{
-          position: 'absolute', width: 450, height: 450, background: '#7c3aed',
-          borderRadius: '50%', filter: 'blur(150px)', opacity: 0.08, bottom: '-80px', right: '10%',
+          position: 'absolute', width: 450, height: 450, background: 'rgba(96, 165, 250, 0.04)',
+          borderRadius: '50%', filter: 'blur(150px)', opacity: 0.8, bottom: '-80px', right: '10%',
           pointerEvents: 'none'
         }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 860 }}>
           <div style={{
-            background: 'rgba(15, 33, 53, 0.5)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(79, 142, 247, 0.2)',
+            background: '#FFFFFF',
+            border: '1px solid var(--border-default)',
             borderRadius: 24,
             padding: '56px 40px',
             boxShadow: 'var(--shadow-xl)'
@@ -56,7 +66,7 @@ export default function Footer() {
             <h2 style={{
               fontSize: '2.1rem',
               fontWeight: 800,
-              color: '#f0f4ff',
+              color: 'var(--text-primary)',
               marginBottom: 16,
               lineHeight: 1.25,
               fontFamily: 'Plus Jakarta Sans, sans-serif'
@@ -65,7 +75,7 @@ export default function Footer() {
             </h2>
             <p style={{
               fontSize: '0.96rem',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               lineHeight: 1.65,
               maxWidth: 580,
               margin: '0 auto 36px'
@@ -79,42 +89,48 @@ export default function Footer() {
               justifyContent: 'center',
               flexWrap: 'wrap'
             }}>
-              <a href="/chat" style={{
-                background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
-                color: 'white',
-                padding: '14px 30px',
-                borderRadius: 12,
-                fontSize: '0.92rem',
-                fontWeight: 700,
-                boxShadow: '0 4px 16px rgba(124,58,237,0.35)',
-                transition: 'all 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                textDecoration: 'none'
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(124,58,237,0.45)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(124,58,237,0.35)' }}
+              <a 
+                href="/chat" 
+                onClick={(e) => handleLinkClick(e, '/chat')}
+                style={{
+                  background: 'var(--gradient-main)',
+                  color: 'white',
+                  padding: '14px 30px',
+                  borderRadius: 12,
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  boxShadow: 'var(--shadow-button)',
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.25)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-button)' }}
               >
                 <span>🚀 Plan with Studytra AI</span>
                 <ArrowRight size={15} />
               </a>
-              <a href="/dashboard" style={{
-                background: 'rgba(79, 142, 247, 0.08)',
-                border: '1px solid rgba(79, 142, 247, 0.25)',
-                color: '#4f8ef7',
-                padding: '14px 30px',
-                borderRadius: 12,
-                fontSize: '0.92rem',
-                fontWeight: 700,
-                transition: 'all 0.2s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                textDecoration: 'none'
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.15)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'; e.currentTarget.style.transform = 'none' }}
+              <a 
+                href="/dashboard" 
+                onClick={(e) => handleLinkClick(e, '/dashboard')}
+                style={{
+                  background: 'rgba(37, 99, 235, 0.05)',
+                  border: '1px solid rgba(37, 99, 235, 0.2)',
+                  color: 'var(--accent-primary)',
+                  padding: '14px 30px',
+                  borderRadius: 12,
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  transition: 'all 0.2s',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.1)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.05)'; e.currentTarget.style.transform = 'none' }}
               >
                 <span>📊 Open Dashboard</span>
               </a>
@@ -125,10 +141,10 @@ export default function Footer() {
 
       {/* ── Footer Section ── */}
       <footer style={{ 
-        background: 'var(--bg-primary)', 
-        color: '#f0f4ff', 
+        background: '#FFFFFF', 
+        color: 'var(--text-secondary)', 
         padding: '72px 24px 36px',
-        borderTop: '1px solid rgba(79, 142, 247, 0.12)'
+        borderTop: '1px solid var(--border-default)'
       }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr', gap: 48, marginBottom: 56 }} className="foot-grid">
@@ -138,9 +154,9 @@ export default function Footer() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
                 <div style={{
                   width: 38, height: 38, borderRadius: 11,
-                  background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                  background: 'var(--gradient-main)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(79,142,247,0.25)'
+                  boxShadow: 'var(--shadow-button)'
                 }}>
                   <GraduationCap size={20} color="white" />
                 </div>
@@ -149,35 +165,39 @@ export default function Footer() {
                   fontWeight: 800, 
                   fontSize: '1.25rem',
                   letterSpacing: '-0.02em',
-                  color: '#f0f4ff'
+                  color: 'var(--text-primary)'
                 }}>Studytra</span>
               </div>
-              <p style={{ fontSize: '0.86rem', color: '#94a3b8', lineHeight: 1.75, maxWidth: 280, marginBottom: 24 }}>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 280, marginBottom: 24 }}>
                 AI-powered study abroad execution engine for Indian students. 6 countries. Structured checklists. Zero costs.
               </p>
               
               {/* Country badges */}
               <div style={{ display: 'flex', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
-                {COUNTRIES.map(c => (
-                  <a 
-                    key={c.id} 
-                    href={`/chat?country=${encodeURIComponent(c.name)}`}
-                    title={`Plan for ${c.name}`} 
-                    style={{
-                      fontSize: '1.2rem', 
-                      background: 'rgba(79, 142, 247, 0.08)',
-                      border: '1px solid rgba(79, 142, 247, 0.12)',
-                      width: 36, height: 36, borderRadius: 10,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'all 0.2s',
-                      textDecoration: 'none'
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.18)'; e.currentTarget.style.borderColor = '#4f8ef7' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'; e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.12)' }}
-                  >
-                    {c.flag}
-                  </a>
-                ))}
+                {COUNTRIES.map(c => {
+                  const href = `/chat?country=${encodeURIComponent(c.name)}`
+                  return (
+                    <a 
+                      key={c.id} 
+                      href={href}
+                      onClick={(e) => handleLinkClick(e, href)}
+                      title={`Plan for ${c.name}`} 
+                      style={{
+                        fontSize: '1.2rem', 
+                        background: 'var(--theme-icon-bg)',
+                        border: '1px solid var(--border-default)',
+                        width: 36, height: 36, borderRadius: 10,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.2s',
+                        textDecoration: 'none'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--theme-icon-hover)'; e.currentTarget.style.borderColor = 'var(--accent-primary)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'var(--theme-icon-bg)'; e.currentTarget.style.borderColor = 'var(--border-default)' }}
+                    >
+                      {c.flag}
+                    </a>
+                  )
+                })}
               </div>
 
               {/* Social icons */}
@@ -185,16 +205,16 @@ export default function Footer() {
                 {[Twitter, Linkedin, Instagram, Github].map((Icon, i) => (
                   <button key={i} style={{
                     width: 36, height: 36, borderRadius: 10,
-                    background: 'rgba(79, 142, 247, 0.08)',
-                    border: '1px solid rgba(79, 142, 247, 0.12)',
+                    background: 'var(--theme-icon-bg)',
+                    border: '1px solid var(--border-default)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.18)'; e.currentTarget.style.borderColor = '#4f8ef7' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'; e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.12)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--theme-icon-hover)'; e.currentTarget.style.borderColor = 'var(--accent-primary)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'var(--theme-icon-bg)'; e.currentTarget.style.borderColor = 'var(--border-default)' }}
                   >
-                    <Icon size={14} color="#94a3b8" />
+                    <Icon size={14} color="var(--text-muted)" />
                   </button>
                 ))}
               </div>
@@ -205,18 +225,22 @@ export default function Footer() {
               <div key={cat}>
                 <h4 style={{
                   fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em',
-                  textTransform: 'uppercase', color: '#64748b',
+                  textTransform: 'uppercase', color: 'var(--text-muted)',
                   marginBottom: 18, fontFamily: 'Inter, sans-serif',
                 }}>{cat}</h4>
                 {items.map(item => (
-                  <a key={item.label} href={item.href} style={{
-                    display: 'block', marginBottom: 12,
-                    fontSize: '0.86rem', color: '#94a3b8',
-                    transition: 'color 0.2s',
-                    textDecoration: 'none'
-                  }}
-                    onMouseEnter={e => e.target.style.color = '#4f8ef7'}
-                    onMouseLeave={e => e.target.style.color = '#94a3b8'}
+                  <a 
+                    key={item.label} 
+                    href={item.href} 
+                    onClick={(e) => handleLinkClick(e, item.href)}
+                    style={{
+                      display: 'block', marginBottom: 12,
+                      fontSize: '0.86rem', color: 'var(--text-secondary)',
+                      transition: 'color 0.2s',
+                      textDecoration: 'none'
+                    }}
+                    onMouseEnter={e => e.target.style.color = 'var(--accent-primary)'}
+                    onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
                   >{item.label}</a>
                 ))}
               </div>
@@ -225,18 +249,18 @@ export default function Footer() {
 
           {/* Bottom attribution strip */}
           <div style={{
-            borderTop: '1px solid rgba(79, 142, 247, 0.12)',
+            borderTop: '1px solid var(--border-default)',
             paddingTop: 24,
             display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12,
           }}>
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               © 2026 Studytra. Made with passion for Indian student applicants worldwide.
             </span>
             <div style={{ display: 'flex', gap: 22 }}>
               {['Privacy Policy', 'Terms of Service', 'Contact Us'].map(l => (
-                <a key={l} href="#" style={{ fontSize: '0.8rem', color: '#64748b', transition: 'color 0.2s', textDecoration: 'none' }}
-                  onMouseEnter={e => e.target.style.color = '#f0f4ff'}
-                  onMouseLeave={e => e.target.style.color = '#64748b'}
+                <a key={l} href="#" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', transition: 'color 0.2s', textDecoration: 'none' }}
+                  onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
+                  onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
                 >{l}</a>
               ))}
             </div>

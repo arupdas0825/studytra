@@ -19,19 +19,19 @@ export default function HowItWorks() {
   }, [])
 
   return (
-    <section id="how-it-works" ref={ref} style={{ padding: '100px 24px', background: 'var(--white)' }}>
+    <section id="how-it-works" ref={ref} style={{ padding: '100px 24px', background: '#FFFFFF', borderTop: '1px solid var(--border-default)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <span style={{
-            display: 'inline-block', background: 'var(--blue-50)',
-            color: 'var(--blue-700)', fontSize: '0.72rem', fontWeight: 700,
+            display: 'inline-block', background: 'rgba(37, 99, 235, 0.05)',
+            color: 'var(--accent-primary)', fontSize: '0.72rem', fontWeight: 700,
             letterSpacing: '0.1em', textTransform: 'uppercase',
             padding: '5px 14px', borderRadius: 'var(--r-full)', marginBottom: 16,
           }} className="reveal">Process</span>
-          <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', transitionDelay: '0.1s' }}>
+          <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', color: 'var(--text-primary)', transitionDelay: '0.1s' }}>
             Four Stages, One Clear Path
           </h2>
-          <p className="reveal" style={{ color: 'var(--gray-500)', maxWidth: 500, margin: '12px auto 0', fontSize: '1rem', transitionDelay: '0.15s' }}>
+          <p className="reveal" style={{ color: 'var(--text-secondary)', maxWidth: 500, margin: '12px auto 0', fontSize: '1rem', transitionDelay: '0.15s' }}>
             We break your entire study abroad journey into four logical stages.
           </p>
         </div>
@@ -40,9 +40,9 @@ export default function HowItWorks() {
           {steps.map(({ n, icon: Icon, title, desc }, i) => (
             <div key={n} className="reveal" style={{
               transitionDelay: `${0.1 + i * 0.1}s`,
-              background: 'var(--ivory)',
+              background: 'var(--bg-primary)',
               borderRadius: 'var(--r-lg)', padding: '32px 24px',
-              border: '1px solid var(--gray-200)',
+              border: '1px solid var(--border-default)',
               position: 'relative', overflow: 'hidden',
               transition: 'transform 0.2s, box-shadow 0.2s',
             }}
@@ -50,19 +50,19 @@ export default function HowItWorks() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               <div style={{
-                fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 800,
-                fontSize: '3.5rem', color: 'var(--gray-200)', lineHeight: 1, marginBottom: 20,
+                fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 900,
+                fontSize: '3.5rem', color: 'rgba(15, 23, 42, 0.04)', lineHeight: 1, marginBottom: 20,
               }}>{n}</div>
               <div style={{
                 width: 46, height: 46, borderRadius: 'var(--r-md)',
-                background: 'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)',
+                background: 'var(--gradient-main)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18,
-                boxShadow: '0 4px 14px rgba(26,58,140,0.25)',
+                boxShadow: '0 4px 14px rgba(37,99,235,0.15)',
               }}>
                 <Icon size={20} color="white" />
               </div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 10, color: 'var(--blue-950)' }}>{title}</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.7 }}>{desc}</p>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: 10, color: 'var(--text-primary)' }}>{title}</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{desc}</p>
             </div>
           ))}
         </div>

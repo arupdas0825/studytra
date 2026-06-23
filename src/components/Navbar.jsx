@@ -1,48 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, X, ChevronDown, LogOut, User as UserIcon, LayoutDashboard, MessageSquare, Settings } from 'lucide-react'
+import { Menu, X, ChevronDown, LogOut, LayoutDashboard, MessageSquare, Settings } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import AuthModal from './auth/AuthModal'
 import { useToast } from '../context/ToastContext'
-import { useTheme } from '../context/ThemeContext'
-
-const SunIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/>
-    <line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-)
-
-const MoonIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
-)
-
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
-
-  return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle-btn"
-      title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      aria-label="Toggle theme"
-    >
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-    </button>
-  )
-}
-
 
 const navLinks = [
   { label: 'How It Works', href: '/#how-it-works' },
@@ -75,9 +35,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false)
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false)
-  const [authModalOpen, setAuthModalOpen] = useState(false)
   
-  const { user, logout } = useAuth()
+  const { user, logout, setAuthModalOpen } = useAuth()
   const { showSuccess } = useToast()
   const navigate = useNavigate()
   
@@ -108,6 +67,18 @@ export default function Navbar() {
       navigate('/')
     } catch (err) {
       console.error("Sign out failed: ", err)
+    }
+  }
+
+  // Intercept navigation for guests
+  const handleNavClick = (e, item) => {
+    if (item.href.startsWith('/#')) {
+      return
+    }
+    if (!user) {
+      e.preventDefault()
+      setAuthModalOpen(true)
+      setMenuOpen(false)
     }
   }
 
@@ -164,7 +135,7 @@ export default function Navbar() {
                 width: 40, 
                 height: 40, 
                 borderRadius: 12, 
-                boxShadow: '0 4px 14px rgba(79,142,247,0.3)', 
+                boxShadow: '0 4px 14px rgba(37,99,247,0.15)', 
                 flexShrink: 0,
                 objectFit: 'contain'
               }} 
@@ -248,6 +219,7 @@ export default function Navbar() {
                           <a
                             key={item.label}
                             href={item.href}
+                            onClick={(e) => handleNavClick(e, item)}
                             style={{
                               display: 'block',
                               padding: '10px 14px',
@@ -286,6 +258,7 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href}
+                  onClick={(e) => handleNavClick(e, link)}
                   style={{
                     padding: '8px 14px',
                     borderRadius: 'var(--r-sm)',
@@ -336,7 +309,6 @@ export default function Navbar() {
 
           {/* ── Auth State Buttons ── */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <ThemeToggle />
             {user ? (
               <div style={{ position: 'relative' }} ref={avatarDropdownRef}>
                 {/* User Avatar Circle */}
@@ -350,7 +322,7 @@ export default function Navbar() {
                       height: 38,
                       borderRadius: '50%',
                       cursor: 'pointer',
-                      border: '2px solid var(--primary)',
+                      border: '2px solid var(--accent-primary)',
                       boxShadow: 'var(--shadow-sm)',
                       objectFit: 'cover'
                     }}
@@ -400,14 +372,14 @@ export default function Navbar() {
                     {/* Navigation links */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
                       <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <LayoutDashboard size={14} color="var(--primary)" />
+                        <LayoutDashboard size={14} color="var(--accent-primary)" />
                         <span>Dashboard</span>
                       </a>
                       <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <MessageSquare size={14} color="var(--accent)" />
+                        <MessageSquare size={14} color="var(--accent-primary)" />
                         <span>My Chats</span>
                       </a>
-                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <a href="/" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                         <Settings size={14} color="var(--text-muted)" />
                         <span>Planning Home</span>
                       </a>
@@ -484,12 +456,6 @@ export default function Navbar() {
               gap: 4,
             }}
           >
-            {/* Mobile Theme Toggle Row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 8px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>Theme</span>
-              <ThemeToggle />
-            </div>
-
             {navLinks.map(link =>
               link.dropdown ? (
                 <div key={link.label}>
@@ -509,7 +475,7 @@ export default function Navbar() {
                     <a
                       key={item.label}
                       href={item.href}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={(e) => { handleNavClick(e, item); setMenuOpen(false); }}
                       style={{
                         display: 'block',
                         padding: '10px 8px',
@@ -527,7 +493,7 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => { handleNavClick(e, link); setMenuOpen(false); }}
                   style={{
                     display: 'block',
                     padding: '12px 8px',
@@ -552,7 +518,7 @@ export default function Navbar() {
                     padding: '12px 8px',
                     fontSize: '1rem',
                     fontWeight: 600,
-                    color: 'var(--primary)',
+                    color: 'var(--accent-primary)',
                     borderBottom: '1px solid var(--border)',
                     textDecoration: 'none',
                   }}
@@ -620,15 +586,6 @@ export default function Navbar() {
           }
         `}</style>
       </nav>
-
-      {/* Render the Auth Modal */}
-      <AuthModal 
-        isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
-        onGuestContinue={() => {
-          showSuccess("Continuing as guest");
-        }}
-      />
     </>
   )
 }
