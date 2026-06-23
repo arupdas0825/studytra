@@ -1,0 +1,226 @@
+/* src/styles/landing.css */
+
+.landing-root {
+  background-color: #04080f;
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Typography Headings */
+.landing-root h1,
+.landing-root h2,
+.landing-root h3,
+.landing-root h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #f1f5f9;
+  letter-spacing: -0.025em;
+}
+
+/* Colors and custom properties scoped to landing */
+.landing-root {
+  --bg-primary:     #04080f;
+  --bg-secondary:   #080f1a;
+  --bg-card:        #0c1a2e;
+  --accent-blue:    #3b82f6;
+  --accent-violet:  #7c3aed;
+  --accent-cyan:    #06b6d4;
+  --gradient-main:  linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
+  --gradient-text:  linear-gradient(135deg, #60a5fa, #a78bfa);
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+  --border:         rgba(59, 130, 246, 0.12);
+  --border-hover:   rgba(59, 130, 246, 0.35);
+  --glow-blue:      0 0 60px rgba(59, 130, 246, 0.15);
+  --glow-card:      0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Card Style */
+.landing-root .glass-card {
+  background: rgba(12, 26, 46, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(59, 130, 246, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.landing-root .glass-card:hover {
+  border-color: rgba(59, 130, 246, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(59, 130, 246, 0.15);
+}
+
+/* Gradient text */
+.landing-root .gradient-text {
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+/* Gradient Button */
+.landing-root .btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  justify-content: center;
+}
+.landing-root .btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.landing-root .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+}
+.landing-root .btn-primary:hover::after {
+  left: 100%;
+}
+
+/* Ghost button */
+.landing-root .btn-ghost {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  justify-content: center;
+}
+.landing-root .btn-ghost:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #f1f5f9;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* Drifting backgrounds */
+@keyframes blob-drift-one {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.08); }
+  66% { transform: translate(-30px, 20px) scale(0.95); }
+}
+
+@keyframes blob-drift-two {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-35px, 40px) scale(1.1); }
+}
+
+.landing-root .bg-blob-1 {
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: blob-drift-one 10s ease-in-out infinite;
+}
+
+.landing-root .bg-blob-2 {
+  position: absolute;
+  top: 25%;
+  right: 5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: blob-drift-two 12s ease-in-out infinite;
+}
+
+/* Card Float Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.landing-root .floating-card {
+  animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Progress fill animation */
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: 25%; }
+}
+.landing-root .progress-fill {
+  animation: progressFill 1.5s ease 0.5s forwards;
+}
+
+/* Fade in on scroll */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.landing-root .fade-in {
+  opacity: 0;
+}
+.landing-root .fade-in.visible {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Custom Scrollbar for Landing */
+.landing-root::-webkit-scrollbar {
+  width: 6px;
+}
+.landing-root::-webkit-scrollbar-track {
+  background: #04080f;
+}
+.landing-root::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.25);
+  border-radius: 99px;
+}
+
+/* Horizontal Countries Slider for Mobile */
+@media (max-width: 768px) {
+  .countries-horizontal-scroll {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 20px !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px !important;
+    scrollbar-width: none; /* Firefox */
+  }
+  .countries-horizontal-scroll::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .countries-horizontal-scroll > div {
+    flex-shrink: 0 !important;
+    width: 280px !important;
+    scroll-snap-align: center !important;
+  }
+}

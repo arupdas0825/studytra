@@ -37,3 +37,9 @@
   - [x] Loading skeletons & errors retry state
   - [x] Mobile responsiveness audit
   - [x] Compile check (npm run build)
+- [x] Landing Page Implementation (New `/` Route)
+  - [x] Routing updates in App.jsx (Move HomePage to /app, map CountriesPage, SOP/Loan guides)
+  - [x] Build LandingPage.jsx structure (Navbar, Hero, Problem statement, How it works, Features, Countries, Reviews, Pricing, final CTA, Footer)
+  - [x] Implement CSS styles in landing.css (radial blur drifting, card float, progress fill, scroll triggers)
+  - [x] Create CountriesPage.jsx page shell to handle /countries routing
+  - [x] Build check and verification (Vite production bundle compiled successfully)
