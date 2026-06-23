@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { 
   Menu, X, ChevronDown, Sparkles, AlertCircle, Compass, CheckCircle2,
   DollarSign, FileText, Landmark, BarChart3, Star, Github, ArrowRight,
-  TrendingUp, Globe, Clock, ArrowUpRight
+  TrendingUp, Globe, Clock, ArrowUpRight, LogOut, LayoutDashboard, MessageSquare, Settings
 } from 'lucide-react'
-import { supabase } from '../utils/supabase'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
+import AuthModal from '../components/auth/AuthModal'
 import { COUNTRIES } from '../constants/countries'
 import '../styles/landing.css'
 
@@ -45,20 +47,26 @@ function CountUp({ target, suffix = '', duration = 1500 }) {
 
 export default function LandingPage() {
   const navigate = useNavigate()
-  const [user, setUser] = useState(null)
+  const { user, logout } = useAuth()
+  const { showSuccess } = useToast()
+  
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false) // tools dropdown
+  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
 
-  // Auth check
+  const avatarDropdownRef = useRef(null)
+
+  // Outside click listener for avatar dropdown self-closure
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => subscription.unsubscribe()
+    const handleOutsideClick = (e) => {
+      if (avatarDropdownRef.current && !avatarDropdownRef.current.contains(e.target)) {
+        setAvatarDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
   }, [])
 
   // Scroll detection for Navbar styling
@@ -85,17 +93,21 @@ export default function LandingPage() {
     return () => obs.disconnect()
   }, [])
 
-  const handleGoogleSignIn = async () => {
+  const handleSignOut = async () => {
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/dashboard'
-        }
-      })
+      await logout()
+      showSuccess("Successfully signed out ✓")
+      setAvatarDropdownOpen(false)
     } catch (err) {
-      console.error('Google Sign-In Error:', err)
+      console.error("Sign out failed: ", err)
     }
+  }
+
+  const getInitials = () => {
+    if (!user) return "?"
+    if (user.displayName) return user.displayName.charAt(0).toUpperCase()
+    if (user.email) return user.email.charAt(0).toUpperCase()
+    return "?"
   }
 
   return (
@@ -179,12 +191,104 @@ export default function LandingPage() {
           {/* Right Action buttons */}
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             {user ? (
-              <a href="/dashboard" className="btn-ghost" style={{ padding: '8px 18px', fontSize: '0.82rem', borderRadius: 30 }}>
-                Go to Dashboard
-              </a>
+              <div style={{ position: 'relative' }} ref={avatarDropdownRef}>
+                {/* User Avatar Circle */}
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName || "User"}
+                    onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                      border: '2px solid #3b82f6',
+                      boxShadow: '0 0 10px rgba(59,130,246,0.3)',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : (
+                  <div
+                    onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#f1f5f9',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 10px rgba(59,130,246,0.3)',
+                    }}
+                  >
+                    {getInitials()}
+                  </div>
+                )}
+
+                {/* Avatar Dropdown Panel */}
+                {avatarDropdownOpen && (
+                  <div style={{
+                    position: 'absolute', top: '120%', right: 0,
+                    width: 240, background: 'rgba(12, 26, 46, 0.96)',
+                    backdropFilter: 'blur(20px)', border: '1px solid rgba(59, 130, 246, 0.18)',
+                    borderRadius: 16, padding: '14px', zIndex: 1000,
+                    boxShadow: 'var(--glow-card)',
+                    animation: 'avatarDropdownFadeUp 0.18s ease',
+                    textAlign: 'left'
+                  }}>
+                    {/* User info */}
+                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid rgba(59,130,246,0.1)' }}>
+                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {user.displayName || "Studytra Student"}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
+                        {user.email}
+                      </div>
+                    </div>
+
+                    {/* Navigation links */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <LayoutDashboard size={14} color="#3b82f6" />
+                        <span>Dashboard</span>
+                      </a>
+                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <MessageSquare size={14} color="#7c3aed" />
+                        <span>My Chats</span>
+                      </a>
+                      <a href="/app" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: '#cbd5e1', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <Settings size={14} color="#94a3b8" />
+                        <span>Planning Home</span>
+                      </a>
+                    </div>
+
+                    {/* Sign Out Button */}
+                    <button
+                      onClick={handleSignOut}
+                      style={{
+                        width: '100%', background: 'rgba(239, 68, 68, 0.08)',
+                        color: '#ef4444', padding: '8px', border: '1px solid rgba(239, 68, 68, 0.15)',
+                        borderRadius: 10, fontSize: '0.78rem', fontWeight: 700,
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)' }}
+                    >
+                      <LogOut size={13} />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
-                <button onClick={handleGoogleSignIn} className="btn-ghost desk-nav" style={{ padding: '8px 18px', fontSize: '0.82rem', borderRadius: 30, border: 'none' }}>
+                <button onClick={() => setAuthModalOpen(true)} className="btn-ghost desk-nav" style={{ padding: '8px 18px', fontSize: '0.82rem', borderRadius: 30, border: 'none' }}>
                   Sign In
                 </button>
                 <a href="/app" className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.82rem', borderRadius: 30 }}>
@@ -221,9 +325,34 @@ export default function LandingPage() {
           <a href="#reviews" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', textDecoration: 'none' }}>Reviews</a>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
-            {!user && (
-              <button onClick={() => { setMobileMenuOpen(false); handleGoogleSignIn(); }} style={{ padding: '12px', width: '100%' }} className="btn-ghost">
-                Sign In with Google
+            {user ? (
+              <div style={{
+                background: 'rgba(59, 130, 246, 0.05)',
+                border: '1px solid rgba(59, 130, 246, 0.15)',
+                borderRadius: 12,
+                padding: '12px',
+                marginBottom: 8
+              }}>
+                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f1f5f9' }}>{user.displayName || "Studytra Student"}</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: 12 }}>{user.email}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <a href="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: '#3b82f6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <LayoutDashboard size={14} /> Dashboard
+                  </a>
+                  <a href="/chat" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: '0.84rem', color: '#7c3aed', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <MessageSquare size={14} /> My Chats
+                  </a>
+                  <button onClick={() => { setMobileMenuOpen(false); handleSignOut(); }} style={{
+                    background: 'none', border: 'none', color: '#ef4444', textAlign: 'left',
+                    fontSize: '0.84rem', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+                  }}>
+                    <LogOut size={14} /> Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => { setMobileMenuOpen(false); setAuthModalOpen(true); }} style={{ padding: '12px', width: '100%' }} className="btn-ghost">
+                Sign In / Sign Up
               </button>
             )}
             <a href="/app" onClick={() => setMobileMenuOpen(false)} style={{ padding: '12px', width: '100%', textAlign: 'center' }} className="btn-primary">
@@ -1384,6 +1513,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Embedded CSS rules for layout adjustments */}
       <style>{`

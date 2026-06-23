@@ -6,13 +6,68 @@ import MessageBubble from '../components/chat/MessageBubble'
 import TypingIndicator from '../components/chat/TypingIndicator'
 import OnboardingForm from '../components/OnboardingForm'
 import { callGemini, parsePlanLock } from '../utils/gemini'
-import { 
-  supabase, 
-  createChatSession, 
-  updateChatSession, 
-  fetchChatSessions, 
-  deleteChatSession 
-} from '../utils/supabase'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
+import { db } from '../lib/firebase'
+import { collection, doc, addDoc, getDocs, query, orderBy, setDoc, deleteDoc } from 'firebase/firestore'
+
+// Firestore Chat History Helpers
+async function fetchChatSessions(uid) {
+  try {
+    const q = query(collection(db, "chatHistory", uid, "sessions"), orderBy("updatedAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    const list = [];
+    querySnapshot.forEach((docSnap) => {
+      list.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    return list;
+  } catch (err) {
+    console.error("Error fetching chat sessions: ", err);
+    return [];
+  }
+}
+
+async function createChatSession(uid, title, messages) {
+  try {
+    const sessionData = {
+      title,
+      messages,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const docRef = await addDoc(collection(db, "chatHistory", uid, "sessions"), sessionData);
+    return { id: docRef.id, ...sessionData };
+  } catch (err) {
+    console.error("Error creating chat session: ", err);
+    return null;
+  }
+}
+
+async function updateChatSession(uid, sessionId, title, messages) {
+  try {
+    const sessionRef = doc(db, "chatHistory", uid, "sessions", sessionId);
+    await setDoc(sessionRef, {
+      title,
+      messages,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.error("Error updating chat session: ", err);
+    return false;
+  }
+}
+
+async function deleteChatSession(uid, sessionId) {
+  try {
+    const sessionRef = doc(db, "chatHistory", uid, "sessions", sessionId);
+    await deleteDoc(sessionRef);
+    return true;
+  } catch (err) {
+    console.error("Error deleting chat session: ", err);
+    return false;
+  }
+}
 
 export default function ChatPage() {
   const navigate = useNavigate()
@@ -27,7 +82,8 @@ export default function ChatPage() {
   const [error, setError] = useState(null)
 
   // Auth & Session History States
-  const [user, setUser] = useState(null)
+  const { user } = useAuth()
+  const { showInfo, showError, showSuccess } = useToast()
   const [chatSessions, setChatSessions] = useState([])
   const [activeSessionId, setActiveSessionId] = useState(null)
 
@@ -40,27 +96,15 @@ export default function ChatPage() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' }) 
   }, [messages, loading])
 
-  // Get current user session
+  // Load chat history sessions when user is available
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        loadUserSessions(session.user.id)
-      }
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        loadUserSessions(session.user.id)
-      } else {
-        setChatSessions([])
-        setActiveSessionId(null)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
+    if (user) {
+      loadUserSessions(user.uid)
+    } else {
+      setChatSessions([])
+      setActiveSessionId(null)
+    }
+  }, [user])
 
   // Load chat history sessions
   const loadUserSessions = async (userId, selectId = null) => {
@@ -121,10 +165,10 @@ export default function ChatPage() {
       setMessages(welcomeMessages)
       if (plan) setLockedPlan(plan)
 
-      // If logged in, create a session in Supabase immediately
+      // If logged in, create a session in Firestore immediately
       if (user) {
         const title = plan ? `${plan.country} Plan` : (country && country !== 'Not decided yet' ? `${country} Counseling` : 'Abroad Plan Setup')
-        const newSess = await createChatSession(user.id, title, welcomeMessages)
+        const newSess = await createChatSession(user.uid, title, welcomeMessages)
         if (newSess) {
           setActiveSessionId(newSess.id)
           setChatSessions(prev => [newSess, ...prev])
@@ -157,6 +201,11 @@ export default function ChatPage() {
     // Save temporary state so user sees their bubble immediately
     let currentSessionId = activeSessionId
 
+    // For guest users, trigger info toast on 3rd user message
+    if (!user && updated.filter(m => m.role === 'user').length >= 3) {
+      showInfo("Sign in to save your chat sessions and access your personalized study dashboard! 🚀");
+    }
+
     try {
       // Call Gemini AI
       const res = await callGemini(updated.map(m => ({ role: m.role, content: m.content })))
@@ -168,7 +217,7 @@ export default function ChatPage() {
         setLockedPlan(plan)
       }
 
-      // Sync with Supabase chat_history table if logged in
+      // Sync with Firestore chatHistory if logged in
       if (user) {
         const title = plan 
           ? `${plan.country} · ${plan.degree}` 
@@ -176,12 +225,12 @@ export default function ChatPage() {
 
         if (currentSessionId) {
           // Update existing session
-          await updateChatSession(user.id, currentSessionId, title, finalMessages)
+          await updateChatSession(user.uid, currentSessionId, title, finalMessages)
           // Update local sidebar title/messages list
           setChatSessions(prev => prev.map(s => s.id === currentSessionId ? { ...s, title, messages: finalMessages } : s))
         } else {
           // Create new session
-          const newSess = await createChatSession(user.id, title, finalMessages)
+          const newSess = await createChatSession(user.uid, title, finalMessages)
           if (newSess) {
             setActiveSessionId(newSess.id)
             setChatSessions(prev => [newSess, ...prev])
@@ -228,7 +277,7 @@ export default function ChatPage() {
   // Delete a chat session
   const handleDeleteSession = async (sessionId) => {
     if (!user) return
-    const success = await deleteChatSession(user.id, sessionId)
+    const success = await deleteChatSession(user.uid, sessionId)
     if (success) {
       setChatSessions(prev => prev.filter(s => s.id !== sessionId))
       if (activeSessionId === sessionId) {

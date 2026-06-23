@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users Profile Collection: accessible only to the owner
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // User Progress Checklists: accessible only to the owner
+    match /progress/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Chat History Subcollection: accessible only to the owner
+    match /chatHistory/{uid}/sessions/{sessionId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Reviews Collection: readable by anyone, writable by authenticated users
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

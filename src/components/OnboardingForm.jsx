@@ -5,7 +5,8 @@ import {
   User, BookOpen, MapPin, Layers,
 } from 'lucide-react'
 import { COUNTRIES } from '../constants/countries'
-import { supabase, saveStudentProfile, saveUserProfile } from '../utils/supabase'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 
 const EDUCATION_LEVELS = [
   '12th / HSC',
@@ -25,6 +26,8 @@ const DEGREE_GOALS = [
 
 export default function OnboardingForm({ onClose }) {
   const navigate = useNavigate()
+  const { user, saveStudyPlan } = useAuth()
+  const { showSuccess, showError } = useToast()
 
   const [step, setStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
@@ -38,19 +41,15 @@ export default function OnboardingForm({ onClose }) {
     dreamCountry: '',
   })
   const [errors, setErrors] = useState({})
-  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user)
-        const name = session.user.user_metadata?.full_name || ''
-        if (name) {
-          setForm(p => ({ ...p, fullName: p.fullName || name }))
-        }
+    if (user) {
+      const name = user.displayName || ''
+      if (name) {
+        setForm(p => ({ ...p, fullName: p.fullName || name }))
       }
-    })
-  }, [])
+    }
+  }, [user])
 
   // ── Update field + clear its error ──
   const up = (key, val) => {
@@ -85,22 +84,26 @@ export default function OnboardingForm({ onClose }) {
 
     setSubmitting(true)
 
-    // Save to sessionStorage for AI context
-    sessionStorage.setItem('studentProfile', JSON.stringify(form))
+    try {
+      // Save to sessionStorage for AI context
+      sessionStorage.setItem('studentProfile', JSON.stringify(form))
 
-    // Save to Supabase profiles table if logged in
-    if (user) {
-      await saveUserProfile(user.id, form)
+      // Save to Firestore if logged in
+      if (user) {
+        await saveStudyPlan(form)
+        showSuccess("Your plan is saved! 🎉")
+      }
+
+      setSubmitting(false)
+      onClose()
+
+      const country = form.dreamCountry === 'Not decided yet' ? '' : form.dreamCountry
+      navigate(`/chat?country=${encodeURIComponent(country)}`)
+    } catch (err) {
+      console.error("Error saving plan: ", err)
+      showError("Failed to save your plan. Please try again.")
+      setSubmitting(false)
     }
-
-    // Save to Supabase student session table
-    await saveStudentProfile(form)
-
-    setSubmitting(false)
-    onClose()
-
-    const country = form.dreamCountry === 'Not decided yet' ? '' : form.dreamCountry
-    navigate(`/chat?country=${encodeURIComponent(country)}`)
   }
 
   // ── Shared styles ──

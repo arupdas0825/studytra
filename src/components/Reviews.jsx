@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Star, Plus, X, Send, Loader } from 'lucide-react'
-import { supabase } from '../utils/supabase'
+import { useAuth } from '../context/AuthContext'
+import AuthModal from './auth/AuthModal'
+import { db } from '../lib/firebase'
+import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore'
 
 const DEFAULT_REVIEWS = [
   { id: '1', name: 'Vikram Reddy', country: 'Germany', university: 'MSc Robotics', text: 'APS and visa checklist saved me from so many mistakes. Never needed a consultancy.', rating: 5, created_at: '2026-06-01T00:00:00Z' },
@@ -20,6 +23,9 @@ export default function Reviews() {
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
+  const { user } = useAuth()
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+
   // Intersection observer for animation
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
@@ -29,27 +35,24 @@ export default function Reviews() {
     return () => obs.disconnect()
   }, [])
 
-  // ── Fetch Reviews from Supabase ──
+  // ── Fetch Reviews from Firestore ──
   const fetchReviews = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const q = query(collection(db, "reviews"), orderBy("created_at", "desc"));
+      const querySnapshot = await getDocs(q);
+      const data = [];
+      querySnapshot.forEach((docSnap) => {
+        data.push({ id: docSnap.id, ...docSnap.data() });
+      });
 
-      if (error) {
-        throw error
-      }
-
-      if (data && data.length > 0) {
+      if (data.length > 0) {
         setReviews(data)
       } else {
-        // Fallback if table is empty
         setReviews(DEFAULT_REVIEWS)
       }
     } catch (err) {
-      console.warn('Could not load reviews from Supabase (table might not exist yet). Using defaults.', err)
+      console.warn('Could not load reviews from Firestore. Using defaults.', err)
       setReviews(DEFAULT_REVIEWS)
     } finally {
       setLoading(false)
@@ -71,40 +74,39 @@ export default function Reviews() {
   }
 
   const handleSubmit = async () => {
+    if (!user) {
+      setAuthModalOpen(true)
+      return
+    }
     if (!validate()) return
     setSubmitting(true)
+    
+    const newReview = {
+      name: form.name.trim(),
+      country: form.country.trim(),
+      university: form.university.trim(),
+      text: form.text.trim(),
+      rating: form.rating,
+      created_at: new Date().toISOString()
+    }
+
+    // Optimistic Update: immediately prepend the new review to the list
+    const originalReviews = [...reviews]
+    setReviews(prev => [newReview, ...prev])
+    setDone(true)
+    
+    setTimeout(() => {
+      setShowForm(false)
+      setDone(false)
+      setForm({ name: '', country: '', university: '', text: '', rating: 5 })
+    }, 2200)
+
     try {
-      const newReview = {
-        name: form.name.trim(),
-        country: form.country.trim(),
-        university: form.university.trim(),
-        text: form.text.trim(),
-        rating: form.rating,
-        created_at: new Date().toISOString()
-      }
-
-      const { error } = await supabase.from('reviews').insert(newReview)
-      
-      if (error) throw error
-
-      setDone(true)
-      fetchReviews() // refresh
-      setTimeout(() => {
-        setShowForm(false)
-        setDone(false)
-        setForm({ name: '', country: '', university: '', text: '', rating: 5 })
-      }, 2200)
+      await addDoc(collection(db, "reviews"), newReview)
+      fetchReviews() // refresh in background to sync database IDs
     } catch (err) {
-      console.error('Error inserting review to Supabase:', err)
-      // Save locally to state as backup so UX isn't broken for user
-      const localBack = [{ id: String(Date.now()), ...form, created_at: new Date().toISOString() }, ...reviews]
-      setReviews(localBack)
-      setDone(true)
-      setTimeout(() => {
-        setShowForm(false)
-        setDone(false)
-        setForm({ name: '', country: '', university: '', text: '', rating: 5 })
-      }, 2200)
+      console.error('Error inserting review to Firestore:', err)
+      setReviews(originalReviews) // rollback on failure
     } finally {
       setSubmitting(false)
     }
@@ -362,7 +364,7 @@ export default function Reviews() {
                   >
                     {submitting ? (
                       <>
-                        <Loader size={15} className="spin-loader" /> Saving to Supabase...
+                        <Loader size={15} className="spin-loader" /> Saving Review...
                       </>
                     ) : (
                       <>
@@ -376,6 +378,8 @@ export default function Reviews() {
           </div>
         )}
       </div>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

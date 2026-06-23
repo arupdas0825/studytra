@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../utils/supabase'
+import { useAuth } from '../context/AuthContext'
+import { db } from '../lib/firebase'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import Sidebar from '../components/dashboard/Sidebar'
 import Overview from '../components/dashboard/Overview'
 import Timeline from '../components/dashboard/Timeline'
@@ -10,107 +12,70 @@ import { Landmark, ArrowLeft, RefreshCw } from 'lucide-react'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const { user, userProfile, loading: authLoading, logout, signInWithGoogle } = useAuth()
+  const [progressLoading, setProgressLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [completedSteps, setCompletedSteps] = useState([])
   const [completedDocs, setCompletedDocs] = useState([])
   const [syncing, setSyncing] = useState(false)
 
-  // 1. Auth & Session Tracking
+  // Map camelCase studyPlan to snake_case profile expected by dashboard components
+  const profile = userProfile?.studyPlan ? {
+    full_name: userProfile.studyPlan.fullName,
+    dream_country: userProfile.studyPlan.dreamCountry,
+    target_degree: userProfile.studyPlan.targetDegree,
+    target_course: userProfile.studyPlan.targetCourse,
+    current_level: userProfile.studyPlan.currentLevel,
+    current_university: userProfile.studyPlan.currentUniversity,
+    age: userProfile.studyPlan.age
+  } : null;
+
+  const loading = authLoading || progressLoading;
+
+  // Load progress once auth loading completes
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        loadUserProfile(session.user)
-      } else {
-        setLoading(false)
-      }
-    })
+    if (authLoading) return
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        loadUserProfile(session.user)
-      } else {
-        setProfile(null)
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  // 2. Load User Profile and Progress
-  const loadUserProfile = async (currentUser) => {
-    try {
-      setLoading(true)
-      
-      // Load profile
-      const { data: profileData, error: profileErr } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', currentUser.id)
-        .single()
-
-      let activeProfile = profileData
-
-      if (profileErr && profileErr.code === 'PGRST116') {
-        // Profile doesn't exist yet, try to migrate from sessionStorage
-        const savedProfile = sessionStorage.getItem('studentProfile')
-        if (savedProfile) {
-          const parsed = JSON.parse(savedProfile)
-          const newProfile = {
-            id: currentUser.id,
-            full_name: parsed.fullName,
-            age: parseInt(parsed.age) || null,
-            current_level: parsed.currentLevel,
-            current_university: parsed.currentUniversity,
-            target_degree: parsed.targetDegree,
-            target_course: parsed.targetCourse,
-            dream_country: parsed.dreamCountry,
-          }
-          
-          const { error: upsertErr } = await supabase.from('profiles').upsert(newProfile)
-          if (!upsertErr) activeProfile = newProfile
-        }
-      }
-
-      setProfile(activeProfile)
-
-      // Load checklist and timeline progress
-      const { data: progressData } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', currentUser.id)
-        .single()
-
-      if (progressData) {
-        setCompletedSteps(progressData.completed_steps || [])
-        setCompletedDocs(progressData.completed_docs || [])
-      }
-
-    } catch (err) {
-      console.error('Error loading dashboard data:', err)
-    } finally {
-      setLoading(false)
+    if (!user) {
+      setProgressLoading(false)
+      return
     }
-  }
 
-  // 3. Save progress change in Supabase
+    const loadProgress = async () => {
+      try {
+        const progressRef = doc(db, "progress", user.uid)
+        const progressSnap = await getDoc(progressRef)
+        if (progressSnap.exists()) {
+          const data = progressSnap.data()
+          setCompletedSteps(data.completedSteps || data.completed_steps || [])
+          setCompletedDocs(data.completedDocs || data.completed_docs || [])
+        }
+      } catch (err) {
+        console.error("Error loading progress from Firestore: ", err)
+      } finally {
+        setProgressLoading(false)
+      }
+    }
+
+    loadProgress()
+  }, [user, authLoading])
+
+  // Save progress change in Firestore
   const saveProgress = async (newSteps, newDocs) => {
     if (!user) return
     setSyncing(true)
     try {
-      await supabase.from('user_progress').upsert({
-        user_id: user.id,
+      const progressRef = doc(db, "progress", user.uid)
+      await setDoc(progressRef, {
+        uid: user.uid,
+        completedSteps: newSteps,
         completed_steps: newSteps,
+        completedDocs: newDocs,
         completed_docs: newDocs,
-        updated_at: new Date().toISOString()
-      })
+        updatedAt: new Date().toISOString()
+      }, { merge: true })
     } catch (err) {
-      console.error('Error saving progress to Supabase:', err)
+      console.error('Error saving progress to Firestore:', err)
     } finally {
       setSyncing(false)
     }
@@ -134,22 +99,19 @@ export default function Dashboard() {
 
   const handleGoogleSignIn = async () => {
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/dashboard'
-        }
-      })
+      await signInWithGoogle()
     } catch (err) {
       console.error('Google Sign-In Error:', err)
     }
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    setProfile(null)
-    navigate('/')
+    try {
+      await logout()
+      navigate('/')
+    } catch (err) {
+      console.error('Sign Out Error:', err)
+    }
   }
 
   // ── Rendering states ──
