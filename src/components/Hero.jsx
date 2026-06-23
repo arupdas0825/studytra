@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react'
-import { COUNTRIES } from '../constants/countries'
+import { ArrowRight, Sparkles, CheckCircle, Play } from 'lucide-react'
 
 // Country display names with emoji
 const ROTATING = [
-  { name: 'Germany', flag: '🇩🇪', code: 'DE', color: '#1a3a8c' },
-  { name: 'United States', flag: '🇺🇸', code: 'US', color: '#b91c1c' },
-  { name: 'Canada', flag: '🇨🇦', code: 'CA', color: '#c2410c' },
-  { name: 'United Kingdom', flag: '🇬🇧', code: 'GB', color: '#1d4ed8' },
-  { name: 'Australia', flag: '🇦🇺', code: 'AU', color: '#059669' },
+  { name: 'Germany', flag: '🇩🇪', code: 'DE', color: '#3b82f6' },
+  { name: 'United States', flag: '🇺🇸', code: 'US', color: '#ef4444' },
+  { name: 'Canada', flag: '🇨🇦', code: 'CA', color: '#f97316' },
+  { name: 'United Kingdom', flag: '🇬🇧', code: 'GB', color: '#6366f1' },
+  { name: 'Australia', flag: '🇦🇺', code: 'AU', color: '#10b981' },
+  { name: 'Austria', flag: '🇦🇹', code: 'AT', color: '#ec4899' },
 ]
 
-// Active Plan card data for all 5 countries
+// Active Plan card data for all 6 countries
 const PLANS = [
   {
     flag: '🇩🇪', code: 'DE', country: 'Germany', intake: 'WS 2026',
@@ -74,6 +74,18 @@ const PLANS = [
       { stage: 'Pre-Departure', pending: true },
     ],
   },
+  {
+    flag: '🇦🇹', code: 'AT', country: 'Austria', intake: 'WS 2026',
+    title: 'Austria · MSc CS · WS 2026',
+    badge: 'Admission Offer!',
+    progress: 50,
+    steps: [
+      { stage: 'Degree + B2 Language', done: true },
+      { stage: 'TU Wien Application', active: true },
+      { stage: 'Visa Application', pending: true },
+      { stage: 'Pre-Departure', pending: true },
+    ],
+  },
 ]
 
 export default function Hero() {
@@ -102,235 +114,207 @@ export default function Hero() {
         setActiveIdx(p => (p + 1) % ROTATING.length)
         setAnimating(false)
       }, 400)
-    }, 2200)
+    }, 2500)
     return () => clearInterval(timer)
   }, [])
 
   return (
     <section style={{
       minHeight: '100vh',
-      background: 'linear-gradient(160deg, var(--ivory) 0%, var(--white) 55%, var(--blue-50) 100%)',
-      display: 'flex', alignItems: 'center',
+      background: '#050914',
+      display: 'flex',
+      alignItems: 'center',
       padding: '120px 24px 80px',
-      position: 'relative', overflow: 'hidden',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      {/* BG blobs */}
-      <div style={{ position: 'absolute', top: -80, right: -80, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(37,99,196,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: 40, left: -60, width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      {/* Moving Background Mesh */}
+      <div style={{
+        position: 'absolute', top: '-10%', right: '-10%', width: 500, height: 500, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(79, 142, 247, 0.15) 0%, transparent 70%)',
+        animation: 'floatBg 8s infinite alternate', pointerEvents: 'none'
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '-5%', left: '-5%', width: 400, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%)',
+        animation: 'floatBg 10s infinite alternate-reverse', pointerEvents: 'none'
+      }} />
 
-      <div className="container" style={{ width: '100%' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="hero-grid">
+      <div className="container" style={{ width: '100%', position: 'relative', zIndex: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 64, alignItems: 'center' }} className="hero-grid">
 
-          {/* LEFT */}
+          {/* LEFT COLUMN */}
           <div style={{ animation: 'fadeUp 0.8s ease both' }}>
-            {/* Badge */}
+            
+            {/* AI badge */}
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'var(--mint-50)', border: '1px solid var(--mint-200)',
+              background: 'rgba(79, 142, 247, 0.08)', border: '1px solid rgba(79, 142, 247, 0.2)',
               borderRadius: 'var(--r-full)', padding: '6px 16px 6px 8px', marginBottom: 28,
             }}>
               <div style={{
-                background: 'var(--mint-500)', borderRadius: 'var(--r-full)',
-                padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 5,
+                background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)', borderRadius: 'var(--r-full)',
+                padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5,
               }}>
                 <Sparkles size={11} color="white" />
                 <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'white', letterSpacing: '0.07em' }}>AI-POWERED</span>
               </div>
-              <span style={{ fontSize: '0.82rem', fontWeight: 500, color: 'var(--mint-600)' }}>
-                Study Abroad Execution Platform
+              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#f0f4ff' }}>
+                Study Abroad Simplified
               </span>
             </div>
 
             {/* Headline */}
             <h1 style={{
               fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
-              fontWeight: 800, color: 'var(--blue-950)',
+              fontWeight: 800, color: '#f0f4ff',
               marginBottom: 14, lineHeight: 1.08,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              letterSpacing: '-0.03em'
             }}>
-              Plan Your Future in
+              Your Dream University.<br />
+              Your Roadmap.<br />
+              <span style={{
+                background: 'linear-gradient(135deg, #4f8ef7, #7c3aed)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>All in One Place.</span>
             </h1>
 
-            {/* Animated country name */}
-            <div style={{
-              minHeight: 'clamp(3rem, 6vw, 4.2rem)',
-              marginBottom: 28,
-              overflow: 'visible',
-            }}>
-              <span style={{
-                fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
-                fontWeight: 800, lineHeight: 1.08,
-                color: ROTATING[activeIdx].color,
-                transform: animating ? 'translateY(-10px)' : 'translateY(0)',
-                opacity: animating ? 0 : 1,
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                flexWrap: 'wrap',
-              }}>
-                {ROTATING[activeIdx].name}
-                <span className="hero-flag" style={{
-                  fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
-                  lineHeight: 1,
-                }}>{ROTATING[activeIdx].flag}</span>
-                <span className="hero-badge" style={{
-                  fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)',
-                  fontWeight: 700,
-                  color: ROTATING[activeIdx].color,
-                  border: `2px solid ${ROTATING[activeIdx].color}40`,
-                  borderRadius: 8,
-                  padding: '4px 10px',
-                  letterSpacing: '0.06em',
-                  lineHeight: 1,
-                  verticalAlign: 'middle',
-                }}>{ROTATING[activeIdx].code}</span>
-              </span>
-            </div>
-
-            {/* Country dots indicator */}
-            <div style={{ display: 'flex', gap: 6, marginBottom: 28 }}>
-              {ROTATING.map((_, i) => (
-                <div key={i} onClick={() => setActiveIdx(i)} style={{
-                  width: i === activeIdx ? 24 : 6,
-                  height: 6, borderRadius: 99,
-                  background: i === activeIdx ? ROTATING[activeIdx].color : 'var(--gray-200)',
-                  transition: 'all 0.4s ease',
-                  cursor: 'pointer',
-                }} />
-              ))}
-            </div>
-
+            {/* Subtext */}
             <p style={{
-              fontSize: '1.05rem', color: 'var(--gray-500)',
-              lineHeight: 1.75, maxWidth: 480, marginBottom: 32,
+              fontSize: '1.05rem', color: '#94a3b8',
+              lineHeight: 1.75, maxWidth: 540, marginBottom: 32,
             }}>
-              Structured AI guidance for Indian students — roadmaps, visa steps, cost breakdowns, and timelines for{' '}
-              <strong style={{ color: 'var(--blue-700)' }}>Germany, USA, Canada, UK & Australia.</strong>{' '}
-              No consultancy needed.
+              AI-powered study abroad planning for Indian students targeting Europe, USA, Canada & more. 
+              Get customized roadmaps, cost calculators, and visa checklists.
             </p>
 
-            {/* Checklist */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 36 }}>
-              {[
-                'Complete country-specific roadmap',
-                'Visa & document checklist',
-                'Cost calculator with INR conversion',
-              ].map(item => (
-                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <CheckCircle size={16} color="var(--mint-500)" />
-                  <span style={{ fontSize: '0.9rem', color: 'var(--gray-700)', fontWeight: 500 }}>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs */}
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 40 }}>
               <button onClick={() => navigate('/chat')} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
-                background: 'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)',
+                background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
                 color: 'white', padding: '15px 30px',
                 borderRadius: 'var(--r-sm)', fontSize: '0.96rem', fontWeight: 700,
-                boxShadow: '0 6px 24px rgba(26,58,140,0.3)', transition: 'all 0.2s',
+                boxShadow: '0 6px 24px rgba(79,142,247,0.35)', transition: 'all 0.2s',
+                cursor: 'pointer'
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(26,58,140,0.4)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(26,58,140,0.3)' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(79,142,247,0.45)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(79,142,247,0.35)' }}
               >
                 Start Planning Free <ArrowRight size={16} />
               </button>
-              <button onClick={() => document.querySelector('#countries')?.scrollIntoView({ behavior: 'smooth' })} style={{
-                background: 'white', color: 'var(--blue-700)',
-                padding: '15px 30px', borderRadius: 'var(--r-sm)',
-                fontSize: '0.96rem', fontWeight: 600,
-                border: '1.5px solid var(--blue-100)', transition: 'all 0.2s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--blue-300)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--blue-100)'; e.currentTarget.style.transform = 'none' }}
+              
+              <button 
+                onClick={() => document.querySelector('#countries')?.scrollIntoView({ behavior: 'smooth' })} 
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: 'rgba(255, 255, 255, 0.03)', color: '#f0f4ff',
+                  padding: '15px 30px', borderRadius: 'var(--r-sm)',
+                  fontSize: '0.96rem', fontWeight: 700,
+                  border: '1px solid rgba(79, 142, 247, 0.2)', transition: 'all 0.2s',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)'; e.currentTarget.style.transform = 'none' }}
               >
-                Explore Countries →
+                <Play size={14} fill="#f0f4ff" /> Watch Demo
               </button>
             </div>
 
-            {/* Available for */}
-            <div style={{ display: 'flex', gap: 8, marginTop: 32, alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 500 }}>Available for:</span>
-              {ROTATING.map(c => (
-                <div key={c.code} title={c.name} style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  background: 'white', border: '1px solid var(--gray-200)',
-                  borderRadius: 'var(--r-full)', padding: '4px 10px',
-                  fontSize: '0.78rem', fontWeight: 600, color: 'var(--blue-950)',
-                  boxShadow: 'var(--shadow-xs)',
+            {/* Trust Badges */}
+            <div style={{ display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', borderTop: '1px solid rgba(79, 142, 247, 0.15)', paddingTop: 28 }}>
+              {[
+                { label: '🎓 AI-Powered' },
+                { label: '🌍 6+ Countries' },
+                { label: '✅ Free to Use' }
+              ].map(badge => (
+                <div key={badge.label} style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  fontSize: '0.86rem', fontWeight: 600, color: '#f0f4ff'
                 }}>
-                  <span className="hero-flag" style={{ fontSize: '0.9rem' }}>{c.flag}</span>
-                  <span>{c.code}</span>
+                  {badge.label}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RIGHT — Dashboard preview */}
-          <div style={{ position: 'relative', animation: 'fadeUp 0.8s 0.2s ease both' }}>
-            {/* Animated Active Plan Card */}
+          {/* RIGHT COLUMN: Interactive Dashboard Mockup */}
+          <div style={{ position: 'relative', animation: 'fadeUp 0.8s 0.2s ease both' }} className="hero-mockup-col">
+            {/* Main Mockup Card */}
             <div style={{
-              background: 'white', borderRadius: 'var(--r-xl)',
-              boxShadow: 'var(--shadow-xl)', border: '1px solid var(--gray-200)',
-              overflow: 'hidden', animation: 'float 4s ease-in-out infinite',
+              background: 'rgba(15, 33, 53, 0.65)',
+              backdropFilter: 'blur(16px)',
+              borderRadius: 24,
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+              border: '1px solid rgba(79, 142, 247, 0.18)',
+              overflow: 'hidden',
+              animation: 'float 5s ease-in-out infinite',
               opacity: cardFading ? 0 : 1,
               transform: cardFading ? 'scale(0.97) translateY(6px)' : 'scale(1) translateY(0)',
               transition: 'opacity 0.4s ease, transform 0.4s ease',
             }}>
-              {/* Card header */}
+              {/* Header */}
               <div style={{
-                background: 'linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%)',
+                background: 'linear-gradient(135deg, #0d1b2a 0%, #050914 100%)',
                 padding: '20px 24px',
+                borderBottom: '1px solid rgba(79, 142, 247, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <div>
-                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', marginBottom: 4 }}>ACTIVE PLAN</div>
-                  <div style={{ color: 'white', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '1rem' }}>
+                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', letterSpacing: '0.1em', marginBottom: 4, fontWeight: 700 }}>ACTIVE ROADMAP</div>
+                  <div style={{ color: '#f0f4ff', fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '0.95rem' }}>
                     {PLANS[cardIdx].title}
                   </div>
                 </div>
                 <div style={{
-                  background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.4)',
+                  background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)',
                   color: '#34d399', padding: '4px 12px', borderRadius: 'var(--r-full)',
                   fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em',
-                }}>LIVE</div>
+                }}>LIVE STATUS</div>
               </div>
 
-              {/* Steps */}
-              <div style={{ padding: '20px 24px' }}>
+              {/* Steps List */}
+              <div style={{ padding: '24px' }}>
                 {PLANS[cardIdx].steps.map((item, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 14,
-                    paddingBottom: i < 3 ? 16 : 0, position: 'relative',
+                    paddingBottom: i < 3 ? 18 : 0, position: 'relative',
                   }}>
                     {i < 3 && <div style={{
-                      position: 'absolute', left: 9, top: 22, width: 2, height: 16,
-                      background: item.done ? 'var(--mint-400)' : 'var(--gray-200)',
+                      position: 'absolute', left: 9, top: 22, width: 2, height: 18,
+                      background: item.done ? '#10b981' : 'rgba(79, 142, 247, 0.2)',
                     }} />}
                     <div style={{
                       width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                      background: item.done ? 'var(--mint-500)' : item.active ? 'var(--blue-500)' : 'var(--gray-200)',
-                      boxShadow: item.active ? '0 0 0 4px rgba(37,99,196,0.15)' : 'none',
-                    }} />
-                    <span style={{ fontSize: '0.86rem', fontWeight: 600, color: item.pending ? 'var(--gray-400)' : 'var(--blue-950)' }}>{item.stage}</span>
-                    {item.done && <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--mint-500)', fontWeight: 700 }}>✓ Done</span>}
-                    {item.active && <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--blue-500)', fontWeight: 700 }}>Active</span>}
+                      background: item.done ? '#10b981' : item.active ? '#4f8ef7' : 'rgba(79, 142, 247, 0.1)',
+                      border: item.active ? '2.5px solid #050914' : 'none',
+                      boxShadow: item.active ? '0 0 0 4px rgba(79, 142, 247, 0.25)' : 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.6rem', color: 'white', fontWeight: 700
+                    }}>
+                      {item.done && '✓'}
+                    </div>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 700, color: item.pending ? '#64748b' : '#f0f4ff' }}>
+                      {item.stage}
+                    </span>
+                    {item.done && <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#10b981', fontWeight: 800 }}>Done</span>}
+                    {item.active && <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#4f8ef7', fontWeight: 800 }}>In Progress</span>}
                   </div>
                 ))}
               </div>
 
-              {/* Progress */}
-              <div style={{ padding: '14px 24px 20px', borderTop: '1px solid var(--gray-100)' }}>
+              {/* Progress Ring / Bar */}
+              <div style={{ padding: '16px 24px 22px', borderTop: '1px solid rgba(79, 142, 247, 0.12)', background: 'rgba(5, 9, 20, 0.2)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)', fontWeight: 500 }}>Overall Progress</span>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--blue-700)' }}>{PLANS[cardIdx].progress}%</span>
+                  <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>Overall Roadmap Completion</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#4f8ef7' }}>{PLANS[cardIdx].progress}%</span>
                 </div>
-                <div style={{ background: 'var(--gray-100)', borderRadius: 'var(--r-full)', height: 7, overflow: 'hidden' }}>
+                <div style={{ background: 'rgba(5, 9, 20, 0.8)', borderRadius: 'var(--r-full)', height: 7, overflow: 'hidden', border: '1px solid rgba(79, 142, 247, 0.1)' }}>
                   <div style={{
                     width: `${PLANS[cardIdx].progress}%`, height: '100%',
-                    background: 'linear-gradient(90deg, var(--blue-600) 0%, var(--mint-400) 100%)',
+                    background: 'linear-gradient(90deg, #4f8ef7 0%, #7c3aed 100%)',
                     borderRadius: 'var(--r-full)',
                     transition: 'width 0.6s ease',
                   }} />
@@ -338,44 +322,51 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Floating country badge — updates with card */}
+            {/* Floating Top Badge */}
             <div style={{
-              position: 'absolute', top: -18, right: -18,
-              background: 'white', borderRadius: 'var(--r-md)',
-              padding: '10px 14px', boxShadow: 'var(--shadow-lg)',
-              border: '1px solid var(--gray-200)',
-              display: 'flex', alignItems: 'center', gap: 8,
+              position: 'absolute', top: -16, right: -16,
+              background: '#0f2135', borderRadius: 16,
+              padding: '10px 16px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+              border: '1px solid rgba(79, 142, 247, 0.18)',
+              display: 'flex', alignItems: 'center', gap: 10,
               opacity: cardFading ? 0 : 1,
               transition: 'opacity 0.4s ease',
             }}>
-              <span className="hero-flag" style={{ fontSize: '1.3rem' }}>{PLANS[cardIdx].flag}</span>
+              <span style={{ fontSize: '1.4rem' }}>{PLANS[cardIdx].flag}</span>
               <div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--blue-900)' }}>{PLANS[cardIdx].country}</div>
-                <div style={{ fontSize: '0.62rem', color: 'var(--gray-400)' }}>{PLANS[cardIdx].intake}</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#f0f4ff' }}>{PLANS[cardIdx].country}</div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: 1 }}>{PLANS[cardIdx].intake}</div>
               </div>
             </div>
 
-            {/* Bottom badge */}
+            {/* Floating Bottom Badge */}
             <div style={{
-              position: 'absolute', bottom: -16, left: -16,
-              background: 'linear-gradient(135deg, var(--mint-500) 0%, var(--mint-400) 100%)',
-              borderRadius: 'var(--r-md)', padding: '10px 16px',
-              boxShadow: 'var(--shadow-md)',
+              position: 'absolute', bottom: -12, left: -12,
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              borderRadius: 14, padding: '10px 16px',
+              boxShadow: '0 8px 24px rgba(16, 185, 129, 0.25)',
               display: 'flex', alignItems: 'center', gap: 7,
               opacity: cardFading ? 0 : 1,
               transition: 'opacity 0.4s ease',
             }}>
-              <span style={{ fontSize: '1rem' }}>✅</span>
-              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'white' }}>{PLANS[cardIdx].badge}</span>
+              <span style={{ fontSize: '1rem', lineHeight: 1 }}>🎖️</span>
+              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'white' }}>{PLANS[cardIdx].badge}</span>
             </div>
           </div>
+
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr !important; } }
-        @media (max-width: 768px) { .hero-badge { display: none !important; } }
-        @media (min-width: 769px) { .hero-flag { display: none !important; } }
+        @keyframes floatBg {
+          0% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, -30px) scale(1.05); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @media (max-width: 860px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 48px; }
+          .hero-mockup-col { display: flex; justify-content: center; }
+        }
         @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>

@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   X, GraduationCap, ChevronRight, ArrowLeft,
   User, BookOpen, MapPin, Layers,
 } from 'lucide-react'
 import { COUNTRIES } from '../constants/countries'
-import { saveStudentProfile } from '../utils/supabase'
+import { supabase, saveStudentProfile, saveUserProfile } from '../utils/supabase'
 
 const EDUCATION_LEVELS = [
   '12th / HSC',
@@ -38,6 +38,19 @@ export default function OnboardingForm({ onClose }) {
     dreamCountry: '',
   })
   const [errors, setErrors] = useState({})
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user)
+        const name = session.user.user_metadata?.full_name || ''
+        if (name) {
+          setForm(p => ({ ...p, fullName: p.fullName || name }))
+        }
+      }
+    })
+  }, [])
 
   // ── Update field + clear its error ──
   const up = (key, val) => {
@@ -75,7 +88,12 @@ export default function OnboardingForm({ onClose }) {
     // Save to sessionStorage for AI context
     sessionStorage.setItem('studentProfile', JSON.stringify(form))
 
-    // Save to Supabase database
+    // Save to Supabase profiles table if logged in
+    if (user) {
+      await saveUserProfile(user.id, form)
+    }
+
+    // Save to Supabase student session table
     await saveStudentProfile(form)
 
     setSubmitting(false)
@@ -246,6 +264,78 @@ export default function OnboardingForm({ onClose }) {
                 Tell us about yourself so our AI can give you{' '}
                 <strong style={{ color: 'var(--blue-700)' }}>fully personalized</strong> guidance.
               </p>
+
+              {!user ? (
+                <div style={{
+                  background: 'rgba(79, 142, 247, 0.05)',
+                  border: '1.5px dashed rgba(79, 142, 247, 0.25)',
+                  borderRadius: 'var(--r-sm)',
+                  padding: '16px',
+                  textAlign: 'center',
+                  marginBottom: 6
+                }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: 12 }}>
+                    Have an account? Sign in to save progress & sync with your dashboard automatically.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await supabase.auth.signInWithOAuth({
+                          provider: 'google',
+                          options: {
+                            redirectTo: window.location.origin + '/chat'
+                          }
+                        })
+                      } catch (err) {
+                        console.error('Google Sign-In Error:', err)
+                      }
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 18px',
+                      borderRadius: 'var(--r-sm)',
+                      background: 'white',
+                      border: '1px solid var(--gray-200)',
+                      color: 'var(--blue-950)',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      boxShadow: 'var(--shadow-xs)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
+                      <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.909c1.702-1.567 2.683-3.874 2.683-6.615z" fill="#4285F4"/>
+                      <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.909-2.258c-.806.54-1.837.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+                      <path d="M3.964 10.707a5.416 5.416 0 0 1-.282-1.707c0-.596.102-1.174.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+                      <path d="M9 3.579c1.32 0 2.508.454 3.44 1.345l2.582-2.58C13.463.894 11.428 0 9 0A8.997 8.997 0 0 0 .957 4.961l3.007 2.332C4.672 5.163 6.656 3.579 9 3.579z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google
+                  </button>
+                </div>
+              ) : (
+                <div style={{
+                  background: 'rgba(16, 185, 129, 0.05)',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  borderRadius: 'var(--r-sm)',
+                  padding: '10px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 6
+                }}>
+                  <span style={{ fontSize: '0.78rem', color: '#10b981', fontWeight: 600 }}>
+                    ✓ Linked to {user.email}
+                  </span>
+                  <span style={{ fontSize: '0.74rem', color: 'var(--gray-500)' }}>
+                    Auto-saving enabled
+                  </span>
+                </div>
+              )}
 
               {/* Name + Age row */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px', gap: 12 }}>

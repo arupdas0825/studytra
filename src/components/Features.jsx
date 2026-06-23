@@ -1,80 +1,295 @@
-import { useEffect, useRef } from 'react'
-import { Map, Calculator, CreditCard, Clock, Plane, Lock, Globe, FileCheck } from 'lucide-react'
+import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { MessageSquare, Calculator, BookOpen, Landmark, Calendar, ArrowRight } from 'lucide-react'
 
-const features = [
-  { icon: Globe, title: '5 Country Coverage', desc: 'Germany, USA, Canada, UK & Australia — complete guidance for all five destinations.', color: 'var(--mint-500)' },
-  { icon: Map, title: 'Admission Roadmap', desc: 'Step-by-step country-specific application process from research to enrollment.', color: 'var(--blue-500)' },
-  { icon: Calculator, title: 'Cost Estimator', desc: 'Monthly & yearly cost breakdown with live INR conversion for every city.', color: '#f59e0b' },
-  { icon: CreditCard, title: 'Loan Guidance', desc: 'Compare SBI, HDFC Credila, Avanse & more — interest, collateral, and limits.', color: '#8b5cf6' },
-  { icon: Clock, title: 'Timeline Planner', desc: 'Intake-based milestone tracker covering all stages — editable to your dates.', color: 'var(--blue-400)' },
-  { icon: FileCheck, title: 'Document Checklist', desc: 'Interactive country-wise checklist with progress tracking — never miss a doc.', color: 'var(--mint-600)' },
-  { icon: Plane, title: 'Flight Planning', desc: 'Booking window, budget range, and direct links to flight search platforms.', color: '#f97316' },
-  { icon: Lock, title: 'Decision Locking', desc: 'Lock your plan — country, university, intake. All AI guidance aligns to it.', color: 'var(--blue-700)' },
+const featuresList = [
+  {
+    id: 'ai-chat',
+    icon: MessageSquare,
+    title: 'AI Study Advisor',
+    desc: 'Ask questions, review course requirements, and receive immediate structured planning guidance.',
+    link: '/chat',
+    mockup: (
+      <div style={{
+        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
+        padding: 20, fontFamily: 'monospace', fontSize: '0.78rem', color: '#f0f4ff',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)', width: '100%', maxWidth: 360, margin: '0 auto'
+      }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 14, borderBottom: '1px solid rgba(79, 142, 247, 0.12)', paddingBottom: 8 }}>
+          <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
+          <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
+          <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ alignSelf: 'flex-end', background: '#4f8ef7', padding: '8px 12px', borderRadius: '12px 12px 2px 12px', maxWidth: '80%' }}>
+            How do I apply to TU Wien?
+          </div>
+          <div style={{ alignSelf: 'flex-start', background: '#0f2135', border: '1px solid rgba(79,142,247,0.1)', padding: '8px 12px', borderRadius: '12px 12px 12px 2px', maxWidth: '85%' }}>
+            <strong>Studytra AI:</strong><br />
+            1. Language: English or German B2<br />
+            2. App Window: June - Aug<br />
+            3. Apply directly on their portal.<br />
+            ➤ Next Step: Collect B2 certificate.
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'budget',
+    icon: Calculator,
+    title: 'Smart Cost Planner',
+    desc: 'Simulate rent, tuition, and living costs in local currencies with live INR conversions.',
+    link: '/budget',
+    mockup: (
+      <div style={{
+        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
+        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        width: '100%', maxWidth: 360, margin: '0 auto'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+          <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Rent & Utilities</span>
+          <span style={{ fontWeight: 800, fontSize: '0.88rem', color: '#4f8ef7' }}>€550 / mo</span>
+        </div>
+        <div style={{ height: 6, background: 'rgba(79, 142, 247, 0.15)', borderRadius: 99, position: 'relative', marginBottom: 16 }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '55%', background: '#4f8ef7', borderRadius: 99 }} />
+          <div style={{ position: 'absolute', top: -4, left: '55%', width: 14, height: 14, borderRadius: '50%', background: '#4f8ef7', border: '2.5px solid #0d1b2a' }} />
+        </div>
+        <div style={{ borderTop: '1px solid rgba(79, 142, 247, 0.12)', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>Total in INR:</span>
+          <strong style={{ fontSize: '0.88rem', color: '#10b981' }}>≈ ₹49,775 / month</strong>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'sop',
+    icon: BookOpen,
+    title: 'SOP Structure Guide',
+    desc: 'Access copyable templates, section structures, and what admission committees seek.',
+    link: '/tools/sop-guide',
+    mockup: (
+      <div style={{
+        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
+        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.76rem'
+      }}>
+        <div style={{ fontWeight: 700, borderBottom: '1px solid rgba(79, 142, 247, 0.15)', paddingBottom: 6, marginBottom: 10, color: '#4f8ef7' }}>
+          SOP Paragraph Structure
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ background: 'rgba(79, 142, 247, 0.08)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid #4f8ef7' }}>
+            <strong>Para 1: Fit & Focus</strong> — Mention specific labs, professors, or curriculum highlights.
+          </div>
+          <div style={{ background: 'rgba(124, 58, 237, 0.08)', padding: 8, borderRadius: 6, borderLeft: '3.5px solid #7c3aed' }}>
+            <strong>Para 2: Academic Projects</strong> — Describe bachelor thesis details and metrics.
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'loans',
+    icon: Landmark,
+    title: 'Loan Comparison Guide',
+    desc: 'Compare collateral limits, interest rates, and tax benefits from leading Indian banks.',
+    link: '/loans',
+    mockup: (
+      <div style={{
+        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
+        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.74rem'
+      }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid rgba(79, 142, 247, 0.15)', textAlign: 'left', color: '#94a3b8' }}>
+              <th style={{ paddingBottom: 6 }}>Bank</th>
+              <th style={{ paddingBottom: 6 }}>Interest</th>
+              <th style={{ paddingBottom: 6 }}>No-Collateral</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: '1px solid rgba(79, 142, 247, 0.08)' }}>
+              <td style={{ padding: '8px 0', fontWeight: 700 }}>SBI Scholar</td>
+              <td style={{ padding: '8px 0', color: '#34d399' }}>8.05%</td>
+              <td style={{ padding: '8px 0' }}>Up to ₹40L</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '8px 0', fontWeight: 700 }}>HDFC Credila</td>
+              <td style={{ padding: '8px 0', color: '#34d399' }}>9.50%+</td>
+              <td style={{ padding: '8px 0' }}>Flexible</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
+  },
+  {
+    id: 'roadmaps',
+    icon: Calendar,
+    title: 'Preparation Milestones',
+    desc: 'Stay organized with custom timelines covering IELTS prep, APS applications, and visa slots.',
+    link: '/tools/execution-guides',
+    mockup: (
+      <div style={{
+        background: '#0d1b2a', border: '1px solid rgba(79, 142, 247, 0.15)', borderRadius: 16,
+        padding: 20, color: '#f0f4ff', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        width: '100%', maxWidth: 360, margin: '0 auto', fontSize: '0.76rem',
+        display: 'flex', flexDirection: 'column', gap: 10
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
+          <span style={{ textDecoration: 'line-through', color: '#64748b' }}>Take IELTS / GRE</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', color: 'white' }}>✓</span>
+          <span style={{ textDecoration: 'line-through', color: '#64748b' }}>Apply for APS Certificate</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #4f8ef7' }} />
+          <span style={{ fontWeight: 700, color: '#4f8ef7' }}>Secure Blocked Account</span>
+        </div>
+      </div>
+    )
+  }
 ]
 
 export default function Features() {
+  const navigate = useNavigate()
   const ref = useRef(null)
+
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')) })
-    }, { threshold: 0.08 })
-    if (ref.current) obs.observe(ref.current)
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible')
+        }
+      })
+    }, { threshold: 0.1 })
+    
+    const elements = document.querySelectorAll('.feat-row-reveal')
+    elements.forEach(el => obs.observe(el))
+    
     return () => obs.disconnect()
   }, [])
 
   return (
-    <section id="features" ref={ref} style={{ padding: '100px 24px', background: 'var(--white)' }}>
+    <section id="features" style={{
+      padding: '100px 24px',
+      background: '#050914',
+      borderTop: '1px solid rgba(79, 142, 247, 0.12)'
+    }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.7fr', gap: 72, alignItems: 'start' }} className="feat-layout">
-          <div style={{ position: 'sticky', top: 96 }}>
-            <span style={{
-              display: 'inline-block', background: 'var(--blue-50)',
-              color: 'var(--blue-700)', fontSize: '0.72rem', fontWeight: 700,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              padding: '5px 14px', borderRadius: 'var(--r-full)', marginBottom: 16,
-            }} className="reveal">Features</span>
-            <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.5rem)', transitionDelay: '0.1s' }}>
-              Everything You Need.<br />
-              <span style={{ color: 'var(--gray-400)', fontWeight: 400, fontSize: '90%' }}>Nothing You Don't.</span>
-            </h2>
-            <p className="reveal" style={{ color: 'var(--gray-500)', marginTop: 14, lineHeight: 1.75, transitionDelay: '0.15s' }}>
-              Every functional area of study abroad planning — from exams to visa to flight — in one structured platform.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="feat-grid">
-            {features.map(({ icon: Icon, title, desc, color }, i) => (
-              <div key={title} className="reveal" style={{
-                transitionDelay: `${0.05 + i * 0.07}s`,
-                background: 'var(--ivory)',
-                borderRadius: 'var(--r-lg)', padding: '22px 20px',
-                border: '1px solid var(--gray-200)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.background = 'white' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'var(--ivory)' }}
-              >
-                <div style={{
-                  width: 42, height: 42, borderRadius: 'var(--r-sm)',
-                  background: `${color}18`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14,
-                }}>
-                  <Icon size={18} color={color} />
-                </div>
-                <h3 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: 6, color: 'var(--blue-950)' }}>{title}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', lineHeight: 1.65 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
+        
+        {/* Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: 80 }}>
+          <span style={{
+            display: 'inline-block', background: 'rgba(79, 142, 247, 0.1)',
+            border: '1px solid rgba(79, 142, 247, 0.2)', color: '#4f8ef7',
+            fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
+            textTransform: 'uppercase', padding: '5px 14px', borderRadius: 'var(--r-full)',
+            marginBottom: 16
+          }}>Features</span>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.6rem)', fontWeight: 800, color: '#f0f4ff', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            Built for Execution.
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '1rem', maxWidth: 480, margin: '12px auto 0', lineHeight: 1.6 }}>
+            Every tool you need to plan your study abroad journey independently, without hiring consultancies.
+          </p>
         </div>
+
+        {/* Alternating Feature List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 100 }}>
+          {featuresList.map((f, i) => {
+            const Icon = f.icon
+            const isEven = i % 2 === 0
+            return (
+              <div
+                key={f.id}
+                className="feat-row-reveal"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 64,
+                  alignItems: 'center',
+                  opacity: 0,
+                  transform: 'translateY(30px)',
+                  transition: 'opacity 0.8s ease, transform 0.8s ease',
+                }}
+              >
+                {/* Text Content */}
+                <div style={{
+                  order: isEven ? 1 : 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16
+                }}>
+                  <div style={{
+                    width: 46, height: 46, borderRadius: 12,
+                    background: 'rgba(79, 142, 247, 0.1)',
+                    border: '1px solid rgba(79, 142, 247, 0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <Icon size={20} color="#4f8ef7" />
+                  </div>
+                  <h3 style={{
+                    fontSize: '1.4rem', fontWeight: 800, color: '#f0f4ff',
+                    fontFamily: 'Plus Jakarta Sans', margin: 0
+                  }}>{f.title}</h3>
+                  <p style={{
+                    color: '#94a3b8', fontSize: '0.94rem', lineHeight: 1.7, margin: 0
+                  }}>{f.desc}</p>
+                  
+                  <button
+                    onClick={() => navigate(f.link)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      background: 'none', color: '#4f8ef7', border: 'none',
+                      fontSize: '0.88rem', fontWeight: 700, cursor: 'pointer',
+                      padding: '4px 0', width: 'fit-content', transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateX(4px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                  >
+                    Open Tool <ArrowRight size={14} />
+                  </button>
+                </div>
+
+                {/* Mockup Container */}
+                <div style={{
+                  order: isEven ? 2 : 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  background: 'rgba(15, 33, 53, 0.3)',
+                  border: '1px solid rgba(79, 142, 247, 0.1)',
+                  borderRadius: 24,
+                  padding: '48px 24px',
+                  boxShadow: 'inset 0 0 20px rgba(79, 142, 247, 0.05)',
+                  position: 'relative'
+                }}>
+                  {f.mockup}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
       </div>
 
       <style>{`
-        @media (max-width: 900px) {
-          .feat-layout { grid-template-columns: 1fr !important; }
-          .feat-layout > div:first-child { position: static !important; }
+        .feat-row-reveal.visible {
+          opacity: 1 !important;
+          transform: translateY(0) !important;
         }
-        @media (max-width: 540px) { .feat-grid { grid-template-columns: 1fr !important; } }
+        @media (max-width: 860px) {
+          .feat-row-reveal {
+            grid-template-columns: 1fr !important;
+            gap: 36px !important;
+          }
+          .feat-row-reveal > div {
+            order: unset !important;
+          }
+        }
       `}</style>
     </section>
   )

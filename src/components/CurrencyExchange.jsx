@@ -7,6 +7,7 @@ const COUNTRY_CURRENCIES = [
     { country: 'Canada', flag: '🇨🇦', code: 'CAD', symbol: 'CA$', color: '#c2410c', lightColor: '#fff7ed' },
     { country: 'United Kingdom', flag: '🇬🇧', code: 'GBP', symbol: '£', color: '#1d4ed8', lightColor: '#eff6ff' },
     { country: 'Australia', flag: '🇦🇺', code: 'AUD', symbol: 'A$', color: '#065f46', lightColor: '#ecfdf5' },
+    { country: 'Austria', flag: '🇦🇹', code: 'EUR', symbol: '€', color: '#881a1a', lightColor: '#fff5f5' },
 ]
 
 // Fallback rates (INR per 1 unit of foreign currency)

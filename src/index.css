@@ -5,55 +5,56 @@
 }
 
 :root {
-  --blue-950: #07112a;
-  --blue-900: #0d1f4e;
-  --blue-800: #142d6e;
-  --blue-700: #1a3a8c;
-  --blue-600: #1e47a8;
-  --blue-500: #2563c4;
-  --blue-400: #3b7de0;
-  --blue-300: #6aa0f0;
-  --blue-100: #dbeafe;
-  --blue-50:  #eff6ff;
+  --blue-950: #050914;  /* deep navy black */
+  --blue-900: #0d1b2a;  /* dark navy */
+  --blue-800: #0f2135;  /* card navy */
+  --blue-700: #4f8ef7;  /* electric blue */
+  --blue-600: #7c3aed;  /* deep violet */
+  --blue-500: #4f8ef7;  
+  --blue-400: #7c3aed;  
+  --blue-300: #6aa0f0;  
+  --blue-100: rgba(79, 142, 247, 0.15);
+  --blue-5:   rgba(15, 33, 53, 0.6);
 
-  --mint-600: #059669;
+  --mint-600: #10b981;
   --mint-500: #10b981;
   --mint-400: #34d399;
   --mint-200: #a7f3d0;
   --mint-100: #d1fae5;
   --mint-50:  #ecfdf5;
 
-  --ivory:     #fafaf7;
-  --ivory-2:   #f4f3ee;
-  --ivory-3:   #eceae2;
-  --white:     #ffffff;
+  --ivory:     #050914;
+  --ivory-2:   #0d1b2a;
+  --ivory-3:   #0f2135;
+  --white:     rgba(15, 33, 53, 0.65);
 
-  --gray-900: #0f172a;
-  --gray-700: #334155;
-  --gray-500: #64748b;
-  --gray-400: #94a3b8;
-  --gray-200: #e2e8f0;
-  --gray-100: #f1f5f9;
-  --gray-50:  #f8fafc;
+  --gray-900: #f0f4ff;
+  --gray-700: #94a3b8;
+  --gray-500: #94a3b8;
+  --gray-400: #64748b;
+  --gray-200: rgba(79, 142, 247, 0.15);
+  --gray-100: rgba(15, 33, 53, 0.8);
+  --gray-50:  #0d1b2a;
 
-  --primary:        var(--blue-700);
-  --primary-dark:   var(--blue-900);
-  --primary-hover:  var(--blue-800);
-  --primary-light:  var(--blue-50);
-  --accent:         var(--mint-500);
-  --accent-light:   var(--mint-100);
-  --text:           var(--gray-900);
-  --text-muted:     var(--gray-500);
-  --bg:             var(--white);
-  --bg-soft:        var(--ivory);
-  --bg-soft-2:      var(--ivory-2);
-  --border:         var(--gray-200);
+  --primary:        #4f8ef7;
+  --primary-dark:   #7c3aed;
+  --primary-hover:  #6366f1;
+  --primary-light:  rgba(79, 142, 247, 0.12);
+  --accent:         #7c3aed;
+  --accent-light:   rgba(124, 58, 237, 0.12);
+  --text:           #f0f4ff;
+  --text-muted:     #94a3b8;
+  --bg:             #050914;
+  --bg-soft:        #0d1b2a;
+  --bg-soft-2:      #0f2135;
+  --border:         rgba(79, 142, 247, 0.15);
+  --glow:           0 0 40px rgba(79, 142, 247, 0.12);
 
-  --shadow-xs: 0 1px 2px 0 rgba(13,31,78,0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(13,31,78,0.1), 0 1px 2px -1px rgba(13,31,78,0.06);
-  --shadow-md: 0 4px 6px -1px rgba(13,31,78,0.1), 0 2px 4px -2px rgba(13,31,78,0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(13,31,78,0.1), 0 4px 6px -4px rgba(13,31,78,0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(13,31,78,0.15), 0 8px 10px -6px rgba(13,31,78,0.05);
+  --shadow-xs: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-sm: 0 4px 20px rgba(0,0,0,0.6);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.7);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.8);
+  --shadow-xl: 0 20px 64px rgba(0,0,0,0.9);
 
   --r-xs:  6px;
   --r-sm:  10px;
@@ -67,7 +68,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif;
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.65;
@@ -76,13 +77,13 @@ body {
 
 h1,h2,h3,h4,h5 {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  color: var(--blue-950);
+  color: #f0f4ff;
   line-height: 1.12;
   letter-spacing: -0.025em;
 }
 
 a { text-decoration: none; color: inherit; }
-button { cursor: pointer; border: none; outline: none; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+button { cursor: pointer; border: none; outline: none; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
 img { max-width: 100%; display: block; }
 
 .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
@@ -93,18 +94,18 @@ img { max-width: 100%; display: block; }
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--gray-100); }
-::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 99px; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050914; }
+::-webkit-scrollbar-thumb { background: rgba(79, 142, 247, 0.25); border-radius: 99px; }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
-  70%  { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
-  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(79,142,247,0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(79,142,247,0); }
+  100% { box-shadow: 0 0 0 0 rgba(79,142,247,0); }
 }
 @keyframes float {
   0%,100% { transform: translateY(0px); }
@@ -113,25 +114,19 @@ img { max-width: 100%; display: block; }
 
 /* 3D Glassmorphism Utilities */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 
-    0 30px 60px rgba(0, 0, 0, 0.12),
-    0 10px 20px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 0 20px rgba(255, 255, 255, 0.3);
-  border-radius: var(--r-2xl);
+  background: rgba(15, 33, 53, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(79, 142, 247, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 
 .glass-panel-dark {
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(79, 142, 247, 0.15);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 2px 20px rgba(255, 255, 255, 0.05);
   border-radius: 24px;
 }
 
@@ -198,7 +193,7 @@ img { max-width: 100%; display: block; }
 
 /* ── Button System ── */
 .btn-primary {
-  background: linear-gradient(135deg, #1a3a8c 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -207,17 +202,17 @@ img { max-width: 100%; display: block; }
   font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 14px rgba(79, 142, 247, 0.25);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 6px 20px rgba(79, 142, 247, 0.35);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--blue-700, #1d4ed8);
-  border: 1.5px solid var(--blue-100, #dbeafe);
+  color: #4f8ef7;
+  border: 1.5px solid rgba(79, 142, 247, 0.3);
   border-radius: 10px;
   padding: 11px 24px;
   font-weight: 600;
@@ -226,34 +221,38 @@ img { max-width: 100%; display: block; }
   transition: all 0.2s ease;
 }
 .btn-secondary:hover {
-  background: var(--blue-50, #eff6ff);
-  border-color: var(--blue-400, #3b7de0);
+  background: rgba(79, 142, 247, 0.08);
+  border-color: #4f8ef7;
 }
 
 /* ── Card System ── */
 .card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-radius: 16px;
+  background: rgba(15, 33, 53, 0.6);
+  border: 1px solid rgba(79, 142, 247, 0.15);
 }
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(26, 58, 140, 0.10);
+  box-shadow: 0 8px 32px rgba(79, 142, 247, 0.15);
 }
 
 /* ── Form Elements ── */
 input, select, textarea {
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid rgba(79, 142, 247, 0.15);
+  background: rgba(15, 33, 53, 0.8);
+  color: #f0f4ff;
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.9rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  border-color: #4f8ef7;
+  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
 }
 
 /* ── Section Container ── */

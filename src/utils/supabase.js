@@ -90,3 +90,126 @@ export function subscribeToSessionCount(callback) {
   // Return unsubscribe function
   return () => supabase.removeChannel(channel)
 }
+
+// ── Chat Session Helpers ───────────────────────────────────────────────────
+
+// Create a new chat session for a user
+export async function createChatSession(userId, title, messages) {
+  try {
+    const { data, error } = await supabase
+      .from('chat_history')
+      .insert({
+        user_id: userId,
+        title: title,
+        messages: messages,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating chat session in Supabase:', error.message)
+      return null
+    }
+    return data
+  } catch (err) {
+    console.error('Connection error creating chat session:', err)
+    return null
+  }
+}
+
+// Update an existing chat session
+export async function updateChatSession(userId, sessionId, title, messages) {
+  try {
+    const { data, error } = await supabase
+      .from('chat_history')
+      .update({
+        title: title,
+        messages: messages,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', sessionId)
+      .eq('user_id', userId)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error updating chat session in Supabase:', error.message)
+      return null
+    }
+    return data
+  } catch (err) {
+    console.error('Connection error updating chat session:', err)
+    return null
+  }
+}
+
+// Fetch all chat sessions for a user
+export async function fetchChatSessions(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('chat_history')
+      .select('id, title, messages, updated_at')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching chat sessions from Supabase:', error.message)
+      return []
+    }
+    return data || []
+  } catch (err) {
+    console.error('Connection error fetching chat sessions:', err)
+    return []
+  }
+}
+
+// Delete a chat session
+export async function deleteChatSession(userId, sessionId) {
+  try {
+    const { error } = await supabase
+      .from('chat_history')
+      .delete()
+      .eq('id', sessionId)
+      .eq('user_id', userId)
+
+    if (error) {
+      console.error('Error deleting chat session in Supabase:', error.message)
+      return false
+    }
+    return true
+  } catch (err) {
+    console.error('Connection error deleting chat session:', err)
+    return false
+  }
+}
+
+// Save student profile directly to profiles table for authenticated users
+export async function saveUserProfile(userId, profile) {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({
+        id: userId,
+        full_name: profile.fullName,
+        age: parseInt(profile.age) || null,
+        current_level: profile.currentLevel,
+        current_university: profile.currentUniversity,
+        target_degree: profile.targetDegree,
+        target_course: profile.targetCourse,
+        dream_country: profile.dreamCountry,
+        updated_at: new Date().toISOString()
+      })
+
+    if (error) {
+      console.error('Error saving user profile to Supabase (profiles table):', error.message)
+      return false
+    }
+    console.log('✅ User profile saved to Supabase profiles table')
+    return true
+  } catch (err) {
+    console.error('Connection error saving user profile:', err)
+    return false
+  }
+}

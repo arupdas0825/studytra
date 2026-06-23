@@ -285,6 +285,60 @@ After my studies, I intend to [career plan — be honest about whether staying i
 
 [Your Full Name]`,
   },
+  {
+    id: 'austria',
+    name: 'Austria',
+    flag: '🇦🇹',
+    color: '#881a1a',
+    localName: 'Motivationsschreiben (Motivation Letter)',
+    wordLimit: '500–800 words (1-2 pages)',
+    tone: 'Structured, professional, academic-focused',
+    whatTheyWant: [
+      'Academic rationale for selecting Austria and specific technical universities (e.g. TU Wien)',
+      'Detailed description of relevant research work, projects, and academic background',
+      'Explanation of why the Austrian research landscape fits your future plans',
+      'Career prospects in Europe (e.g. Red-White-Red Card pathway)',
+      'Strong focus on livability, safety, and cultural integration in Vienna/Austria',
+    ],
+    doNotInclude: [
+      'Exaggerated claims or childhood stories',
+      'Informal phrasing or personal hardship details that are irrelevant to academic fit',
+      'Generic content not tailored to the specific program/professors',
+    ],
+    structure: [
+      { para: 'Introduction', content: 'Academic goals and program choice' },
+      { para: 'Academic Fit', content: 'Relevance of undergraduate studies, thesis, and research projects' },
+      { para: 'Why Austria', content: 'Vienna livability, TU Wien research focus, European career prospects' },
+      { para: 'Career Goals', content: 'Long-term path and integration with Red-White-Red Card pathway' },
+    ],
+    commonMistakes: [
+      'Not showing specific fit with Austrian technical universities',
+      'Lacking clear, academic motivation (Austrian institutions value high academic rigor)',
+      'Ignoring European career landscape and integration opportunities',
+    ],
+    starterTemplate: `[Your Full Name]
+[Date]
+
+Admissions Committee
+[Program Name]
+[University Name], Austria
+
+Dear Admissions Committee,
+
+[INTRODUCTION & PROGRAM FIT]
+I am writing to express my strong interest in the [Program Name] at [University Name], Austria. With a solid foundation in [Your Field], this program aligns perfectly with my goal to specialize in [Sub-field]. Austria’s renown for technical innovation and high academic standards makes it my primary study destination.
+
+[ACADEMIC BACKGROUND & PROJECTS]
+During my Bachelor’s degree in [Your Field] from [Your University in India], I developed a deep interest in [specific topic]. My final year thesis/project, titled "[Project Title]", involved [explain briefly what you did and the outcomes]. This experience equipped me with practical skills in [Skill 1] and [Skill 2].
+
+[WHY AUSTRIA & THIS UNIVERSITY]
+Austria offers an exceptional research environment, particularly at technical universities like [TU Wien / TU Graz], which combine academic excellence with high quality of life. The city of Vienna’s top-ranked livability and the university’s links to the European tech ecosystem provide the ideal launchpad for my career.
+
+[CAREER ASPIRATIONS]
+Upon graduation, I aspire to work as a [Target Role] in Europe. The Red-White-Red Card pathway presents a structured transition to professional life, enabling me to contribute to Austria’s innovative industries.
+
+[Your Full Name]`,
+  },
 ]
 
 const UNIVERSAL_TIPS = [
@@ -353,7 +407,7 @@ export default function SOPGuidePage() {
             background: '#D1FAF8', borderRadius: 100, padding: '5px 14px', marginBottom: 16,
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#0EA5A0', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#0EA5A0' }}>VERIFIED FORMATS · 5 COUNTRIES</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#0EA5A0' }}>VERIFIED FORMATS · 6 COUNTRIES</span>
           </div>
           <h1 style={{
             fontSize: 'clamp(26px, 4vw, 44px)', fontWeight: 900,

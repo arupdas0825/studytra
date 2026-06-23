@@ -8,6 +8,7 @@ const COUNTRIES = [
     { id: 'ca', flag: '🇨🇦', name: 'Canada', currency: 'CAD', symbol: 'CA$', color: '#c2410c', inrRate: 61.8 },
     { id: 'uk', flag: '🇬🇧', name: 'United Kingdom', currency: 'GBP', symbol: '£', color: '#1d4ed8', inrRate: 105.4 },
     { id: 'au', flag: '🇦🇺', name: 'Australia', currency: 'AUD', symbol: 'A$', color: '#065f46', inrRate: 54.6 },
+    { id: 'at', flag: '🇦🇹', name: 'Austria', currency: 'EUR', symbol: '€', color: '#881a1a', inrRate: 90.5 },
 ]
 
 const DEFAULTS = {
@@ -16,6 +17,7 @@ const DEFAULTS = {
     ca: { tuition: 2000, rent: 1100, food: 350, transport: 100, entertainment: 200, income: 4000 },
     uk: { tuition: 1800, rent: 1000, food: 320, transport: 110, entertainment: 220, income: 3800 },
     au: { tuition: 2200, rent: 1150, food: 380, transport: 130, entertainment: 240, income: 4500 },
+    at: { tuition: 200, rent: 550, food: 250, transport: 30, entertainment: 150, income: 2200 },
 }
 
 const CATEGORIES = [
@@ -63,7 +65,7 @@ function Slider({ value, min = 0, max, step = 10, color, onChange }) {
 }
 
 /* ── Compact exchange rate ticker ──────────────────────────────────────────── */
-function RateTicker({ rates }) {
+function RateTicker({ rates, lastUpdated }) {
     const [open, setOpen] = useState(false)
     const active = COUNTRIES.filter(c => rates[c.currency])
     if (!active.length) return null
@@ -95,9 +97,9 @@ function RateTicker({ rates }) {
             {open && (
                 <div style={{
                     position: 'absolute', top: 'calc(100% + 10px)', right: 0,
-                    background: 'white', borderRadius: 16,
-                    boxShadow: '0 12px 48px rgba(0,0,0,0.18)',
-                    border: '1px solid var(--gray-100)',
+                    background: 'rgba(15, 33, 53, 0.95)', backdropFilter: 'blur(16px)', borderRadius: 16,
+                    boxShadow: 'var(--shadow-lg)',
+                    border: '1px solid rgba(79, 142, 247, 0.15)',
                     padding: '14px 16px', minWidth: 220,
                     animation: 'fadeUp 0.18s ease', zIndex: 9999,
                 }}>
@@ -108,17 +110,17 @@ function RateTicker({ rates }) {
                         <div key={c.id} style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                             padding: '7px 0',
-                            borderBottom: '1px solid var(--gray-100)',
+                            borderBottom: '1px solid rgba(79, 142, 247, 0.1)',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <span className="emoji-flag" style={{ fontSize: '1.1rem' }}>{c.flag}</span>
                                 <div>
-                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--blue-950)' }}>{c.currency}</div>
+                                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f0f4ff' }}>{c.currency}</div>
                                     <div style={{ fontSize: '0.65rem', color: 'var(--gray-400)' }}>{c.name}</div>
                                 </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: c.color }}>
+                                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: c.color || '#4f8ef7' }}>
                                     ₹{(rates[c.currency] || c.inrRate).toFixed(2)}
                                 </div>
                                 <div style={{ fontSize: '0.62rem', color: 'var(--gray-400)' }}>per 1 {c.currency}</div>
@@ -126,7 +128,7 @@ function RateTicker({ rates }) {
                         </div>
                     ))}
                     <div style={{ fontSize: '0.62rem', color: 'var(--gray-400)', textAlign: 'center', marginTop: 8 }}>
-                        Live · ExchangeRate-API
+                        Live · ExchangeRate-API {lastUpdated && `· Updated: ${lastUpdated}`}
                     </div>
                 </div>
             )}
@@ -141,6 +143,7 @@ export default function BudgetPlanner() {
     const [budget, setBudget] = useState(DEFAULTS.de)
     const [rates, setRates] = useState({})
     const [rateLoading, setRateLoading] = useState(true)
+    const [lastUpdated, setLastUpdated] = useState('')
 
     const country = COUNTRIES.find(c => c.id === countryId)
     const inrRate = rates[country.currency] || country.inrRate
@@ -155,6 +158,7 @@ export default function BudgetPlanner() {
                     r[c.currency] = data.rates[c.currency] ? +(1 / data.rates[c.currency]).toFixed(4) : c.inrRate
                 })
                 setRates(r)
+                setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }))
             })
             .catch(() => { })
             .finally(() => setRateLoading(false))
@@ -204,7 +208,7 @@ export default function BudgetPlanner() {
                     </div>
 
                     {/* Right: live rate ticker */}
-                    <RateTicker rates={rates} />
+                    <RateTicker rates={rates} lastUpdated={lastUpdated} />
                 </div>
             </div>
 
@@ -347,6 +351,11 @@ export default function BudgetPlanner() {
                             </div>
                             <div style={{ opacity: 0.65, fontSize: '0.82rem', marginTop: 4, marginBottom: 16 }}>
                                 ≈ {inSurplus ? '+' : '−'}₹{Math.abs(Math.round(savings * inrRate)).toLocaleString('en-IN')} / month
+                                {lastUpdated && (
+                                    <span style={{ display: 'block', fontSize: '0.65rem', opacity: 0.8, marginTop: 4 }}>
+                                        Rates Last Updated: {lastUpdated}
+                                    </span>
+                                )}
                             </div>
 
                             {/* Savings rate bar */}

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react'
+import { supabase } from '../utils/supabase'
 
 const navLinks = [
-  { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Countries', href: '#countries' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Countries', href: '/#countries' },
   {
     label: 'Tools',
     href: '#',
@@ -12,7 +13,7 @@ const navLinks = [
       {
         label: '📋 Student Execution Guides',
         href: '/tools/execution-guides',
-        desc: 'Pre-departure + post-arrival roadmaps for 5 countries',
+        desc: 'Pre-departure + post-arrival roadmaps for 6 countries',
       },
       {
         label: '💰 Cost Estimator',
@@ -20,18 +21,19 @@ const navLinks = [
         desc: 'Set your budget & calculate savings',
       },
       { label: '🏦 Loan Guide', href: '/loans', desc: 'Compare SBI, HDFC Credila & more' },
-      { label: '📄 CV Formats', href: '/tools/cv-formats', desc: 'Academic CVs for Germany, UK, Canada, Australia' },
+      { label: '📄 CV Formats', href: '/tools/cv-formats', desc: 'Academic CVs for Germany, Austria, UK, Canada, Australia' },
       { label: '📋 Resume Formats', href: '/tools/resume-formats', desc: 'ATS resumes for USA, Canada, UK, Australia' },
       { label: '✍️ SOP Guide', href: '/tools/sop-guide', desc: 'Country-specific SOP formats & writing guide' },
     ],
   },
-  { label: 'Reviews', href: '#reviews' },
+  { label: 'Reviews', href: '/#reviews' },
 ]
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [user, setUser] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -39,6 +41,37 @@ export default function Navbar() {
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard'
+        }
+      })
+    } catch (err) {
+      console.error('Google Sign-In Error:', err)
+    }
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    navigate('/')
+  }
 
   return (
     <nav
@@ -49,11 +82,11 @@ export default function Navbar() {
         right: 0,
         zIndex: 1000,
         background: scrolled
-          ? 'rgba(255,255,255,0.97)'
-          : 'rgba(255,255,255,0.85)',
+          ? 'rgba(5, 9, 20, 0.85)'
+          : 'rgba(5, 9, 20, 0.65)',
         backdropFilter: 'blur(16px)',
         borderBottom: scrolled
-          ? '1px solid var(--gray-200)'
+          ? '1px solid rgba(79, 142, 247, 0.15)'
           : '1px solid transparent',
         transition: 'all 0.3s ease',
       }}
@@ -84,7 +117,7 @@ export default function Navbar() {
               width: 40, 
               height: 40, 
               borderRadius: 12, 
-              boxShadow: '0 4px 14px rgba(26,58,140,0.35)', 
+              boxShadow: '0 4px 14px rgba(79,142,247,0.3)', 
               flexShrink: 0,
               objectFit: 'contain'
             }} 
@@ -94,7 +127,7 @@ export default function Navbar() {
               fontFamily: 'Plus Jakarta Sans, sans-serif',
               fontWeight: 800,
               fontSize: '1.25rem',
-              color: 'var(--blue-900)',
+              color: '#f0f4ff',
               letterSpacing: '-0.03em',
             }}
           >
@@ -121,14 +154,12 @@ export default function Navbar() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 4,
-                    background: dropdownOpen ? 'var(--blue-50)' : 'none',
-                    color: dropdownOpen
-                      ? 'var(--blue-700)'
-                      : 'var(--gray-500)',
+                    background: dropdownOpen ? 'rgba(79, 142, 247, 0.1)' : 'none',
+                    color: dropdownOpen ? '#4f8ef7' : '#94a3b8',
                     padding: '8px 14px',
                     borderRadius: 'var(--r-sm)',
                     fontSize: '0.88rem',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     transition: 'all 0.2s',
                     cursor: 'pointer',
                     border: 'none',
@@ -138,9 +169,7 @@ export default function Navbar() {
                   <ChevronDown
                     size={13}
                     style={{
-                      transform: dropdownOpen
-                        ? 'rotate(180deg)'
-                        : 'none',
+                      transform: dropdownOpen ? 'rotate(180deg)' : 'none',
                       transition: 'transform 0.2s',
                     }}
                   />
@@ -160,10 +189,10 @@ export default function Navbar() {
                   >
                     <div
                       style={{
-                        background: 'white',
+                        background: '#0f2135',
                         borderRadius: 'var(--r-lg)',
                         boxShadow: 'var(--shadow-xl)',
-                        border: '1px solid var(--gray-200)',
+                        border: '1px solid rgba(79, 142, 247, 0.15)',
                         padding: 8,
                         animation: 'fadeUp 0.18s ease',
                       }}
@@ -179,19 +208,14 @@ export default function Navbar() {
                             transition: 'background 0.15s',
                             textDecoration: 'none',
                           }}
-                          onMouseEnter={e =>
-                            (e.currentTarget.style.background =
-                              'var(--blue-50)')
-                          }
-                          onMouseLeave={e =>
-                            (e.currentTarget.style.background = 'none')
-                          }
+                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                         >
                           <div
                             style={{
                               fontSize: '0.88rem',
                               fontWeight: 700,
-                              color: 'var(--blue-950)',
+                              color: '#f0f4ff',
                               marginBottom: 2,
                             }}
                           >
@@ -200,7 +224,7 @@ export default function Navbar() {
                           <div
                             style={{
                               fontSize: '0.75rem',
-                              color: 'var(--gray-400)',
+                              color: '#94a3b8',
                             }}
                           >
                             {item.desc}
@@ -219,17 +243,17 @@ export default function Navbar() {
                   padding: '8px 14px',
                   borderRadius: 'var(--r-sm)',
                   fontSize: '0.88rem',
-                  fontWeight: 500,
-                  color: 'var(--gray-500)',
+                  fontWeight: 600,
+                  color: '#94a3b8',
                   transition: 'all 0.2s',
                   textDecoration: 'none',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--blue-700)'
-                  e.currentTarget.style.background = 'var(--blue-50)'
+                  e.currentTarget.style.color = '#4f8ef7'
+                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--gray-500)'
+                  e.currentTarget.style.color = '#94a3b8'
                   e.currentTarget.style.background = 'none'
                 }}
               >
@@ -237,38 +261,109 @@ export default function Navbar() {
               </a>
             )
           )}
+          {user && (
+            <a
+              href="/dashboard"
+              style={{
+                padding: '8px 14px',
+                borderRadius: 'var(--r-sm)',
+                fontSize: '0.88rem',
+                fontWeight: 600,
+                color: '#94a3b8',
+                transition: 'all 0.2s',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = '#4f8ef7'
+                e.currentTarget.style.background = 'rgba(79, 142, 247, 0.08)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = '#94a3b8'
+                e.currentTarget.style.background = 'none'
+              }}
+            >
+              Dashboard
+            </a>
+          )}
         </div>
 
-        {/* ── CTA ── */}
+        {/* ── CTA / Auth ── */}
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button
-            onClick={() => navigate('/chat')}
-            style={{
-              background:
-                'linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%)',
-              color: 'white',
-              padding: '10px 22px',
-              borderRadius: 'var(--r-sm)',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              boxShadow: '0 4px 16px rgba(26,58,140,0.25)',
-              transition: 'all 0.2s',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-1px)'
-              e.currentTarget.style.boxShadow =
-                '0 6px 20px rgba(26,58,140,0.35)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'none'
-              e.currentTarget.style.boxShadow =
-                '0 4px 16px rgba(26,58,140,0.25)'
-            }}
-          >
-            Start Planning →
-          </button>
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {/* User Avatar Circle */}
+              <div
+                onClick={() => navigate('/dashboard')}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#f0f4ff',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 10px rgba(79,142,247,0.3)',
+                }}
+              >
+                {user.email?.charAt(0).toUpperCase()}
+              </div>
+
+              {/* Sign Out Button */}
+              <button
+                onClick={handleSignOut}
+                className="desk-nav"
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444',
+                  padding: '8px 16px',
+                  borderRadius: 'var(--r-sm)',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+              >
+                <LogOut size={13} />
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleGoogleSignIn}
+              style={{
+                background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: 'var(--r-sm)',
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                boxShadow: '0 4px 16px rgba(79,142,247,0.25)',
+                transition: 'all 0.2s',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(79,142,247,0.35)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'none'
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(79,142,247,0.25)'
+              }}
+            >
+              Sign In
+            </button>
+          )}
 
           <button
             className="burger"
@@ -276,9 +371,9 @@ export default function Navbar() {
             style={{ background: 'none', padding: 6, display: 'none', border: 'none', cursor: 'pointer' }}
           >
             {menuOpen ? (
-              <X size={22} color="var(--blue-900)" />
+              <X size={22} color="#f0f4ff" />
             ) : (
-              <Menu size={22} color="var(--blue-900)" />
+              <Menu size={22} color="#f0f4ff" />
             )}
           </button>
         </div>
@@ -288,8 +383,8 @@ export default function Navbar() {
       {menuOpen && (
         <div
           style={{
-            background: 'white',
-            borderTop: '1px solid var(--gray-200)',
+            background: '#0d1b2a',
+            borderTop: '1px solid rgba(79, 142, 247, 0.15)',
             padding: '16px 24px 24px',
             display: 'flex',
             flexDirection: 'column',
@@ -303,7 +398,7 @@ export default function Navbar() {
                   style={{
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    color: 'var(--gray-400)',
+                    color: '#64748b',
                     padding: '12px 8px 6px',
                     textTransform: 'uppercase',
                     letterSpacing: '0.08em',
@@ -321,7 +416,7 @@ export default function Navbar() {
                       padding: '10px 8px',
                       fontSize: '0.92rem',
                       fontWeight: 600,
-                      color: 'var(--blue-900)',
+                      color: '#f0f4ff',
                       textDecoration: 'none',
                     }}
                   >
@@ -339,8 +434,8 @@ export default function Navbar() {
                   padding: '12px 8px',
                   fontSize: '1rem',
                   fontWeight: 600,
-                  color: 'var(--blue-900)',
-                  borderBottom: '1px solid var(--gray-100)',
+                  color: '#f0f4ff',
+                  borderBottom: '1px solid rgba(79, 142, 247, 0.08)',
                   textDecoration: 'none',
                 }}
               >
@@ -348,25 +443,65 @@ export default function Navbar() {
               </a>
             )
           )}
-          <button
-            onClick={() => {
-              setMenuOpen(false)
-              navigate('/chat')
-            }}
-            style={{
-              marginTop: 12,
-              background: 'var(--blue-700)',
-              color: 'white',
-              padding: 13,
-              borderRadius: 'var(--r-sm)',
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Start Planning →
-          </button>
+          {user ? (
+            <>
+              <a
+                href="/dashboard"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  display: 'block',
+                  padding: '12px 8px',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: '#4f8ef7',
+                  borderBottom: '1px solid rgba(79, 142, 247, 0.08)',
+                  textDecoration: 'none',
+                }}
+              >
+                Dashboard
+              </a>
+              <button
+                onClick={() => {
+                  setMenuOpen(false)
+                  handleSignOut()
+                }}
+                style={{
+                  marginTop: 12,
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444',
+                  padding: 13,
+                  borderRadius: 'var(--r-sm)',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  cursor: 'pointer',
+                  width: '100%',
+                }}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => {
+                setMenuOpen(false)
+                handleGoogleSignIn()
+              }}
+              style={{
+                marginTop: 12,
+                background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+                color: 'white',
+                padding: 13,
+                borderRadius: 'var(--r-sm)',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Sign In with Google
+            </button>
+          )}
         </div>
       )}
 

@@ -1,175 +1,374 @@
-import { ArrowLeft, GraduationCap, Lock, MapPin, BookOpen, Calendar, CheckCircle2, Circle } from 'lucide-react'
+import { ArrowLeft, GraduationCap, Lock, MapPin, BookOpen, Calendar, CheckCircle2, Circle, MessageSquare, Plus, Trash2, Sparkles, User } from 'lucide-react'
 
-const countryFlags = { Germany: '🇩🇪', 'United States': '🇺🇸', Canada: '🇨🇦', USA: '🇺🇸' }
-const countryColors = { Germany: '#1a3260', 'United States': '#8B1A1A', Canada: '#7B2D00', USA: '#8B1A1A' }
+const countryFlags = { Germany: '🇩🇪', 'United States': '🇺🇸', Canada: '🇨🇦', USA: '🇺🇸', UK: '🇬🇧', 'United Kingdom': '🇬🇧', Australia: '🇦🇺', Austria: '🇦🇹' }
+const countryColors = { 
+  Germany: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', 
+  'United States': 'linear-gradient(135deg, #7f1d1d 0%, #ef4444 100%)', 
+  USA: 'linear-gradient(135deg, #7f1d1d 0%, #ef4444 100%)', 
+  Canada: 'linear-gradient(135deg, #b91c1c 0%, #f87171 100%)',
+  UK: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+  'United Kingdom': 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+  Australia: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
+  Austria: 'linear-gradient(135deg, #991b1b 0%, #dc2626 100%)'
+}
 
-const roadmapStages = [
-  'Decision Locked',
-  'Exam Preparation',
-  'Applications',
-  'Financial Planning',
-  'Visa Process',
-  'Pre-Departure',
+const quickChips = [
+  { label: 'Visa Requirements', prompt: 'What are the visa requirements and process for my target country?' },
+  { label: 'SOP Writing Help', prompt: 'Can you help me outline or structure my Statement of Purpose (SOP)?' },
+  { label: 'Top Universities', prompt: 'Which are the best universities for my target course and degree?' },
+  { label: 'Blocked Account / Finance', prompt: 'What are the financial proof requirements (like blocked accounts or loans)?' }
 ]
 
-export default function ChatSidebar({ lockedPlan, onBack }) {
-  const color = lockedPlan ? (countryColors[lockedPlan.country] || 'var(--navy)') : 'var(--navy)'
-  const flag = lockedPlan ? (countryFlags[lockedPlan.country] || '🌍') : null
+export default function ChatSidebar({
+  lockedPlan,
+  onBack,
+  profile,
+  user,
+  chatSessions = [],
+  activeSessionId,
+  onSelectSession,
+  onNewChat,
+  onDeleteSession,
+  onQuickAction
+}) {
+  const flag = lockedPlan ? (countryFlags[lockedPlan.country] || '🌍') : (profile ? (countryFlags[profile.dreamCountry] || '🌍') : '🌍')
+  const bgGradient = lockedPlan ? (countryColors[lockedPlan.country] || 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)') : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
 
   return (
     <div style={{
-      width: 280, flexShrink: 0,
-      background: 'white',
-      borderRight: '1px solid var(--gray-200)',
+      width: 300, flexShrink: 0,
+      background: 'rgba(15, 33, 53, 0.65)',
+      backdropFilter: 'blur(16px)',
+      borderRight: '1px solid rgba(79, 142, 247, 0.15)',
       display: 'flex', flexDirection: 'column',
       height: '100vh',
       position: 'sticky', top: 0,
+      color: '#f0f4ff'
     }} className="chat-sidebar">
 
-      {/* Top Logo */}
+      {/* Top Header Logo */}
       <div style={{
         padding: '20px 20px 16px',
-        borderBottom: '1px solid var(--gray-100)',
+        borderBottom: '1px solid rgba(79, 142, 247, 0.12)',
       }}>
         <button onClick={onBack} style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          background: 'none', color: 'var(--gray-600)',
-          fontSize: '0.82rem', fontWeight: 500,
-          marginBottom: 20,
+          background: 'none', color: '#94a3b8',
+          fontSize: '0.82rem', fontWeight: 600,
+          marginBottom: 16,
           transition: 'color 0.2s',
+          cursor: 'pointer'
         }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--navy)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--gray-600)'}
+          onMouseEnter={e => e.currentTarget.style.color = '#4f8ef7'}
+          onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
         >
           <ArrowLeft size={15} /> Back to Home
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            width: 34, height: 34, borderRadius: 9,
-            background: 'var(--navy)',
+            width: 36, height: 36, borderRadius: 10,
+            background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(79, 142, 247, 0.3)'
           }}>
-            <GraduationCap size={17} color="white" />
+            <GraduationCap size={18} color="white" />
           </div>
           <span style={{
-            fontFamily: 'Fraunces, serif', fontWeight: 700,
-            fontSize: '1.15rem', color: 'var(--navy)',
-          }}>Studytra</span>
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 800,
+            fontSize: '1.2rem', color: '#f0f4ff',
+          }}>Studytra AI</span>
         </div>
       </div>
 
-      {/* Plan Card */}
-      <div style={{ padding: '16px 20px', flex: 1, overflowY: 'auto' }}>
-        {lockedPlan ? (
-          <>
-            {/* Locked plan */}
-            <div style={{
-              background: color,
-              borderRadius: 16, padding: '16px',
-              marginBottom: 20,
-            }}>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: 12,
-              }}>
-                <span style={{
-                  fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em',
-                  color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase',
-                }}>Plan Locked</span>
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  background: 'rgba(255,255,255,0.15)', borderRadius: 100,
-                  padding: '2px 8px',
-                }}>
-                  <Lock size={10} color="rgba(255,255,255,0.8)" />
-                  <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>LOCKED</span>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ fontSize: '1.4rem' }}>{flag}</span>
-                <span style={{
-                  fontFamily: 'Fraunces, serif', fontWeight: 600,
-                  fontSize: '1rem', color: 'white',
-                }}>{lockedPlan.country}</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <BookOpen size={12} color="rgba(255,255,255,0.6)" />
-                  <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)' }}>{lockedPlan.degree}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Calendar size={12} color="rgba(255,255,255,0.6)" />
-                  <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)' }}>{lockedPlan.intake}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Roadmap stages */}
-            <div>
-              <div style={{
-                fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em',
-                color: 'var(--gray-400)', textTransform: 'uppercase', marginBottom: 12,
-              }}>Roadmap Stages</div>
-
-              {roadmapStages.map((stage, i) => (
-                <div key={stage} style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '8px 0',
-                  borderBottom: i < roadmapStages.length - 1 ? '1px solid var(--gray-100)' : 'none',
-                }}>
-                  {i === 0 ? (
-                    <CheckCircle2 size={15} color={color} />
-                  ) : (
-                    <Circle size={15} color="var(--gray-200)" />
-                  )}
-                  <span style={{
-                    fontSize: '0.82rem',
-                    fontWeight: i === 0 ? 600 : 400,
-                    color: i === 0 ? 'var(--navy)' : 'var(--gray-400)',
-                  }}>{stage}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          /* Pre-lock state */
+      <div style={{ padding: '16px', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 20 }} className="custom-scroll">
+        
+        {/* Profile Card / Plan Card */}
+        {profile ? (
           <div style={{
-            background: 'var(--gray-100)', borderRadius: 16,
-            padding: '20px 16px', textAlign: 'center',
+            background: bgGradient,
+            borderRadius: 16, padding: '16px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+            border: '1px solid rgba(255,255,255,0.08)'
           }}>
             <div style={{
-              width: 44, height: 44, borderRadius: '50%',
-              background: 'white', margin: '0 auto 12px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: 'var(--shadow-sm)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: 12,
             }}>
-              <MapPin size={18} color="var(--accent)" />
+              <span style={{
+                fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase',
+              }}>{lockedPlan ? 'Plan Locked' : 'Draft Profile'}</span>
+              
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                background: 'rgba(255,255,255,0.15)', borderRadius: 100,
+                padding: '2px 8px',
+              }}>
+                {lockedPlan ? <Lock size={10} color="white" /> : <Sparkles size={10} color="white" />}
+                <span style={{ fontSize: '0.6rem', color: 'white', fontWeight: 700 }}>
+                  {lockedPlan ? 'LOCKED' : 'ACTIVE'}
+                </span>
+              </div>
             </div>
-            <div style={{
-              fontFamily: 'Fraunces, serif', fontWeight: 600,
-              fontSize: '0.95rem', color: 'var(--navy)', marginBottom: 6,
-            }}>No Plan Yet</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--gray-600)', lineHeight: 1.6 }}>
-              Answer the AI's questions to lock your study plan.
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <span style={{ fontSize: '1.3rem' }}>{flag}</span>
+              <span style={{
+                fontFamily: 'Plus Jakarta Sans', fontWeight: 700,
+                fontSize: '0.98rem', color: 'white',
+              }}>{lockedPlan ? lockedPlan.country : (profile.dreamCountry || 'Not Selected')}</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'rgba(255,255,255,0.9)' }}>
+                <User size={12} color="rgba(255,255,255,0.7)" />
+                <span style={{ fontWeight: 600 }}>{profile.fullName}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)' }}>
+                <BookOpen size={12} color="rgba(255,255,255,0.7)" />
+                <span>{lockedPlan ? lockedPlan.degree : profile.targetDegree} · {profile.targetCourse}</span>
+              </div>
+              {lockedPlan && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)' }}>
+                  <Calendar size={12} color="rgba(255,255,255,0.7)" />
+                  <span>{lockedPlan.intake}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            background: 'rgba(15, 33, 53, 0.4)', borderRadius: 16,
+            padding: '16px', textAlign: 'center', border: '1px solid rgba(79, 142, 247, 0.1)'
+          }}>
+            <MapPin size={18} color="#4f8ef7" style={{ marginBottom: 8 }} />
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f0f4ff', marginBottom: 4 }}>No Profile Linked</div>
+            <p style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.5 }}>
+              Onboarding form was bypassed. Complete it to set profile.
             </p>
           </div>
         )}
+
+        {/* Quick Help Chips */}
+        <div>
+          <div style={{
+            fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
+            color: '#64748b', textTransform: 'uppercase', marginBottom: 10,
+          }}>Quick Actions</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {quickChips.map(chip => (
+              <button
+                key={chip.label}
+                onClick={() => onQuickAction && onQuickAction(chip.prompt)}
+                style={{
+                  background: 'rgba(79, 142, 247, 0.05)',
+                  border: '1px solid rgba(79, 142, 247, 0.12)',
+                  borderRadius: 10,
+                  padding: '9px 12px',
+                  textAlign: 'left',
+                  fontSize: '0.76rem',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.12)';
+                  e.currentTarget.style.borderColor = '#4f8ef7';
+                  e.currentTarget.style.color = '#f0f4ff';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(79, 142, 247, 0.05)';
+                  e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.12)';
+                  e.currentTarget.style.color = '#94a3b8';
+                }}
+              >
+                <Sparkles size={11} color="#4f8ef7" style={{ flexShrink: 0 }} />
+                <span>{chip.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat History Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 180 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: 10, borderTop: '1px solid rgba(79, 142, 247, 0.08)', paddingTop: 14
+          }}>
+            <span style={{
+              fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.08em',
+              color: '#64748b', textTransform: 'uppercase'
+            }}>Chat History</span>
+
+            <button
+              onClick={onNewChat}
+              style={{
+                background: 'rgba(79, 142, 247, 0.1)',
+                border: '1px solid rgba(79, 142, 247, 0.2)',
+                borderRadius: 6,
+                padding: '3px 8px',
+                fontSize: '0.68rem',
+                color: '#4f8ef7',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(79, 142, 247, 0.2)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)'}
+            >
+              <Plus size={11} /> New
+            </button>
+          </div>
+
+          {user ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+              {chatSessions.length === 0 ? (
+                <div style={{ padding: '16px 8px', textAlign: 'center', color: '#64748b', fontSize: '0.72rem' }}>
+                  No saved conversations.
+                </div>
+              ) : (
+                chatSessions.map(session => {
+                  const isActive = session.id === activeSessionId
+                  return (
+                    <div
+                      key={session.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: isActive ? 'rgba(79, 142, 247, 0.15)' : 'transparent',
+                        borderRadius: 10,
+                        padding: '2px 8px',
+                        border: `1px solid ${isActive ? 'rgba(79, 142, 247, 0.25)' : 'transparent'}`,
+                        transition: 'all 0.15s'
+                      }}
+                    >
+                      <button
+                        onClick={() => onSelectSession(session.id)}
+                        style={{
+                          flex: 1,
+                          textAlign: 'left',
+                          background: 'none',
+                          color: isActive ? '#f0f4ff' : '#94a3b8',
+                          fontSize: '0.76rem',
+                          fontWeight: isActive ? 700 : 500,
+                          padding: '8px 4px',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6
+                        }}
+                      >
+                        <MessageSquare size={12} color={isActive ? '#4f8ef7' : '#64748b'} />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{session.title || 'Untitled Chat'}</span>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (confirm('Delete this chat history?')) {
+                            onDeleteSession(session.id)
+                          }
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#64748b',
+                          cursor: 'pointer',
+                          padding: '6px',
+                          borderRadius: 6,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'color 0.15s, background 0.15s'
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#64748b'; e.currentTarget.style.background = 'none' }}
+                      >
+                        <Trash2 size={11} />
+                      </button>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          ) : (
+            <div style={{
+              background: 'rgba(79, 142, 247, 0.04)',
+              borderRadius: 12,
+              padding: '12px',
+              textAlign: 'center',
+              border: '1px dashed rgba(79, 142, 247, 0.15)',
+              marginTop: 4
+            }}>
+              <p style={{ fontSize: '0.7rem', color: '#64748b', lineHeight: 1.5 }}>
+                Sign in to save chat sessions and access them later from your sidebar!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Bottom hint */}
+      {/* Bottom User Profile Section */}
       <div style={{
-        padding: '12px 20px',
-        borderTop: '1px solid var(--gray-100)',
+        padding: '14px 20px',
+        borderTop: '1px solid rgba(79, 142, 247, 0.12)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'rgba(5, 9, 20, 0.4)'
       }}>
-        <p style={{ fontSize: '0.72rem', color: 'var(--gray-400)', lineHeight: 1.5 }}>
-          🔒 Your plan stays locked once confirmed. Ask Studytra AI anything about your journey.
-        </p>
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '0.78rem', fontWeight: 700, color: 'white', flexShrink: 0
+            }}>
+              {user.email?.charAt(0).toUpperCase()}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#f0f4ff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user.user_metadata?.full_name || user.email?.split('@')[0]}
+              </div>
+              <div style={{ fontSize: '0.64rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user.email}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p style={{ fontSize: '0.7rem', color: '#64748b', lineHeight: 1.45, margin: 0 }}>
+            ⚡ Powered by Gemini 2.0 Pro
+          </p>
+        )}
       </div>
 
       <style>{`
+        .custom-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+          background: rgba(79, 142, 247, 0.12);
+          border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(79, 142, 247, 0.25);
+        }
         @media (max-width: 768px) {
           .chat-sidebar { display: none !important; }
         }

@@ -1,0 +1,39 @@
+- [x] Critical Bug Fixes
+  - [x] Bug Fix 1: vercel.json rewrite rules
+  - [x] Bug Fix 2: Relocate API folder to root
+  - [x] Bug Fix 3: vite.config.js proxy nesting
+- [x] Add Austria Destination
+  - [x] 2a: countries.js constants
+  - [x] 2b: studytraKnowledge.js AI knowledge base
+  - [x] 2c: OnboardingForm Austria option
+  - [x] 2d: BudgetPlanner EUR + Austria costs
+  - [x] 2e: SOPGuidePage Austria guide
+  - [x] 2f: Integrate Austria in Hero, Countries list, CurrencyExchange, CVFormatPage, ResumeFormatPage
+  - [x] 2g: Copy generated austria.png image to public/images/
+- [x] Build Dashboard Component & Tabs
+  - [x] 3a: Create Dashboard.jsx shell and protected routing
+  - [x] 3b: Create Sidebar.jsx layout
+  - [x] 3c: Create Overview.jsx metrics & countdowns
+  - [x] 3d: Create Timeline.jsx vertical list
+  - [x] 3e: Create DocumentChecklist.jsx check state
+  - [x] 3f: Create VisaGuide.jsx visa instructions
+- [x] UI Redesign (Premium Dark Theme)
+  - [x] index.css base styles & custom typography
+  - [x] Navbar redesign + auth state
+  - [x] Hero redesign with mesh backgrounds & tags
+  - [x] Countries grid hover cards
+  - [x] Features grid list
+  - [x] StatsSection counters
+  - [x] Reviews dynamic list & form modal
+  - [x] ChatPage sidebar, markdown bubbles, input bar
+  - [x] Footer redesign & CTA banner
+- [x] Supabase Auth & Storage Integrations
+  - [x] auth.signInWithOAuth for Google Login
+  - [x] Sync session state & profiles upserts
+  - [x] user_progress persistence
+  - [x] chat_history persistence
+- [x] Optimization & Verification
+  - [x] SEO meta tags in index.html
+  - [x] Loading skeletons & errors retry state
+  - [x] Mobile responsiveness audit
+  - [x] Compile check (npm run build)

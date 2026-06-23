@@ -99,7 +99,29 @@ const COUNTRIES = [
       'Contact', 'Career Objective', 'Education',
       'Work Experience', 'Skills', 'Projects', 'References',
     ],
-    keyMistake: 'Not mentioning Australian work rights on student visa',
+  },
+  {
+    id: 'austria',
+    name: 'Austria',
+    flag: '🇦🇹',
+    color: '#881a1a',
+    formatName: 'Europass CV / Austrian Academic CV',
+    type: 'Academic CV (not resume)',
+    length: '2 pages standard',
+    keyRequirements: [
+      'Photo mandatory (professional, top-right corner)',
+      'Date of birth and nationality standard to include',
+      'Europass format highly recommended',
+      'Language skills with CEFR levels (German B2 or English B2)',
+      'Brief academic summary or research focus',
+      'List all publications, theses, or academic projects',
+    ],
+    atsNotes: 'Austrian universities manually review applications. Clean formatting, clarity, and certified achievements are key.',
+    sectionsOrder: [
+      'Personal Data', 'Academic Education', 'Research & Projects',
+      'Work Experience', 'Languages', 'Skills & Interests',
+    ],
+    keyMistake: 'Excluding a photo or leaving out language proficiency levels',
   },
 ]
 
@@ -150,7 +172,7 @@ export default function CVFormatPage() {
             background: '#EBF2FF', borderRadius: 100, padding: '5px 14px', marginBottom: 16,
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#1A56DB', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#1A56DB' }}>ACADEMIC CV · 4 COUNTRIES</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#1A56DB' }}>ACADEMIC CV · 5 COUNTRIES</span>
           </div>
           <h1 style={{
             fontSize: 'clamp(26px, 4vw, 44px)', fontWeight: 900,

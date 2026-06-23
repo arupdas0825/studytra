@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Users, Globe, Star, Zap } from 'lucide-react'
 import { fetchLiveSessionCount, subscribeToSessionCount } from '../utils/supabase'
 
-// Still export for backward compatibility
 export function getAIUsageCount() {
   return parseInt(localStorage.getItem('studytra_ai_sessions') || '10247')
 }
@@ -33,26 +32,27 @@ function StatItem({ icon: Icon, value, suffix, label, color, animate, isLive }) 
 
   return (
     <div style={{
-      textAlign: 'center', padding: '28px 16px',
+      textAlign: 'center', padding: '36px 20px',
       transition: 'transform 0.2s',
     }}
       onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
       onMouseLeave={e => e.currentTarget.style.transform = 'none'}
     >
       <div style={{
-        width: 50, height: 50, borderRadius: 'var(--r-md)',
-        background: `${color}15`,
+        width: 50, height: 50, borderRadius: 12,
+        background: 'rgba(79, 142, 247, 0.1)',
+        border: '1px solid rgba(79, 142, 247, 0.15)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         margin: '0 auto 16px',
       }}>
-        <Icon size={22} color={color} />
+        <Icon size={22} color="#4f8ef7" />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
         <div style={{
           fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontWeight: 800, fontSize: '2.2rem',
-          color: 'var(--blue-950)', lineHeight: 1,
+          color: '#f0f4ff', lineHeight: 1,
         }}>
           {typeof displayVal === 'number'
             ? displayVal.toLocaleString('en-IN')
@@ -61,19 +61,20 @@ function StatItem({ icon: Icon, value, suffix, label, color, animate, isLive }) 
         <div style={{
           fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontWeight: 800, fontSize: '1.3rem',
-          color: 'var(--blue-950)',
+          color: '#f0f4ff',
         }}>{suffix}</div>
         {isLive && (
           <div style={{
             marginLeft: 6,
-            width: 7, height: 7, borderRadius: '50%',
-            background: 'var(--mint-500)',
+            width: 8, height: 8, borderRadius: '50%',
+            background: '#10b981',
             animation: 'livepin 2s infinite',
+            boxShadow: '0 0 8px #10b981'
           }} />
         )}
       </div>
 
-      <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)', fontWeight: 500, marginTop: 6 }}>
+      <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600, marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {label}
       </div>
     </div>
@@ -85,14 +86,12 @@ export default function StatsSection() {
   const [animate, setAnimate] = useState(false)
   const [liveCount, setLiveCount] = useState(getAIUsageCount())
 
-  // ── Fetch real count from Supabase on mount ──
   useEffect(() => {
     fetchLiveSessionCount().then(count => {
       setLiveCount(count)
       localStorage.setItem('studytra_ai_sessions', String(count))
     })
 
-    // ── Real-time: re-fetch whenever a new student row is inserted ──
     const unsubscribe = subscribeToSessionCount((newCount) => {
       setLiveCount(newCount)
       localStorage.setItem('studytra_ai_sessions', String(newCount))
@@ -101,7 +100,6 @@ export default function StatsSection() {
     return unsubscribe
   }, [])
 
-  // ── Trigger count-up animation when section scrolls into view ──
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => { if (entries[0].isIntersecting) setAnimate(true) },
@@ -114,30 +112,34 @@ export default function StatsSection() {
   const stats = [
     {
       icon: Users, value: liveCount, suffix: '+', label: 'AI Sessions Started',
-      color: 'var(--blue-700)', isLive: true,
+      color: '#4f8ef7', isLive: true,
     },
-    { icon: Globe, value: 5, suffix: '', label: 'Countries Covered', color: 'var(--mint-500)' },
+    { icon: Globe, value: 6, suffix: '', label: 'Countries Covered', color: '#7c3aed' },
     { icon: Star, value: 4.9, suffix: '/5', label: 'Average Rating', color: '#f59e0b' },
-    { icon: Zap, value: 100, suffix: '% Free', label: 'No Consultancy Fees', color: 'var(--blue-400)' },
+    { icon: Zap, value: 100, suffix: '% Free', label: 'No Consultancy Fees', color: '#10b981' },
   ]
 
   return (
     <section ref={ref} style={{
-      background: 'var(--ivory)',
-      borderTop: '1px solid var(--gray-200)',
-      borderBottom: '1px solid var(--gray-200)',
+      background: '#0d1b2a',
+      borderTop: '1px solid rgba(79, 142, 247, 0.15)',
+      borderBottom: '1px solid rgba(79, 142, 247, 0.15)',
     }}>
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }} className="stats-grid">
           {stats.map((s, i) => (
-            <div key={i} style={{ borderRight: i < 3 ? '1px solid var(--gray-200)' : 'none' }}>
+            <div key={i} style={{ borderRight: i < 3 ? '1px solid rgba(79, 142, 247, 0.15)' : 'none' }} className="stats-item-wrapper">
               <StatItem {...s} animate={animate} />
             </div>
           ))}
         </div>
       </div>
       <style>{`
-        @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2,1fr) !important; } }
+        @media (max-width: 768px) {
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .stats-item-wrapper { border-right: none !important; border-bottom: 1px solid rgba(79, 142, 247, 0.15); }
+          .stats-item-wrapper:nth-last-child(-n+2) { border-bottom: none !important; }
+        }
         @keyframes livepin { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.4); } }
       `}</style>
     </section>
