@@ -124,17 +124,17 @@ export default function Navbar() {
       <nav
         style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
+          top: 16,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'calc(100% - 32px)',
+          maxWidth: 1200,
           zIndex: 1000,
-          background: scrolled
-            ? 'var(--navbar-bg)'
-            : 'var(--glass-bg)',
-          backdropFilter: 'blur(16px)',
-          borderBottom: scrolled
-            ? '1px solid var(--navbar-border)'
-            : '1px solid transparent',
+          background: 'var(--navbar-bg)',
+          backdropFilter: 'var(--glass-blur)',
+          border: '1px solid var(--navbar-border)',
+          borderRadius: '999px',
+          boxShadow: 'var(--shadow-card)',
           transition: 'all 0.3s ease',
         }}
       >

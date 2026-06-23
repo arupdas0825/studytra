@@ -4,7 +4,7 @@ const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("studytra-theme") || "dark";
+    return localStorage.getItem("studytra-theme") || "light";
   });
 
   useEffect(() => {

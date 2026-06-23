@@ -255,7 +255,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('fullName', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.fullName ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.fullName ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     />
                     {errors.fullName && <span style={styles.errorText}>{errors.fullName}</span>}
@@ -271,7 +271,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('age', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.age ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.age ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     />
                     {errors.age && <span style={styles.errorText}>{errors.age}</span>}
@@ -358,7 +358,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('institution', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.institution ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.institution ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     />
                     {errors.institution && <span style={styles.errorText}>{errors.institution}</span>}
@@ -381,7 +381,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                         style={{
                           ...styles.input,
                           paddingRight: 35,
-                          borderColor: errors.fieldOfStudy ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                          borderColor: errors.fieldOfStudy ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                         }}
                       />
                       <Search size={15} style={styles.searchIcon} />
@@ -446,7 +446,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('cgpa', e.target.value)}
                       style={{
                         ...styles.input,
-                        borderColor: errors.cgpa ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.cgpa ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     />
                     {errors.cgpa && <span style={styles.errorText}>{errors.cgpa}</span>}
@@ -503,7 +503,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('targetDegree', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.targetDegree ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.targetDegree ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     >
                       <option value="">Select Degree</option>
@@ -522,7 +522,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('targetIntake', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.targetIntake ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.targetIntake ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     >
                       <option value="">Select Intake</option>
@@ -541,7 +541,7 @@ export default function PremiumOnboardingModal({ isOpen, isDismissible = true, o
                       onChange={(e) => updateField('englishLevel', e.target.value)}
                       style={{
                         ...styles.select,
-                        borderColor: errors.englishLevel ? '#ef4444' : 'var(--border-color, rgba(255,255,255,0.1))'
+                        borderColor: errors.englishLevel ? 'var(--accent-error, #ef4444)' : 'var(--border-default)'
                       }}
                     >
                       <option value="">Select Level</option>
@@ -640,7 +640,7 @@ const styles = {
     position: 'fixed',
     inset: 0,
     zIndex: 9999,
-    background: 'var(--modal-overlay, rgba(4, 8, 15, 0.88))',
+    background: 'var(--bg-overlay)',
     backdropFilter: 'blur(20px)',
     display: 'flex',
     alignItems: 'center',
@@ -653,10 +653,10 @@ const styles = {
     position: 'absolute',
     width: 400,
     height: 400,
-    background: '#2563eb',
+    background: 'var(--accent-primary)',
     borderRadius: '50%',
     filter: 'blur(160px)',
-    opacity: 0.12,
+    opacity: 0.08,
     top: '10%',
     left: '15%',
     pointerEvents: 'none'
@@ -668,7 +668,7 @@ const styles = {
     background: '#7c3aed',
     borderRadius: '50%',
     filter: 'blur(160px)',
-    opacity: 0.1,
+    opacity: 0.06,
     bottom: '10%',
     right: '15%',
     pointerEvents: 'none'
@@ -676,11 +676,11 @@ const styles = {
   modalCard: {
     width: '100%',
     maxWidth: 680,
-    background: 'var(--card-bg, #0b1528)',
-    border: '1px solid var(--border-color, rgba(59, 130, 246, 0.2))',
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border-default)',
     borderRadius: 24,
     padding: '32px 32px 28px',
-    boxShadow: '0 25px 60px rgba(0,0,0,0.7), inset 0 2px 22px rgba(255,255,255,0.03)',
+    boxShadow: 'var(--shadow-card)',
     position: 'relative',
     zIndex: 10,
     display: 'flex',
@@ -694,7 +694,7 @@ const styles = {
     alignItems: 'center',
     marginBottom: 20,
     paddingBottom: 16,
-    borderBottom: '1px solid rgba(255,255,255,0.06)'
+    borderBottom: '1px solid var(--border-default)'
   },
   logoGroup: {
     display: 'flex',
@@ -707,18 +707,18 @@ const styles = {
   logoText: {
     fontSize: '0.9rem',
     fontWeight: 800,
-    color: 'var(--text-primary, #ffffff)',
+    color: 'var(--text-primary)',
     letterSpacing: '0.5px'
   },
   logoSubtext: {
     fontSize: '0.7rem',
-    color: '#94a3b8'
+    color: 'var(--text-secondary)'
   },
   logoutBtn: {
     background: 'rgba(239, 68, 68, 0.08)',
     border: '1px solid rgba(239, 68, 68, 0.2)',
     borderRadius: 12,
-    color: '#f87171',
+    color: 'var(--accent-error, #ef4444)',
     padding: '8px 14px',
     fontSize: '0.8rem',
     fontWeight: 600,
@@ -735,21 +735,21 @@ const styles = {
   title: {
     fontSize: '1.5rem',
     fontWeight: 800,
-    color: 'var(--text-primary, #ffffff)',
+    color: 'var(--text-primary)',
     margin: '0 0 6px',
     fontFamily: 'Playfair Display, serif'
   },
   subtitle: {
     fontSize: '0.9rem',
     fontWeight: 700,
-    color: '#2563eb',
+    color: 'var(--accent-primary)',
     margin: '0 0 8px',
     textTransform: 'uppercase',
     letterSpacing: '0.5px'
   },
   subtext: {
     fontSize: '0.8rem',
-    color: '#94a3b8',
+    color: 'var(--text-secondary)',
     lineHeight: 1.4,
     maxWidth: 480,
     margin: '0 auto'
@@ -757,14 +757,14 @@ const styles = {
   progressBarBg: {
     width: '100%',
     height: 6,
-    background: 'rgba(255,255,255,0.06)',
+    background: 'var(--border-default)',
     borderRadius: 10,
     marginBottom: 24,
     overflow: 'hidden'
   },
   progressBarActive: {
     height: '100%',
-    background: 'linear-gradient(90deg, #2563eb 0%, #7c3aed 100%)',
+    background: 'var(--gradient-main)',
     borderRadius: 10
   },
   scrollContainer: {
@@ -788,7 +788,7 @@ const styles = {
     color: 'var(--text-primary)',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
-    borderLeft: '3px solid #2563eb',
+    borderLeft: '3px solid var(--accent-primary)',
     paddingLeft: 8,
     marginBottom: 4
   },
@@ -816,29 +816,24 @@ const styles = {
   label: {
     fontSize: '0.8rem',
     fontWeight: 700,
-    color: '#94a3b8'
+    color: 'var(--text-secondary)'
   },
   input: {
-    background: 'var(--input-bg, rgba(255,255,255,0.03))',
-    border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
+    background: 'var(--bg-input)',
+    border: '1px solid var(--border-default)',
     borderRadius: 12,
     padding: '12px 16px',
-    color: 'var(--text-primary, #ffffff)',
+    color: 'var(--text-primary)',
     fontSize: '0.9rem',
     outline: 'none',
-    transition: 'all 0.2s',
-    '&:focus': {
-      borderColor: '#2563eb',
-      boxShadow: '0 0 10px rgba(37, 99, 235, 0.15)',
-      background: 'rgba(255,255,255,0.05)'
-    }
+    transition: 'all 0.2s'
   },
   select: {
-    background: 'var(--input-bg, rgba(255,255,255,0.03))',
-    border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
+    background: 'var(--bg-input)',
+    border: '1px solid var(--border-default)',
     borderRadius: 12,
     padding: '12px 16px',
-    color: 'var(--text-primary, #ffffff)',
+    color: 'var(--text-primary)',
     fontSize: '0.9rem',
     outline: 'none',
     cursor: 'pointer',
@@ -854,16 +849,16 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-default)',
     borderRadius: 12,
     padding: '12px 16px',
     cursor: 'pointer',
     transition: 'all 0.2s'
   },
   genderCardSelected: {
-    border: '1px solid #2563eb',
-    background: 'rgba(37, 99, 235, 0.1)'
+    border: '1px solid var(--accent-primary)',
+    background: 'rgba(37, 99, 235, 0.08)'
   },
   hiddenRadio: {
     display: 'none'
@@ -872,7 +867,7 @@ const styles = {
     width: 16,
     height: 16,
     borderRadius: '50%',
-    border: '2px solid #64748b',
+    border: '2px solid var(--text-secondary)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -882,7 +877,7 @@ const styles = {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    background: '#2563eb'
+    background: 'var(--accent-primary)'
   },
   eduCardGrid: {
     display: 'flex',
@@ -893,16 +888,16 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 14,
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid rgba(255,255,255,0.06)',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-default)',
     borderRadius: 14,
     padding: '12px 16px',
     cursor: 'pointer',
     transition: 'all 0.2s'
   },
   eduCardSelected: {
-    border: '1px solid #2563eb',
-    background: 'rgba(37, 99, 235, 0.1)'
+    border: '1px solid var(--accent-primary)',
+    background: 'rgba(37, 99, 235, 0.08)'
   },
   eduCardCheck: {
     flexShrink: 0
@@ -911,7 +906,7 @@ const styles = {
     width: 18,
     height: 18,
     borderRadius: '50%',
-    background: '#2563eb',
+    background: 'var(--accent-primary)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -920,7 +915,7 @@ const styles = {
     width: 18,
     height: 18,
     borderRadius: '50%',
-    border: '2px solid rgba(255,255,255,0.15)'
+    border: '2px solid var(--border-default)'
   },
   eduCardContent: {
     display: 'flex',
@@ -934,7 +929,7 @@ const styles = {
   },
   eduCardDesc: {
     fontSize: '0.72rem',
-    color: '#64748b'
+    color: 'var(--text-secondary)'
   },
   searchableWrapper: {
     position: 'relative'
@@ -944,7 +939,7 @@ const styles = {
     right: 14,
     top: '50%',
     transform: 'translateY(-50%)',
-    color: '#64748b',
+    color: 'var(--text-secondary)',
     pointerEvents: 'none'
   },
   dropdownList: {
@@ -952,14 +947,14 @@ const styles = {
     top: '100%',
     left: 0,
     right: 0,
-    background: 'var(--dropdown-bg, #0f1c30)',
-    border: '1px solid var(--border-color, rgba(59, 130, 246, 0.25))',
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border-default)',
     borderRadius: 12,
     marginTop: 6,
     maxHeight: 200,
     overflowY: 'auto',
     zIndex: 99999,
-    boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+    boxShadow: 'var(--shadow-card)'
   },
   dropdownItem: {
     padding: '10px 16px',
@@ -967,11 +962,11 @@ const styles = {
     color: 'var(--text-primary)',
     cursor: 'pointer',
     transition: 'all 0.15s',
-    borderBottom: '1px solid rgba(255,255,255,0.03)'
+    borderBottom: '1px solid var(--border-default)'
   },
   errorText: {
     fontSize: '0.72rem',
-    color: '#ef4444',
+    color: 'var(--accent-error, #ef4444)',
     marginTop: 2
   },
   countryGrid: {
@@ -988,8 +983,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: 8,
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid rgba(255,255,255,0.06)',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-default)',
     borderRadius: 14,
     padding: '16px 10px',
     cursor: 'pointer',
@@ -997,8 +992,8 @@ const styles = {
     transition: 'all 0.2s'
   },
   countryCardSelected: {
-    border: '1px solid #2563eb',
-    background: 'rgba(37, 99, 235, 0.1)',
+    border: '1px solid var(--accent-primary)',
+    background: 'rgba(37, 99, 235, 0.08)',
     boxShadow: '0 4px 15px rgba(37,99,235,0.1)'
   },
   countryFlag: {
@@ -1016,7 +1011,7 @@ const styles = {
     width: 16,
     height: 16,
     borderRadius: '50%',
-    background: '#2563eb',
+    background: 'var(--accent-primary)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -1035,8 +1030,8 @@ const styles = {
     gap: 6,
     padding: '12px 14px',
     borderRadius: 12,
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-default)',
     cursor: 'pointer',
     fontSize: '0.85rem',
     fontWeight: 700,
@@ -1044,9 +1039,9 @@ const styles = {
     transition: 'all 0.2s'
   },
   budgetChipSelected: {
-    background: '#2563eb',
-    borderColor: '#2563eb',
-    color: '#ffffff'
+    background: 'var(--accent-primary)',
+    borderColor: 'var(--accent-primary)',
+    color: 'var(--text-inverse, #ffffff)'
   },
   trustBanner: {
     display: 'flex',
@@ -1062,14 +1057,14 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     gap: 14,
-    borderTop: '1px solid rgba(255,255,255,0.06)',
+    borderTop: '1px solid var(--border-default)',
     paddingTop: 20
   },
   backBtn: {
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-default)',
     borderRadius: 12,
-    color: '#94a3b8',
+    color: 'var(--text-secondary)',
     padding: '12px 24px',
     fontSize: '0.9rem',
     fontWeight: 700,
@@ -1081,7 +1076,7 @@ const styles = {
   },
   nextBtn: {
     marginLeft: 'auto',
-    background: '#2563eb',
+    background: 'var(--accent-primary)',
     border: 'none',
     borderRadius: 12,
     color: '#ffffff',
@@ -1093,11 +1088,11 @@ const styles = {
     gap: 8,
     cursor: 'pointer',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(37,99,235,0.3)'
+    boxShadow: 'var(--shadow-button)'
   },
   submitBtn: {
     marginLeft: 'auto',
-    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+    background: 'var(--gradient-main)',
     border: 'none',
     borderRadius: 12,
     color: '#ffffff',
@@ -1109,6 +1104,6 @@ const styles = {
     gap: 8,
     cursor: 'pointer',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 14px rgba(37,99,235,0.3)'
+    boxShadow: 'var(--shadow-button)'
   }
 }
