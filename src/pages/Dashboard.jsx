@@ -9,6 +9,7 @@ import Timeline from '../components/dashboard/Timeline'
 import DocumentChecklist from '../components/dashboard/DocumentChecklist'
 import VisaGuide from '../components/dashboard/VisaGuide'
 import { Landmark, ArrowLeft, RefreshCw } from 'lucide-react'
+import PremiumOnboardingModal from '../components/auth/PremiumOnboardingModal'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -19,16 +20,30 @@ export default function Dashboard() {
   const [completedDocs, setCompletedDocs] = useState([])
   const [syncing, setSyncing] = useState(false)
 
-  // Map camelCase studyPlan to snake_case profile expected by dashboard components
-  const profile = userProfile?.studyPlan ? {
-    full_name: userProfile.studyPlan.fullName,
-    dream_country: userProfile.studyPlan.dreamCountry,
-    target_degree: userProfile.studyPlan.targetDegree,
-    target_course: userProfile.studyPlan.targetCourse,
-    current_level: userProfile.studyPlan.currentLevel,
-    current_university: userProfile.studyPlan.currentUniversity,
-    age: userProfile.studyPlan.age
-  } : null;
+  // Map onboarding fields (flat schema or legacy studyPlan) to snake_case profile expected by dashboard components
+  const profile = (userProfile?.onboardingCompleted || userProfile?.onboardingComplete) ? {
+    full_name: userProfile.fullName || userProfile.displayName || user?.displayName || 'Student',
+    dream_country: userProfile.targetCountry || 'Germany',
+    target_degree: userProfile.targetDegree || "Master's",
+    target_course: userProfile.fieldOfStudy || 'Computer Science',
+    current_level: userProfile.educationLevel || 'Undergraduate',
+    current_university: userProfile.institution || '',
+    age: userProfile.age || '',
+    gender: userProfile.gender,
+    semester: userProfile.semester,
+    cgpa: userProfile.cgpa,
+    targetIntake: userProfile.targetIntake,
+    englishLevel: userProfile.englishLevel,
+    budgetRange: userProfile.budgetRange
+  } : (userProfile?.studyPlan ? {
+    full_name: userProfile.studyPlan.fullName || userProfile.displayName || user?.displayName || 'Student',
+    dream_country: userProfile.studyPlan.dreamCountry || 'Germany',
+    target_degree: userProfile.studyPlan.targetDegree || "Master's",
+    target_course: userProfile.studyPlan.targetCourse || 'Computer Science',
+    current_level: userProfile.studyPlan.currentLevel || 'Undergraduate',
+    current_university: userProfile.studyPlan.currentUniversity || '',
+    age: userProfile.studyPlan.age || ''
+  } : null);
 
   const loading = authLoading || progressLoading;
 
@@ -248,46 +263,21 @@ export default function Dashboard() {
   // If user is authenticated but profile is not completed
   if (!profile) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'var(--bg-primary)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        color: 'var(--text-primary)',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          maxWidth: 420,
-          background: 'rgba(15, 33, 53, 0.6)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(79, 142, 247, 0.15)',
-          borderRadius: 20,
-          padding: 32,
-        }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>🤔</div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: 8 }}>Profile Incomplete</h2>
-          <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: 24 }}>
-            We couldn't find a study plan for your account. Please complete our quick onboarding questions to create your planner!
-          </p>
-          <button
-            onClick={() => navigate('/chat')}
-            style={{
-              padding: '12px 24px',
-              borderRadius: 10,
-              background: 'linear-gradient(135deg, #4f8ef7 0%, #7c3aed 100%)',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              cursor: 'pointer',
-              border: 'none'
-            }}
-          >
-            Start Onboarding Form
-          </button>
+      <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative', overflow: 'hidden' }}>
+        {/* Render a blurred mock dashboard layout for premium visual feel */}
+        <div style={{ filter: 'blur(12px)', pointerEvents: 'none', display: 'flex', minHeight: '100vh', opacity: 0.35 }}>
+          <Sidebar activeTab="overview" setActiveTab={() => {}} user={user} profile={null} onSignOut={() => {}} />
+          <main style={{ flex: 1, padding: '32px 36px 80px' }} />
         </div>
+        
+        {/* Locked Premium Onboarding Modal */}
+        <PremiumOnboardingModal 
+          isOpen={true} 
+          isDismissible={false} 
+          onClose={() => {
+            // Modal saves data to Firestore, updating userProfile state which triggers re-render
+          }} 
+        />
       </div>
     )
   }

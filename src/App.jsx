@@ -1,6 +1,7 @@
+import React, { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import LandingPage from './pages/LandingPage'
@@ -15,50 +16,76 @@ import CVFormatPage from './pages/CVFormatPage'
 import SOPGuidePage from './pages/SOPGuidePage'
 import ResumeFormatPage from './pages/ResumeFormatPage'
 import CountriesPage from './pages/CountriesPage'
+import PremiumOnboardingModal from './components/auth/PremiumOnboardingModal'
+
+function AppContent() {
+  const { user, userProfile } = useAuth()
+  const [onboardingOpen, setOnboardingOpen] = useState(false)
+
+  useEffect(() => {
+    if (user && userProfile && !userProfile.onboardingCompleted && !userProfile.onboardingComplete) {
+      setOnboardingOpen(true)
+    } else {
+      setOnboardingOpen(false)
+    }
+  }, [user, userProfile])
+
+  return (
+    <>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/"                       element={<LandingPage />} />
+        <Route path="/app"                    element={<HomePage />} />
+        
+        {/* Compatibility routes */}
+        <Route path="/home"                   element={<HomePage />} />
+        <Route path="/countries"              element={<CountriesPage />} />
+        <Route path="/budget"                 element={<BudgetPlanner />} />
+        
+        {/* Protected routes */}
+        <Route path="/chat"                   element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+        <Route path="/dashboard"              element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        
+        <Route path="/roadmap"                element={<RoadmapPage />} />
+        
+        {/* SOP guidance routes */}
+        <Route path="/sop"                    element={<SOPGuidePage />} />
+        <Route path="/tools/sop-guide"        element={<SOPGuidePage />} />
+        
+        {/* Loan guidance routes */}
+        <Route path="/loan"                   element={<LoanGuidance />} />
+        <Route path="/loans"                  element={<LoanGuidance />} />
+        
+        {/* Tools routes */}
+        <Route path="/tools/execution-guides" element={<CountryRoadmapsSection />} />
+        <Route path="/tools/cv-formats"       element={<CVFormatPage />} />
+        <Route path="/tools/resume-formats"   element={<ResumeFormatPage />} />
+        
+        <Route path="*" element={
+          <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <h2>404 - Page Not Found</h2>
+            <a href="/" style={{ color: 'var(--accent-primary)', marginTop: 12, fontWeight: 700 }}>Go Home</a>
+          </div>
+        } />
+      </Routes>
+      
+      <PremiumOnboardingModal 
+        isOpen={onboardingOpen} 
+        isDismissible={false} 
+        onClose={() => setOnboardingOpen(false)} 
+      />
+    </>
+  )
+}
 
 export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
-          <Routes>
-          {/* Public routes */}
-          <Route path="/"                       element={<LandingPage />} />
-          <Route path="/app"                    element={<HomePage />} />
-          
-          {/* Compatibility routes */}
-          <Route path="/home"                   element={<HomePage />} />
-          <Route path="/countries"              element={<CountriesPage />} />
-          <Route path="/budget"                 element={<BudgetPlanner />} />
-          
-          {/* Protected routes */}
-          <Route path="/chat"                   element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
-          <Route path="/dashboard"              element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          
-          <Route path="/roadmap"                element={<RoadmapPage />} />
-          
-          {/* SOP guidance routes */}
-          <Route path="/sop"                    element={<SOPGuidePage />} />
-          <Route path="/tools/sop-guide"        element={<SOPGuidePage />} />
-          
-          {/* Loan guidance routes */}
-          <Route path="/loan"                   element={<LoanGuidance />} />
-          <Route path="/loans"                  element={<LoanGuidance />} />
-          
-          {/* Tools routes */}
-          <Route path="/tools/execution-guides" element={<CountryRoadmapsSection />} />
-          <Route path="/tools/cv-formats"       element={<CVFormatPage />} />
-          <Route path="/tools/resume-formats"   element={<ResumeFormatPage />} />
-          
-          <Route path="*" element={
-            <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-              <h2>404 - Page Not Found</h2>
-              <a href="/" style={{ color: 'var(--accent-primary)', marginTop: 12, fontWeight: 700 }}>Go Home</a>
-            </div>
-          } />
-        </Routes>
-      </ToastProvider>
-    </AuthProvider>
-  </ThemeProvider>
+          <AppContent />
+        </ToastProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

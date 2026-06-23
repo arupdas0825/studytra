@@ -13,7 +13,13 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// Safety check for Firebase API Key
+if (!firebaseConfig.apiKey) {
+  console.error("Firebase API Key is missing! Check your environment variables (.env).");
+}
+
 const app = initializeApp(firebaseConfig);
+console.log("Firebase initialized");
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
@@ -29,6 +35,7 @@ isSupported().then(supported => {
 
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
+console.log("Auth provider initialized");
 
 export const appleProvider = new OAuthProvider("apple.com");
 appleProvider.addScope("email");
