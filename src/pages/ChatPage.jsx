@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Send, RefreshCw, Trash2, ShieldAlert, Sparkles, MessageSquare } from 'lucide-react'
-import ChatSidebar from '../components/chat/ChatSidebar'
-import MessageBubble from '../components/chat/MessageBubble'
-import TypingIndicator from '../components/chat/TypingIndicator'
 import OnboardingForm from '../components/OnboardingForm'
 import { callGemini, parsePlanLock } from '../utils/gemini'
 import { useAuth } from '../context/AuthContext'
@@ -104,34 +101,43 @@ export default function ChatPage() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' }) 
   }, [messages, loading])
 
-  // Load chat history sessions when user is available
+  // Load chat history sessions when user is available or URL search parameters update
   useEffect(() => {
     if (user) {
-      loadUserSessions(user.uid)
+      const sessionId = searchParams.get('session')
+      const isNew = searchParams.get('new')
+      
+      if (isNew) {
+        handleNewChat()
+        // Clean URL parameter
+        navigate('/chat', { replace: true })
+      } else {
+        loadUserSessions(user.uid, sessionId)
+      }
     } else {
       setChatSessions([])
       setActiveSessionId(null)
     }
-  }, [user])
+  }, [user, searchParams])
 
   // Load chat history sessions
   const loadUserSessions = async (userId, selectId = null) => {
     const list = await fetchChatSessions(userId)
     setChatSessions(list)
     
-    // If a specific ID is requested, select it
-    if (selectId && list.some(s => s.id === selectId)) {
-      setActiveSessionId(selectId)
-      const active = list.find(s => s.id === selectId)
+    const targetId = selectId || (list.length > 0 ? list[0].id : null)
+    
+    if (targetId && list.some(s => s.id === targetId)) {
+      setActiveSessionId(targetId)
+      const active = list.find(s => s.id === targetId)
       setMessages(active.messages || [])
-      // Re-evaluate locked plan if present in history
       detectPlanLock(active.messages || [])
-    } else if (list.length > 0 && !activeSessionId) {
-      // Otherwise select the first session by default
-      setActiveSessionId(list[0].id)
-      setMessages(list[0].messages || [])
-      detectPlanLock(list[0].messages || [])
       initialized.current = true
+    } else {
+      setMessages([])
+      setLockedPlan(null)
+      setActiveSessionId(null)
+      initialized.current = false
     }
   }
 
@@ -293,19 +299,6 @@ export default function ChatPage() {
           pointerEvents: 'none', zIndex: 0
         }} />
 
-        {/* Sidebar */}
-        <ChatSidebar 
-          lockedPlan={lockedPlan} 
-          onBack={() => navigate('/')} 
-          profile={profile}
-          user={user}
-          chatSessions={chatSessions}
-          activeSessionId={activeSessionId}
-          onSelectSession={handleSelectSession}
-          onNewChat={handleNewChat}
-          onDeleteSession={handleDeleteSession}
-          onQuickAction={(promptText) => handleSend(promptText)}
-        />
 
         {/* Main Chat Interface */}
         <div style={{ 

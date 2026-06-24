@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X, Compass, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 
@@ -13,7 +14,7 @@ const GoogleIcon = () => (
 );
 
 const AppleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#000000" style={{ flexShrink: 0 }}>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF" style={{ flexShrink: 0 }}>
     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
   </svg>
 );
@@ -34,6 +35,7 @@ const getErrorMessage = (code) => ({
 export default function AuthModal({ isOpen, onClose }) {
   const { signInWithGoogle, signInWithApple, loginWithEmail, registerWithEmail } = useAuth();
   const { showSuccess, showError } = useToast();
+  const navigate = useNavigate();
   
   // Modal Views: 'options', 'login', 'register'
   const [view, setView] = useState('options');
@@ -61,6 +63,7 @@ export default function AuthModal({ isOpen, onClose }) {
       await signInWithGoogle();
       showSuccess("Signed in successfully with Google 🎉");
       onClose();
+      navigate('/chat');
     } catch (err) {
       setError(getErrorMessage(err.code || err.message));
     } finally {
@@ -75,6 +78,7 @@ export default function AuthModal({ isOpen, onClose }) {
       await signInWithApple();
       showSuccess("Signed in successfully with Apple 🎉");
       onClose();
+      navigate('/chat');
     } catch (err) {
       setError(getErrorMessage(err.code || err.message));
     } finally {
@@ -105,6 +109,7 @@ export default function AuthModal({ isOpen, onClose }) {
         showSuccess("Account created successfully 🎉");
       }
       onClose();
+      navigate('/chat');
     } catch (err) {
       setError(getErrorMessage(err.code || err.message));
     } finally {
@@ -112,132 +117,159 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   };
 
+  const handleGuestLogin = () => {
+    onClose();
+    navigate('/budget'); // Take guest to budget calculator as a trial
+  };
+
   return (
-    <div style={styles.overlay}>
-      {/* Modal Card */}
-      <div style={styles.modalCard}>
+    <div className="auth-backdrop">
+      <div className="auth-modal">
         {/* Close Button */}
-        <button onClick={onClose} style={styles.closeBtn} aria-label="Close modal">
-          <X size={18} />
+        <button onClick={onClose} className="auth-close" aria-label="Close modal">
+          <X size={16} />
         </button>
 
-        {/* Logo and Headings */}
-        <div style={styles.header}>
-          <div style={styles.logoCircle}>
-            <Compass size={24} color="#2563EB" />
-          </div>
-          <h2 style={styles.title}>
-            {view === 'options' && "Welcome to Studytra"}
-            {view === 'login' && "Sign in to Studytra"}
-            {view === 'register' && "Create your account"}
-          </h2>
-          <p style={styles.subtitle}>
-            {view === 'options' && "Your global study journey starts here. Sign in to unlock roadmaps, budget estimators, and templates."}
-            {view === 'login' && "Enter your email credentials to access your personalized workspace."}
-            {view === 'register' && "Create an account to start planning your international education journey."}
-          </p>
+        {/* Brand Header */}
+        <div className="auth-brand">
+          <img src="/studytra-logo.png" alt="Studytra Logo" className="auth-logo" />
+          <span className="auth-brand-name">Studytra</span>
         </div>
 
-        {/* Error message */}
+        {/* Dynamic Titles */}
+        <h2 className="auth-title">
+          {view === 'options' && "Welcome to Studytra"}
+          {view === 'login' && "Sign In"}
+          {view === 'register' && "Create Account"}
+        </h2>
+        <p className="auth-subtitle">
+          {view === 'options' && "Join thousands of Indian students mapping out their study abroad journey."}
+          {view === 'login' && "Enter your credentials below to access your workspace."}
+          {view === 'register' && "Create an account to start building your study abroad profile."}
+        </p>
+
+        {/* Interactive Benefit Chips */}
+        {view === 'options' && (
+          <div className="auth-benefits">
+            <div className="auth-benefit-chip">
+              <span className="check">✓</span> Personalized Roadmaps
+            </div>
+            <div className="auth-benefit-chip">
+              <span className="check">✓</span> Visa Checklists
+            </div>
+            <div className="auth-benefit-chip">
+              <span className="check">✓</span> Budget Calculators
+            </div>
+            <div className="auth-benefit-chip">
+              <span className="check">✓</span> Free Templates
+            </div>
+          </div>
+        )}
+
+        {/* Error Notification */}
         {error && (
-          <div style={styles.errorBanner}>
+          <div style={{
+            background: 'rgba(220, 38, 38, 0.08)',
+            border: '1px solid rgba(220, 38, 38, 0.2)',
+            color: '#dc2626',
+            borderRadius: 'var(--radius-md)',
+            padding: '10px 14px',
+            fontSize: '12.5px',
+            fontWeight: 600,
+            marginBottom: 20,
+            lineHeight: 1.4
+          }}>
             {error}
           </div>
         )}
 
-        {/* ── View 1: Main Login Options ── */}
+        {/* View 1: Main Login Options */}
         {view === 'options' && (
-          <div style={styles.optionsContainer}>
-            {/* Google Login */}
-            <button 
-              onClick={handleGoogleLogin} 
-              disabled={loading}
-              style={styles.googleBtn}
-            >
+          <div className="auth-buttons">
+            <button onClick={handleGoogleLogin} disabled={loading} className="btn-auth-google">
               <GoogleIcon />
-              <span>Continue with Google</span>
+              Continue with Google
             </button>
-
-            {/* Apple Login */}
-            <button 
-              onClick={handleAppleLogin} 
-              disabled={loading}
-              style={styles.appleBtn}
-            >
+            <button onClick={handleAppleLogin} disabled={loading} className="btn-auth-apple">
               <AppleIcon />
-              <span>Continue with Apple</span>
+              Continue with Apple
             </button>
 
-            {/* Email Login Button */}
-            <button 
-              onClick={() => { setView('login'); setError(null); }}
-              style={styles.emailOptionBtn}
-            >
-              <Mail size={18} color="#64748B" />
-              <span>Continue with Email</span>
-            </button>
-
-            <div style={styles.dividerRow}>
-              <div style={styles.dividerLine} />
-              <span style={styles.dividerText}>or</span>
-              <div style={styles.dividerLine} />
+            <div className="auth-divider">
+              <div className="auth-divider-line" />
+              <span className="auth-divider-text">or</span>
+              <div className="auth-divider-line" />
             </div>
 
-            {/* Create Account Toggle */}
             <button 
-              onClick={() => { setView('register'); setError(null); }}
-              style={styles.registerToggleBtn}
+              onClick={() => { setView('login'); setError(null); }} 
+              className="btn btn-md btn-soft btn-pill"
+              style={{ width: '100%' }}
             >
-              Create an Account
+              <Mail size={16} /> Continue with Email
+            </button>
+            
+            <button 
+              onClick={() => { setView('register'); setError(null); }} 
+              className="btn btn-md btn-ghost btn-pill"
+              style={{ width: '100%', marginTop: 4 }}
+            >
+              Create Email Account
+            </button>
+
+            <div className="auth-divider" style={{ marginTop: 8 }} />
+
+            <button onClick={handleGuestLogin} className="btn-auth-guest">
+              Skip & Continue as Guest →
             </button>
           </div>
         )}
 
-        {/* ── View 2: Email Sign In or View 3: Registration Form ── */}
+        {/* View 2 & 3: Email Forms */}
         {view !== 'options' && (
-          <form onSubmit={handleEmailSubmit} style={styles.form}>
+          <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {view === 'register' && (
-              <div style={styles.inputWrapper}>
-                <label style={styles.label}>Full Name</label>
-                <div style={styles.inputContainer}>
-                  <User size={18} style={styles.inputIcon} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Full Name</label>
+                <div style={{ position: 'relative' }}>
+                  <User size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
                   <input 
                     type="text" 
                     placeholder="e.g. Arup Das" 
                     value={form.name}
                     onChange={(e) => updateField('name', e.target.value)}
-                    style={styles.input}
+                    style={{ width: '100%', paddingLeft: 40 }}
                     required
                   />
                 </div>
               </div>
             )}
 
-            <div style={styles.inputWrapper}>
-              <label style={styles.label}>Email Address</label>
-              <div style={styles.inputContainer}>
-                <Mail size={18} style={styles.inputIcon} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Email Address</label>
+              <div style={{ position: 'relative' }}>
+                <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
                 <input 
                   type="email" 
                   placeholder="name@example.com" 
                   value={form.email}
                   onChange={(e) => updateField('email', e.target.value)}
-                  style={styles.input}
+                  style={{ width: '100%', paddingLeft: 40 }}
                   required
                 />
               </div>
             </div>
 
-            <div style={styles.inputWrapper}>
-              <label style={styles.label}>Password</label>
-              <div style={styles.inputContainer}>
-                <Lock size={18} style={styles.inputIcon} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
                 <input 
                   type="password" 
-                  placeholder="Enter your password" 
+                  placeholder="At least 6 characters" 
                   value={form.password}
                   onChange={(e) => updateField('password', e.target.value)}
-                  style={styles.input}
+                  style={{ width: '100%', paddingLeft: 40 }}
                   required
                 />
               </div>
@@ -246,14 +278,15 @@ export default function AuthModal({ isOpen, onClose }) {
             <button 
               type="submit" 
               disabled={loading}
-              style={styles.submitBtn}
+              className="btn btn-md btn-primary btn-pill"
+              style={{ width: '100%', marginTop: 8 }}
             >
               {loading ? (
-                <span className="spinner" style={styles.spinner} />
+                <span className="btn-spinner" />
               ) : (
                 <>
                   <span>{view === 'login' ? 'Sign In' : 'Create Account'}</span>
-                  <ArrowRight size={18} />
+                  <ArrowRight size={16} />
                 </>
               )}
             </button>
@@ -261,296 +294,20 @@ export default function AuthModal({ isOpen, onClose }) {
             <button 
               type="button"
               onClick={() => { setView('options'); setError(null); }}
-              style={styles.backBtn}
+              className="btn btn-md btn-ghost btn-pill"
+              style={{ width: '100%' }}
             >
               Back to all options
             </button>
           </form>
         )}
 
-        {/* Footer info */}
-        <p style={styles.fineprint}>
-          By continuing, you agree to our Terms of Service. <br />
+        {/* Legal Disclaimer */}
+        <p className="auth-legal" style={{ marginTop: 24 }}>
+          By continuing, you agree to Studytra's Terms of Service.<br />
           Your study plan data remains private and secure.
         </p>
       </div>
-
-      <style>{`
-        @keyframes authModalFadeUp {
-          from { opacity: 0; transform: translateY(16px) scale(0.97); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
-
-const styles = {
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    zIndex: 9999,
-    background: 'rgba(252, 252, 253, 0.85)',
-    backdropFilter: 'blur(16px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
-  },
-  modalCard: {
-    width: '100%',
-    maxWidth: 440,
-    background: '#FFFFFF',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    borderRadius: 28,
-    padding: '40px 32px 32px',
-    position: 'relative',
-    boxShadow: '0 20px 60px rgba(15, 23, 42, 0.08)',
-    animation: 'authModalFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-  },
-  closeBtn: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    background: '#FFFFFF',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    borderRadius: '50%',
-    width: 36,
-    height: 36,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    color: '#64748B',
-    transition: 'all 0.2s',
-    '&:hover': {
-      background: '#F8FAFC',
-      color: '#0F172A'
-    }
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: 28
-  },
-  logoCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: '50%',
-    background: '#EFF6FF',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 16px'
-  },
-  title: {
-    fontSize: '1.45rem',
-    fontWeight: 800,
-    color: '#0F172A',
-    margin: '0 0 8px',
-    letterSpacing: '-0.02em'
-  },
-  subtitle: {
-    fontSize: '0.86rem',
-    color: '#64748B',
-    lineHeight: 1.5,
-    margin: 0
-  },
-  errorBanner: {
-    background: '#FEF2F2',
-    border: '1px solid #FEE2E2',
-    borderRadius: 12,
-    padding: '10px 14px',
-    fontSize: '0.8rem',
-    color: '#EF4444',
-    marginBottom: 20,
-    textAlign: 'center',
-    fontWeight: 500
-  },
-  optionsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 12
-  },
-  googleBtn: {
-    background: '#FFFFFF',
-    color: '#0F172A',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    padding: '0 24px',
-    height: 56,
-    borderRadius: 16,
-    fontSize: '0.94rem',
-    fontWeight: 700,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)'
-  },
-  appleBtn: {
-    background: '#FFFFFF',
-    color: '#000000',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    padding: '0 24px',
-    height: 56,
-    borderRadius: 16,
-    fontSize: '0.94rem',
-    fontWeight: 700,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)'
-  },
-  emailOptionBtn: {
-    background: '#FFFFFF',
-    color: '#0F172A',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    padding: '0 24px',
-    height: 56,
-    borderRadius: 16,
-    fontSize: '0.94rem',
-    fontWeight: 700,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)'
-  },
-  dividerRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    margin: '12px 0',
-    opacity: 0.8
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    background: 'rgba(15, 23, 42, 0.06)'
-  },
-  dividerText: {
-    fontSize: '0.76rem',
-    color: '#64748B',
-    textTransform: 'uppercase',
-    fontWeight: 700
-  },
-  registerToggleBtn: {
-    width: '100%',
-    border: '1.5px dashed rgba(37, 99, 235, 0.2)',
-    background: 'rgba(37, 99, 235, 0.02)',
-    color: '#2563EB',
-    height: 56,
-    borderRadius: 16,
-    fontSize: '0.94rem',
-    fontWeight: 700,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    '&:hover': {
-      background: 'rgba(37, 99, 235, 0.05)',
-      borderColor: '#2563EB'
-    }
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 16
-  },
-  inputWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6
-  },
-  label: {
-    fontSize: '0.82rem',
-    fontWeight: 700,
-    color: '#0F172A'
-  },
-  inputContainer: {
-    position: 'relative'
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: 18,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: '#64748B',
-    pointerEvents: 'none'
-  },
-  input: {
-    width: '100%',
-    background: '#FFFFFF',
-    border: '1px solid rgba(15, 23, 42, 0.08)',
-    borderRadius: 16,
-    padding: '0 20px 0 46px',
-    height: 56,
-    color: '#0F172A',
-    fontSize: '0.96rem',
-    fontWeight: 500,
-    outline: 'none',
-    transition: 'all 0.25s',
-    boxSizing: 'border-box',
-    '&:focus': {
-      borderColor: '#2563EB',
-      boxShadow: '0 0 0 4px rgba(37, 99, 235, 0.08)'
-    }
-  },
-  submitBtn: {
-    background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
-    color: '#FFFFFF',
-    border: 'none',
-    height: 56,
-    borderRadius: 16,
-    fontSize: '0.96rem',
-    fontWeight: 700,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    cursor: 'pointer',
-    marginTop: 8,
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.2)',
-    transition: 'all 0.2s'
-  },
-  backBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#64748B',
-    fontSize: '0.86rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    textAlign: 'center',
-    padding: '4px 0',
-    transition: 'all 0.2s',
-    '&:hover': {
-      color: '#0F172A'
-    }
-  },
-  fineprint: {
-    fontSize: '0.68rem',
-    color: '#64748B',
-    textAlign: 'center',
-    marginTop: 24,
-    lineHeight: 1.45
-  },
-  spinner: {
-    width: 20,
-    height: 20,
-    borderRadius: '50%',
-    border: '2px solid rgba(255,255,255,0.2)',
-    borderTopColor: 'white',
-    animation: 'spin 0.8s linear infinite',
-  }
-};

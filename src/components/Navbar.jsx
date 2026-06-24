@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard, MessageSquare, Settings } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { useToast } from '../context/ToastContext'
 
 const navLinks = [
   { label: 'How It Works', href: '/#how-it-works' },
@@ -14,17 +13,17 @@ const navLinks = [
       {
         label: '📋 Student Execution Guides',
         href: '/tools/execution-guides',
-        desc: 'Pre-departure + post-arrival roadmaps for 6 countries',
+        desc: 'Pre-departure + post-arrival roadmaps for 5 countries',
       },
       {
         label: '💰 Cost Estimator',
         href: '/budget',
         desc: 'Set your budget & calculate savings',
       },
-      { label: '🏦 Loan Guide', href: '/loans', desc: 'Compare SBI, HDFC Credila & more' },
-      { label: '📄 CV Formats', href: '/tools/cv-formats', desc: 'Academic CVs for Germany, Austria, UK, Canada, Australia' },
+      { label: '🏦 Loan Guide', href: '/loan', desc: 'Compare SBI, Credila, ICICI & more' },
+      { label: '📄 CV Formats', href: '/tools/cv-formats', desc: 'Academic CVs for Germany, UK, Canada...' },
       { label: '📋 Resume Formats', href: '/tools/resume-formats', desc: 'ATS resumes for USA, Canada, UK, Australia' },
-      { label: '✍️ SOP Guide', href: '/tools/sop-guide', desc: 'Country-specific SOP formats & writing guide' },
+      { label: '✍️ SOP Guide', href: '/sop', desc: 'Country-specific SOP formats & writing guide' },
     ],
   },
   { label: 'Reviews', href: '/#reviews' },
@@ -32,15 +31,12 @@ const navLinks = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false)
-  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false)
   
-  const { user, logout, setAuthModalOpen } = useAuth()
-  const { showSuccess } = useToast()
+  const { user, setAuthModalOpen } = useAuth()
   const navigate = useNavigate()
-  
-  const avatarDropdownRef = useRef(null)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 18)
@@ -48,544 +44,235 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  // Outside click listener for avatar dropdown self-closure
+  // Close dropdown on outside click
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (avatarDropdownRef.current && !avatarDropdownRef.current.contains(e.target)) {
-        setAvatarDropdownOpen(false)
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setToolsDropdownOpen(false)
       }
     }
     document.addEventListener('mousedown', handleOutsideClick)
     return () => document.removeEventListener('mousedown', handleOutsideClick)
   }, [])
 
-  const handleSignOut = async () => {
-    try {
-      await logout()
-      showSuccess("Successfully signed out ✓")
-      setAvatarDropdownOpen(false)
-      navigate('/')
-    } catch (err) {
-      console.error("Sign out failed: ", err)
-    }
-  }
-
-  // Intercept navigation for guests
-  const handleNavClick = (e, item) => {
-    if (item.href.startsWith('/#')) {
+  const handleNavClick = (e, link) => {
+    if (link.href.startsWith('/#')) {
+      // Allow scrolling to sections
+      if (window.location.pathname !== '/') {
+        e.preventDefault()
+        navigate(link.href)
+      }
+      setMobileMenuOpen(false)
       return
     }
-    if (!user) {
-      e.preventDefault()
-      setAuthModalOpen(true)
-      setMenuOpen(false)
-    }
   }
 
-  // Get initials for initials-based fallback avatar
-  const getInitials = () => {
-    if (!user) return "?"
-    if (user.displayName) return user.displayName.charAt(0).toUpperCase()
-    if (user.email) return user.email.charAt(0).toUpperCase()
-    return "?"
+  const handleAuthAction = () => {
+    if (user) {
+      navigate('/chat')
+    } else {
+      setAuthModalOpen(true)
+    }
+    setMobileMenuOpen(false)
   }
 
   return (
     <>
-      <nav
-        style={{
-          position: 'fixed',
-          top: 16,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'calc(100% - 32px)',
-          maxWidth: 1200,
-          zIndex: 1000,
-          background: 'var(--navbar-bg)',
-          backdropFilter: 'var(--glass-blur)',
-          border: '1px solid var(--navbar-border)',
-          borderRadius: '999px',
-          boxShadow: 'var(--shadow-card)',
-          transition: 'all 0.3s ease',
-        }}
-      >
-        <div
-          className="container"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: 68,
-          }}
-        >
-          {/* ── Logo ── */}
-          <a
-            href="/"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              textDecoration: 'none',
-            }}
-          >
-            <img 
-              src="/studytra-logo.png" 
-              alt="Studytra Logo" 
-              style={{ 
-                width: 40, 
-                height: 40, 
-                borderRadius: 12, 
-                boxShadow: '0 4px 14px rgba(37,99,247,0.15)', 
-                flexShrink: 0,
-                objectFit: 'contain'
-              }} 
-            />
-            <span
-              style={{
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                fontWeight: 800,
-                fontSize: '1.25rem',
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.03em',
-              }}
-            >
-              Studytra
-            </span>
-          </a>
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        {/* Logo and Brand */}
+        <Link to="/" className="navbar-logo">
+          <img src="/studytra-logo.png" alt="Studytra Logo" />
+          <span className="navbar-logo-text">Studytra</span>
+        </Link>
 
-          {/* ── Desktop Nav Links ── */}
-          <div
-            className="desk-nav"
-            style={{ display: 'flex', gap: 6, alignItems: 'center' }}
-          >
-            {navLinks.map(link =>
-              link.dropdown ? (
-                <div
-                  key={link.label}
-                  style={{ position: 'relative' }}
-                  onMouseEnter={() => setToolsDropdownOpen(true)}
-                  onMouseLeave={() => setToolsDropdownOpen(false)}
-                >
-                  <button
-                    onClick={() => setToolsDropdownOpen(o => !o)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      background: toolsDropdownOpen ? 'var(--theme-icon-hover)' : 'none',
-                      color: toolsDropdownOpen ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                      padding: '8px 14px',
-                      borderRadius: 'var(--r-sm)',
-                      fontSize: '0.88rem',
-                      fontWeight: 600,
-                      transition: 'all 0.2s',
-                      cursor: 'pointer',
-                      border: 'none',
-                    }}
-                  >
-                    {link.label}
-                    <ChevronDown
-                      size={13}
-                      style={{
-                        transform: toolsDropdownOpen ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 0.2s',
-                      }}
-                    />
-                  </button>
-
-                  {toolsDropdownOpen && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        paddingTop: 6,
-                        zIndex: 999,
-                        minWidth: 280,
-                      }}
-                    >
-                      <div
-                        style={{
-                          background: 'var(--bg-card)',
-                          borderRadius: 'var(--r-lg)',
-                          boxShadow: 'var(--shadow-xl)',
-                          border: '1px solid var(--border-default)',
-                          padding: 8,
-                          animation: 'fadeUp 0.18s ease',
-                        }}
-                      >
-                        {link.dropdown.map(item => (
-                          <a
-                            key={item.label}
-                            href={item.href}
-                            onClick={(e) => handleNavClick(e, item)}
-                            style={{
-                              display: 'block',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--r-md)',
-                              transition: 'background 0.15s',
-                              textDecoration: 'none',
-                            }}
-                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--theme-icon-hover)')}
-                            onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                          >
-                            <div
-                              style={{
-                                fontSize: '0.88rem',
-                                fontWeight: 700,
-                                color: 'var(--text-primary)',
-                                marginBottom: 2,
-                              }}
-                            >
-                              {item.label}
-                            </div>
-                            <div
-                              style={{
-                                fontSize: '0.75rem',
-                                color: 'var(--text-secondary)',
-                              }}
-                            >
-                              {item.desc}
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link)}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: 'var(--r-sm)',
-                    fontSize: '0.88rem',
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                    transition: 'all 0.2s',
-                    textDecoration: 'none',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.color = 'var(--accent-primary)'
-                    e.currentTarget.style.background = 'var(--theme-icon-hover)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.color = 'var(--text-secondary)'
-                    e.currentTarget.style.background = 'none'
-                  }}
+        {/* Desktop Links */}
+        <div className="navbar-links navbar-desktop-links" style={{ display: 'none' }}>
+          {navLinks.map(link => 
+            link.dropdown ? (
+              <div 
+                key={link.label} 
+                ref={dropdownRef} 
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setToolsDropdownOpen(true)}
+                onMouseLeave={() => setToolsDropdownOpen(false)}
+              >
+                <button 
+                  className={`nav-link ${toolsDropdownOpen ? 'active' : ''}`}
+                  onClick={() => setToolsDropdownOpen(o => !o)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4 }}
                 >
                   {link.label}
-                </a>
-              )
-            )}
-            {user && (
-              <a
-                href="/chat"
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: 'var(--r-sm)',
-                  fontSize: '0.88rem',
-                  fontWeight: 600,
-                  color: 'var(--text-secondary)',
-                  transition: 'all 0.2s',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--accent-primary)'
-                  e.currentTarget.style.background = 'var(--theme-icon-hover)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-secondary)'
-                  e.currentTarget.style.background = 'none'
-                }}
-              >
-                AI Workspace
-              </a>
-            )}
-          </div>
+                  <ChevronDown size={13} style={{ transform: toolsDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </button>
 
-          {/* ── Auth State Buttons ── */}
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {user ? (
-              <div style={{ position: 'relative' }} ref={avatarDropdownRef}>
-                {/* User Avatar Circle */}
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt={user.displayName || "User"}
-                    onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      border: '2px solid var(--accent-primary)',
-                      boxShadow: 'var(--shadow-sm)',
-                      objectFit: 'cover'
-                    }}
-                  />
-                ) : (
-                  <div
-                    onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: '50%',
-                      background: 'var(--gradient-main)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'var(--text-inverse, #ffffff)',
-                      fontWeight: 700,
-                      fontSize: '0.9rem',
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow-sm)',
-                    }}
-                  >
-                    {getInitials()}
-                  </div>
-                )}
-
-                {/* Avatar Dropdown Panel */}
-                {avatarDropdownOpen && (
+                {toolsDropdownOpen && (
                   <div style={{
-                    position: 'absolute', top: '110%', right: 0,
-                    width: 240, background: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px)', border: '1px solid var(--border)',
-                    borderRadius: 16, padding: '14px', zIndex: 1000,
-                    boxShadow: 'var(--shadow-xl)',
-                    animation: 'avatarDropdownFadeUp 0.18s ease'
+                    position: 'absolute',
+                    top: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    paddingTop: 8,
+                    zIndex: 999,
+                    minWidth: 320,
                   }}>
-                    {/* User info */}
-                    <div style={{ marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {user.displayName || "Studytra Student"}
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>
-                        {user.email}
-                      </div>
+                    <div style={{
+                      background: 'var(--bg-surface)',
+                      borderRadius: 'var(--radius-lg)',
+                      border: '1px solid var(--border-default)',
+                      boxShadow: 'var(--shadow-lg)',
+                      padding: 10,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4
+                    }}>
+                      {link.dropdown.map(item => (
+                        <Link
+                          key={item.label}
+                          to={item.href}
+                          style={{
+                            display: 'block',
+                            padding: '10px 14px',
+                            borderRadius: 'var(--radius-md)',
+                            textDecoration: 'none',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                        >
+                          <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
+                            {item.label}
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                            {item.desc}
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-
-                    {/* Navigation links */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
-                      <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <MessageSquare size={14} color="var(--accent-primary)" />
-                        <span>AI Workspace</span>
-                      </a>
-                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <LayoutDashboard size={14} color="var(--accent-primary)" />
-                        <span>Dashboard Tools</span>
-                      </a>
-                      <a href="/settings" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <Settings size={14} color="var(--text-muted)" />
-                        <span>Settings</span>
-                      </a>
-                    </div>
-
-                    {/* Sign Out Button */}
-                    <button
-                      onClick={handleSignOut}
-                      style={{
-                        width: '100%', background: 'rgba(239, 68, 68, 0.08)',
-                        color: '#ef4444', padding: '8px', border: '1px solid rgba(239, 68, 68, 0.15)',
-                        borderRadius: 10, fontSize: '0.78rem', fontWeight: 700,
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)' }}
-                    >
-                      <LogOut size={13} />
-                      Sign Out
-                    </button>
                   </div>
                 )}
               </div>
             ) : (
-              <button
-                onClick={() => setAuthModalOpen(true)}
-                style={{
-                  background: 'var(--gradient-main)',
-                  color: 'var(--text-inverse, white)',
-                  padding: '10px 20px',
-                  borderRadius: 'var(--r-sm)',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  boxShadow: 'var(--shadow-button)',
-                  transition: 'all 0.2s',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'translateY(-1px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'none'
-                }}
+              <a 
+                key={link.label} 
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link)}
+                className="nav-link"
               >
-                Sign In
-              </button>
-            )}
-
-            <button
-              className="burger"
-              onClick={() => setMenuOpen(!menuOpen)}
-              style={{ background: 'none', padding: 6, display: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              {menuOpen ? (
-                <X size={22} color="var(--text-primary)" />
-              ) : (
-                <Menu size={22} color="var(--text-primary)" />
-              )}
-            </button>
-          </div>
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
-        {/* ── Mobile Menu ── */}
-        {menuOpen && (
-          <div
+        {/* Right Buttons */}
+        <div className="navbar-right">
+          {user ? (
+            <button onClick={handleAuthAction} className="btn-signin-nav">
+              Workspace →
+            </button>
+          ) : (
+            <button onClick={handleAuthAction} className="btn-signin-nav">
+              Sign In
+            </button>
+          )}
+
+          {/* Mobile hamburger menu */}
+          <button 
+            className="navbar-mobile-toggle"
+            onClick={() => setMobileMenuOpen(o => !o)}
             style={{
-              background: 'var(--bg-secondary)',
-              borderTop: '1px solid var(--border)',
-              padding: '16px 24px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--navy)',
+              padding: 4,
+              display: 'none'
             }}
           >
-            {navLinks.map(link =>
-              link.dropdown ? (
-                <div key={link.label}>
-                  <div
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      color: 'var(--text-muted)',
-                      padding: '12px 8px 6px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                    }}
-                  >
-                    Tools
-                  </div>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Panel */}
+      {mobileMenuOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 64, left: 0, right: 0,
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-md)',
+          padding: '16px 24px 24px',
+          zIndex: 199,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16
+        }}>
+          {navLinks.map(link => 
+            link.dropdown ? (
+              <div key={link.label} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-tertiary)', letterSpacing: '0.08em', padding: '0 8px' }}>
+                  {link.label}
+                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingLeft: 8 }}>
                   {link.dropdown.map(item => (
-                    <a
+                    <Link
                       key={item.label}
-                      href={item.href}
-                      onClick={(e) => { handleNavClick(e, item); setMenuOpen(false); }}
+                      to={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
                       style={{
-                        display: 'block',
-                        padding: '10px 8px',
-                        fontSize: '0.92rem',
+                        padding: '8px 10px',
+                        fontSize: '14px',
                         fontWeight: 600,
-                        color: 'var(--text-primary)',
-                        textDecoration: 'none',
+                        color: 'var(--text-secondary)',
+                        textDecoration: 'none'
                       }}
                     >
-                      {item.label}
-                    </a>
+                      {item.label.split(' ').slice(1).join(' ')} {/* Remove emoji prefix for mobile simplicity */}
+                    </Link>
                   ))}
                 </div>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => { handleNavClick(e, link); setMenuOpen(false); }}
-                  style={{
-                    display: 'block',
-                    padding: '12px 8px',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    color: 'var(--text-primary)',
-                    borderBottom: '1px solid var(--border)',
-                    textDecoration: 'none',
-                  }}
-                >
-                  {link.label}
-                </a>
-              )
-            )}
-            {user ? (
-              <>
-                <a
-                  href="/chat"
-                  onClick={() => setMenuOpen(false)}
-                  style={{
-                    display: 'block',
-                    padding: '12px 8px',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    color: 'var(--accent-primary)',
-                    borderBottom: '1px solid var(--border)',
-                    textDecoration: 'none',
-                  }}
-                >
-                  AI Workspace
-                </a>
-                <button
-                  onClick={() => {
-                    setMenuOpen(false)
-                    handleSignOut()
-                  }}
-                  style={{
-                    marginTop: 12,
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#ef4444',
-                    padding: 13,
-                    borderRadius: 'var(--r-sm)',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    border: '1px solid rgba(239, 68, 68, 0.2)',
-                    cursor: 'pointer',
-                    width: '100%',
-                  }}
-                >
-                  Sign Out
-                </button>
-              </>
+              </div>
             ) : (
-              <button
-                onClick={() => {
-                  setMenuOpen(false)
-                  setAuthModalOpen(true)
-                }}
+              <a 
+                key={link.label} 
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link)}
                 style={{
-                  marginTop: 12,
-                  background: 'var(--gradient-main)',
-                  color: 'var(--text-inverse, white)',
-                  padding: 13,
-                  borderRadius: 'var(--r-sm)',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  width: '100%'
+                  padding: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none'
                 }}
               >
-                Sign In
-              </button>
-            )}
-          </div>
-        )}
+                {link.label}
+              </a>
+            )
+          )}
+          
+          <button 
+            onClick={handleAuthAction}
+            className="btn btn-primary"
+            style={{ width: '100%', marginTop: 8 }}
+          >
+            {user ? 'Go to Workspace' : 'Sign In'}
+          </button>
+        </div>
+      )}
 
-        <style>{`
-          @keyframes avatarDropdownFadeUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+      <style>{`
+        @media (min-width: 769px) {
+          .navbar-desktop-links {
+            display: flex !important;
           }
-          @keyframes fadeUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @media (max-width: 768px) {
+          .navbar-mobile-toggle {
+            display: block !important;
           }
-          @media (max-width: 900px) {
-            .desk-nav { display: none !important; }
-            .burger   { display: flex !important; }
-          }
-        `}</style>
-      </nav>
+        }
+      `}</style>
     </>
   )
 }

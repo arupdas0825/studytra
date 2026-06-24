@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronDown, Sparkles, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -77,6 +77,12 @@ const PREVIEW_ROADMAPS = {
 export default function HomePage() {
   const navigate = useNavigate()
   const { user, setAuthModalOpen } = useAuth()
+
+  useEffect(() => {
+    if (user) {
+      navigate('/chat', { replace: true })
+    }
+  }, [user, navigate])
   
   // State for Roadmap Preview Country tab
   const [activeTab, setActiveTab] = useState('germany')

@@ -1,0 +1,34 @@
+/* src/styles/cards.css */
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.card:hover { box-shadow: var(--shadow-md); }
+.card-interactive:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Gold accent card */
+.card-gold {
+  border-color: var(--gold-border);
+  background: linear-gradient(145deg, #fff, #fffdf7);
+}
+.card-gold:hover { border-color: var(--gold); box-shadow: var(--shadow-gold); }
+
+/* Navy accent card */
+.card-navy {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+}
+
+/* Flat card — no shadow */
+.card-flat { box-shadow: none; }
+.card-flat:hover { box-shadow: var(--shadow-sm); }

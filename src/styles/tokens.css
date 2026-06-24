@@ -1,0 +1,66 @@
+/* src/styles/tokens.css */
+:root {
+  /* === BACKGROUNDS === */
+  --bg-app:           #f7f5f0;   /* warm parchment — main app bg */
+  --bg-surface:       #ffffff;   /* cards, panels, sidebar */
+  --bg-surface-2:     #faf9f6;   /* subtle off-white for input areas */
+  --bg-hover:         #f2f0eb;   /* hover state on list items */
+  --bg-active:        #eae7df;   /* active/selected state */
+  --bg-overlay:       rgba(30, 20, 10, 0.45); /* modal backdrop */
+
+  /* === BRAND COLORS === */
+  --navy:             #1d3461;   /* primary navy — headings, icons */
+  --navy-light:       #2d4a7a;   /* lighter navy for hover */
+  --navy-faint:       rgba(29, 52, 97, 0.06); /* subtle bg tint */
+  --gold:             #b8922a;   /* warm gold — accents, highlights */
+  --gold-light:       #d4a843;   /* lighter gold for hover */
+  --gold-faint:       rgba(184, 146, 42, 0.10); /* gold tint bg */
+  --gold-border:      rgba(184, 146, 42, 0.25);
+
+  /* === TEXT === */
+  --text-primary:     #1a1408;   /* near-black warm — main text */
+  --text-secondary:   #5a5240;   /* muted brown-grey */
+  --text-tertiary:    #9a8f7e;   /* disabled / placeholder */
+  --text-inverse:     #ffffff;
+  --text-navy:        #1d3461;
+  --text-gold:        #b8922a;
+
+  /* === BORDERS === */
+  --border-subtle:    rgba(30, 20, 10, 0.07);  /* barely-there lines */
+  --border-default:   rgba(30, 20, 10, 0.12);  /* card outlines */
+  --border-strong:    rgba(29, 52, 97, 0.18);  /* emphasis borders */
+  --border-gold:      rgba(184, 146, 42, 0.30);
+
+  /* === SHADOWS === */
+  --shadow-xs:   0 1px 3px rgba(30,20,10,0.06);
+  --shadow-sm:   0 2px 8px rgba(30,20,10,0.07), 0 1px 2px rgba(30,20,10,0.04);
+  --shadow-md:   0 4px 20px rgba(30,20,10,0.08), 0 2px 6px rgba(30,20,10,0.04);
+  --shadow-lg:   0 12px 40px rgba(30,20,10,0.10), 0 4px 12px rgba(30,20,10,0.05);
+  --shadow-xl:   0 24px 60px rgba(30,20,10,0.12), 0 8px 20px rgba(30,20,10,0.06);
+  --shadow-navy: 0 4px 16px rgba(29, 52, 97, 0.22);
+  --shadow-gold: 0 4px 16px rgba(184, 146, 42, 0.20);
+
+  /* === GRADIENTS === */
+  --gradient-primary:  linear-gradient(135deg, #1d3461 0%, #2d5498 100%);
+  --gradient-gold:     linear-gradient(135deg, #b8922a 0%, #d4a843 100%);
+  --gradient-hero:     linear-gradient(135deg, #1d3461 0%, #b8922a 100%);
+  --gradient-surface:  linear-gradient(145deg, #ffffff 0%, #faf9f6 100%);
+
+  /* === RADIUS === */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-pill: 999px;
+
+  /* === SIDEBAR === */
+  --sidebar-width:         240px;
+  --sidebar-collapsed:     64px;
+  --sidebar-bg:            #ffffff;
+  --sidebar-border:        rgba(30, 20, 10, 0.07);
+
+  /* === TYPOGRAPHY === */
+  --font-display:  'Playfair Display', serif;
+  --font-ui:       'Plus Jakarta Sans', sans-serif;
+  --font-body:     'Inter', sans-serif;
+}

@@ -15,7 +15,9 @@ import SOPGuidePage from './pages/SOPGuidePage'
 import ResumeFormatPage from './pages/ResumeFormatPage'
 import PremiumOnboardingModal from './components/auth/PremiumOnboardingModal'
 import AuthModal from './components/auth/AuthModal'
-import AppLayout from './components/layout/AppLayout'
+import AppLayout from './layouts/AppLayout'
+import PublicLayout from './layouts/PublicLayout'
+import AuthConditionalLayout from './layouts/AuthConditionalLayout'
 import UniversitiesPage from './pages/UniversitiesPage'
 import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
@@ -44,37 +46,38 @@ function AppContent() {
   return (
     <>
       <Routes>
-        {/* Public route */}
-        <Route path="/"                       element={<HomePage />} />
+        {/* Strictly Public Layout */}
+        <Route element={<PublicLayout />}>
+          <Route path="/"                       element={<HomePage />} />
+          <Route path="/app"                    element={<HomePage />} />
+          <Route path="/home"                   element={<HomePage />} />
+        </Route>
         
-        {/* Compatibility routes for guests */}
-        <Route path="/app"                    element={<HomePage />} />
-        <Route path="/home"                   element={<HomePage />} />
+        {/* Strictly Protected Layout */}
+        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route path="/chat"                   element={<ChatPage />} />
+          <Route path="/dashboard"              element={<Dashboard />} />
+          <Route path="/roadmap"                element={<RoadmapPage />} />
+          <Route path="/settings"               element={<SettingsPage />} />
+          <Route path="/profile"                element={<ProfilePage />} />
+        </Route>
         
-        {/* Protected routes wrapped in left navigation sidebar layout */}
-        <Route path="/chat"                   element={<ProtectedRoute><AppLayout scrollable={false}><ChatPage /></AppLayout></ProtectedRoute>} />
-        <Route path="/dashboard"              element={<ProtectedRoute><AppLayout scrollable={false}><Dashboard /></AppLayout></ProtectedRoute>} />
-        <Route path="/budget"                 element={<ProtectedRoute><AppLayout><BudgetPlanner /></AppLayout></ProtectedRoute>} />
-        <Route path="/roadmap"                element={<ProtectedRoute><AppLayout><RoadmapPage /></AppLayout></ProtectedRoute>} />
-        <Route path="/countries"              element={<ProtectedRoute><AppLayout><UniversitiesPage /></AppLayout></ProtectedRoute>} />
-        <Route path="/universities"           element={<ProtectedRoute><AppLayout><UniversitiesPage /></AppLayout></ProtectedRoute>} />
-        
-        {/* SOP guidance routes */}
-        <Route path="/sop"                    element={<ProtectedRoute><AppLayout><SOPGuidePage /></AppLayout></ProtectedRoute>} />
-        <Route path="/tools/sop-guide"        element={<ProtectedRoute><AppLayout><SOPGuidePage /></AppLayout></ProtectedRoute>} />
-        
-        {/* Loan guidance routes */}
-        <Route path="/loan"                   element={<ProtectedRoute><AppLayout><LoanGuidance /></AppLayout></ProtectedRoute>} />
-        <Route path="/loans"                  element={<ProtectedRoute><AppLayout><LoanGuidance /></AppLayout></ProtectedRoute>} />
-        
-        {/* Settings & Profile */}
-        <Route path="/settings"               element={<ProtectedRoute><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>} />
-        <Route path="/profile"                element={<ProtectedRoute><AppLayout><ProfilePage /></AppLayout></ProtectedRoute>} />
-        
-        {/* Tools routes */}
-        <Route path="/tools/execution-guides" element={<ProtectedRoute><AppLayout><CountryRoadmapsSection /></AppLayout></ProtectedRoute>} />
-        <Route path="/tools/cv-formats"       element={<ProtectedRoute><AppLayout><CVFormatPage /></AppLayout></ProtectedRoute>} />
-        <Route path="/tools/resume-formats"   element={<ProtectedRoute><AppLayout><ResumeFormatPage /></AppLayout></ProtectedRoute>} />
+        {/* Shared/Conditional Tools Layout */}
+        <Route element={<AuthConditionalLayout />}>
+          <Route path="/budget"                 element={<BudgetPlanner />} />
+          <Route path="/countries"              element={<UniversitiesPage />} />
+          <Route path="/universities"           element={<UniversitiesPage />} />
+          
+          <Route path="/sop"                    element={<SOPGuidePage />} />
+          <Route path="/tools/sop-guide"        element={<SOPGuidePage />} />
+          
+          <Route path="/loan"                   element={<LoanGuidance />} />
+          <Route path="/loans"                  element={<LoanGuidance />} />
+          
+          <Route path="/tools/execution-guides" element={<CountryRoadmapsSection />} />
+          <Route path="/tools/cv-formats"       element={<CVFormatPage />} />
+          <Route path="/tools/resume-formats"   element={<ResumeFormatPage />} />
+        </Route>
         
         <Route path="*" element={
           <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

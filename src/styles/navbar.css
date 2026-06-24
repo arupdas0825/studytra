@@ -1,0 +1,103 @@
+/* src/styles/navbar.css */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(247, 245, 240, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  /* NO border-bottom — none, zero, nada */
+  border-bottom: none;
+  box-shadow: none;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* On scroll — add very subtle shadow instead of border */
+.navbar.scrolled {
+  background: rgba(247, 245, 240, 0.96);
+  box-shadow: 0 1px 20px rgba(30, 20, 10, 0.06);
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.navbar-logo img { width: 30px; height: 30px; border-radius: 7px; object-fit: contain; }
+.navbar-logo-text {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-link {
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.nav-link:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.nav-link.active {
+  background: var(--navy-faint);
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Sign In button in navbar */
+.btn-signin-nav {
+  padding: 9px 20px;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba(29,52,97,0.20);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-signin-nav:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(29,52,97,0.28);
+}
