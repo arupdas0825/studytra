@@ -101,11 +101,11 @@ export default function VisaGuide({ profile }) {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f0f4ff', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
           Visa Application Guide
         </h2>
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: 4, margin: 0 }}>
-          Follow these sequential steps to apply for your student visa for {profile?.dream_country || 'Germany'}.
+        <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: 4, margin: 0, fontWeight: 500 }}>
+          Follow these sequential steps to apply for your student visa for {profile?.dream_country || 'Austria'}.
         </p>
       </div>
 
@@ -117,29 +117,29 @@ export default function VisaGuide({ profile }) {
             <div
               key={step.title}
               style={{
-                background: 'rgba(15, 33, 53, 0.6)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(79, 142, 247, 0.15)',
-                borderRadius: 16,
+                background: '#FFFFFF',
+                border: '1px solid rgba(15, 23, 42, 0.08)',
+                borderRadius: 24,
                 padding: '20px 24px',
                 display: 'flex',
                 gap: 16,
-                alignItems: 'flex-start'
+                alignItems: 'flex-start',
+                boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)'
               }}
             >
               <div style={{
                 width: 28, height: 28, borderRadius: '50%',
-                background: 'rgba(79, 142, 247, 0.15)',
+                background: 'rgba(37, 99, 235, 0.08)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#4f8ef7', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0
+                color: '#2563EB', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0
               }}>
                 {idx + 1}
               </div>
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f0f4ff', margin: '0 0 6px', fontFamily: 'Plus Jakarta Sans' }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: '0 0 6px', fontFamily: 'Plus Jakarta Sans' }}>
                   {step.title}
                 </h4>
-                <p style={{ color: '#94a3b8', fontSize: '0.84rem', margin: 0, lineHeight: 1.6 }}>
+                <p style={{ color: '#64748B', fontSize: '0.84rem', margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
                   {step.desc}
                 </p>
               </div>
@@ -151,21 +151,21 @@ export default function VisaGuide({ profile }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }} className="right-panel">
           {/* Pro Tips Box */}
           <div style={{
-            background: 'rgba(16, 185, 129, 0.05)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            borderRadius: 16,
+            background: 'rgba(16, 185, 129, 0.03)',
+            border: '1px solid rgba(16, 185, 129, 0.15)',
+            borderRadius: 24,
             padding: 24,
           }}>
             <h4 style={{
-              fontSize: '0.95rem', fontWeight: 700, color: '#34d399', margin: '0 0 14px',
+              fontSize: '0.95rem', fontWeight: 700, color: '#16A34A', margin: '0 0 14px',
               fontFamily: 'Plus Jakarta Sans', display: 'flex', alignItems: 'center', gap: 8
             }}>
-              <Award size={18} color="#34d399" />
+              <Award size={18} color="#16A34A" />
               Pro Tips
             </h4>
             <ul style={{ paddingLeft: 16, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
               {guide.tips.map((tip, idx) => (
-                <li key={idx} style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.5 }}>
+                <li key={idx} style={{ fontSize: '0.8rem', color: '#64748B', lineHeight: 1.5, fontWeight: 500 }}>
                   {tip}
                 </li>
               ))}
@@ -174,19 +174,19 @@ export default function VisaGuide({ profile }) {
 
           {/* Warning Box */}
           <div style={{
-            background: 'rgba(239, 68, 68, 0.05)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
-            borderRadius: 16,
+            background: 'rgba(239, 68, 68, 0.03)',
+            border: '1px solid rgba(239, 68, 68, 0.15)',
+            borderRadius: 24,
             padding: 24,
           }}>
             <h4 style={{
-              fontSize: '0.95rem', fontWeight: 700, color: '#fca5a5', margin: '0 0 12px',
+              fontSize: '0.95rem', fontWeight: 700, color: '#EF4444', margin: '0 0 12px',
               fontFamily: 'Plus Jakarta Sans', display: 'flex', alignItems: 'center', gap: 8
             }}>
-              <ShieldAlert size={18} color="#fca5a5" />
+              <ShieldAlert size={18} color="#EF4444" />
               Important Warning
             </h4>
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
               Visa slot timelines are extremely tight. Embassies do not accommodate late requests. Start collecting financial proofs at least 3 months prior.
             </p>
           </div>

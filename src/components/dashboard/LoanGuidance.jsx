@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../Navbar'
 
 // ─────────────────────────────────────────────────────────────────
 //  VERIFIED BANK DATA (Research date: March 2026)
@@ -535,9 +534,8 @@ export default function LoanGuidance() {
 
   return (
     <>
-      <Navbar />
       <div style={{
-        minHeight: '100vh', background: '#F4F6FA', paddingTop: 68,
+        minHeight: '100vh', background: '#F4F6FA', paddingTop: 24,
         fontFamily: "'Plus Jakarta Sans', 'DM Sans', 'Segoe UI', sans-serif",
       }}>
         {/* Back */}

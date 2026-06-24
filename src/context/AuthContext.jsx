@@ -66,6 +66,22 @@ export function AuthProvider({ children }) {
       if (snap.exists()) {
         const data = snap.data();
         console.log("User profile fetched from Firestore:", data);
+        
+        // Sync to sessionStorage for AI context mapping
+        sessionStorage.setItem('studentProfile', JSON.stringify({
+          fullName: data.fullName || '',
+          age: data.age || '',
+          gender: data.gender || '',
+          currentLevel: data.educationLevel || '',
+          currentUniversity: data.university || data.institution || '',
+          targetDegree: data.targetDegree || '',
+          targetCourse: data.fieldOfStudy || '',
+          dreamCountry: data.targetCountry || '',
+          targetIntake: data.targetIntake || '',
+          englishLevel: data.englishLevel || '',
+          budgetRange: data.budgetRange || ''
+        }));
+
         return data;
       } else {
         console.log("Creating new user profile doc in Firestore...");
@@ -129,6 +145,22 @@ export function AuthProvider({ children }) {
       };
       
       await setDoc(ref, dataToSave, { merge: true });
+      
+      // Sync to sessionStorage for AI context mapping
+      sessionStorage.setItem('studentProfile', JSON.stringify({
+        fullName: dataToSave.fullName,
+        age: dataToSave.age,
+        gender: dataToSave.gender,
+        currentLevel: dataToSave.educationLevel,
+        currentUniversity: dataToSave.university || dataToSave.institution,
+        targetDegree: dataToSave.targetDegree,
+        targetCourse: dataToSave.fieldOfStudy,
+        dreamCountry: dataToSave.targetCountry,
+        targetIntake: dataToSave.targetIntake,
+        englishLevel: dataToSave.englishLevel,
+        budgetRange: dataToSave.budgetRange
+      }));
+
       setUserProfile(prev => ({ ...prev, ...dataToSave }));
       console.log("Onboarding data saved successfully:", dataToSave);
     } catch (err) {
@@ -218,6 +250,7 @@ export function AuthProvider({ children }) {
   // Sign Out
   async function logout() {
     await signOut(auth);
+    sessionStorage.removeItem('studentProfile');
     setUserProfile(null);
     setUser(null);
   }

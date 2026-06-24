@@ -74,7 +74,7 @@ export default function Timeline({ profile, completedSteps, onToggleStep }) {
         {/* Central timeline line */}
         <div style={{
           position: 'absolute', left: 8, top: 12, bottom: 20, width: 2,
-          background: 'linear-gradient(180deg, #4f8ef7 0%, rgba(79,142,247,0.15) 100%)'
+          background: 'linear-gradient(180deg, #2563EB 0%, rgba(37,99,235,0.06) 100%)'
         }} />
 
         {steps.map((step, idx) => {
@@ -85,22 +85,22 @@ export default function Timeline({ profile, completedSteps, onToggleStep }) {
               {/* Dot Icon */}
               <div style={{
                 position: 'absolute', left: -28, top: 4,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2
+                display: 'flex', alignItems: 'center', justifycontent: 'center', zIndex: 2
               }}>
                 <button
                   onClick={() => onToggleStep(step.id)}
                   style={{
-                    background: 'var(--bg-primary)', border: 'none', padding: 0, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%'
+                    background: '#FAFAF8', border: 'none', padding: 0, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifycontent: 'center', borderRadius: '50%'
                   }}
                 >
                   {isDone ? (
-                    <CheckCircle2 size={18} color="#10b981" fill="#10b981" style={{ filter: 'drop-shadow(0 0 4px rgba(16,185,129,0.3))' }} />
+                    <CheckCircle2 size={18} color="#10B981" fill="#10B981" style={{ filter: 'drop-shadow(0 0 4px rgba(16,185,129,0.2))' }} />
                   ) : (
                     <div style={{
                       width: 18, height: 18, borderRadius: '50%',
-                      border: '2.5px solid #4f8ef7', background: 'var(--bg-primary)',
-                      boxShadow: '0 0 6px rgba(79,142,247,0.2)'
+                      border: '2.5px solid #2563EB', background: '#FFFFFF',
+                      boxShadow: '0 0 6px rgba(37,99,235,0.15)'
                     }} />
                   )}
                 </button>
@@ -109,60 +109,60 @@ export default function Timeline({ profile, completedSteps, onToggleStep }) {
               {/* Card Container */}
               <div style={{
                 flex: 1,
-                background: 'rgba(15, 33, 53, 0.65)',
-                border: isDone ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(79, 142, 247, 0.15)',
-                borderRadius: 16,
+                background: '#FFFFFF',
+                border: isDone ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(15, 23, 42, 0.08)',
+                borderRadius: 24,
                 padding: '20px 24px',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)',
                 transition: 'all 0.2s',
               }}
-                onMouseEnter={e => e.currentTarget.style.border = isDone ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(79, 142, 247, 0.3)'}
-                onMouseLeave={e => e.currentTarget.style.border = isDone ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(79, 142, 247, 0.15)'}
+                onMouseEnter={e => e.currentTarget.style.borderColor = isDone ? 'rgba(16,185,129,0.4)' : 'rgba(37, 99, 235, 0.2)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = isDone ? 'rgba(16, 185, 129, 0.2)' : 'rgba(15, 23, 42, 0.08)'}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+                <div style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <span style={{
-                      fontSize: '0.72rem', fontWeight: 700, color: isDone ? '#10b981' : '#4f8ef7',
+                      fontSize: '0.72rem', fontWeight: 700, color: isDone ? '#10B981' : '#2563EB',
                       textTransform: 'uppercase', letterSpacing: '0.08em',
-                      background: isDone ? 'rgba(16, 185, 129, 0.1)' : 'rgba(79, 142, 247, 0.1)',
-                      padding: '3px 8px', borderRadius: 4
+                      background: isDone ? 'rgba(16, 185, 129, 0.08)' : 'rgba(37, 99, 235, 0.08)',
+                      padding: '3px 8px', borderRadius: 6
                     }}>
                       {step.phase}
                     </span>
-                    <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f0f4ff', margin: '10px 0 6px', fontFamily: 'Plus Jakarta Sans' }}>
+                    <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0F172A', margin: '10px 0 6px', fontFamily: 'Plus Jakarta Sans' }}>
                       {step.title}
                     </h4>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500 }}>
-                    <Clock size={13} color="#94a3b8" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', fontSize: '0.8rem', fontWeight: 500 }}>
+                    <Clock size={13} color="#64748B" />
                     <span>{step.time}</span>
                   </div>
                 </div>
 
-                <p style={{ color: '#94a3b8', fontSize: '0.86rem', margin: '8px 0 0', lineHeight: 1.65 }}>
+                <p style={{ color: '#64748B', fontSize: '0.86rem', margin: '8px 0 0', lineHeight: 1.65, fontWeight: 500 }}>
                   {step.desc}
                 </p>
 
                 {/* Checkbox Trigger button inside card */}
-                <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ marginTop: 14, display: 'flex', justifycontent: 'flex-end' }}>
                   <button
                     onClick={() => onToggleStep(step.id)}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 6,
-                      background: isDone ? 'rgba(16, 185, 129, 0.1)' : 'rgba(79, 142, 247, 0.05)',
-                      border: isDone ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(79, 142, 247, 0.2)',
+                      background: isDone ? 'rgba(16, 185, 129, 0.08)' : 'rgba(37, 99, 235, 0.05)',
+                      border: isDone ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(37, 99, 235, 0.15)',
                       padding: '6px 12px', borderRadius: 8,
-                      fontSize: '0.78rem', fontWeight: 600,
-                      color: isDone ? '#10b981' : '#f0f4ff',
+                      fontSize: '0.78rem', fontWeight: 700,
+                      color: isDone ? '#10B981' : '#2563EB',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = isDone ? 'rgba(16, 185, 129, 0.2)' : 'rgba(79, 142, 247, 0.15)'
+                      e.currentTarget.style.background = isDone ? 'rgba(16, 185, 129, 0.15)' : 'rgba(37, 99, 235, 0.12)'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = isDone ? 'rgba(16, 185, 129, 0.1)' : 'rgba(79, 142, 247, 0.05)'
+                      e.currentTarget.style.background = isDone ? 'rgba(16, 185, 129, 0.08)' : 'rgba(37, 99, 235, 0.05)'
                     }}
                   >
                     {isDone ? '✓ Completed' : 'Mark Completed'}

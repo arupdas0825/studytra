@@ -283,7 +283,7 @@ export default function Navbar() {
             )}
             {user && (
               <a
-                href="/dashboard"
+                href="/chat"
                 style={{
                   padding: '8px 14px',
                   borderRadius: 'var(--r-sm)',
@@ -302,7 +302,7 @@ export default function Navbar() {
                   e.currentTarget.style.background = 'none'
                 }}
               >
-                Dashboard
+                AI Workspace
               </a>
             )}
           </div>
@@ -371,17 +371,17 @@ export default function Navbar() {
 
                     {/* Navigation links */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
-                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-                        <LayoutDashboard size={14} color="var(--accent-primary)" />
-                        <span>Dashboard</span>
-                      </a>
                       <a href="/chat" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                         <MessageSquare size={14} color="var(--accent-primary)" />
-                        <span>My Chats</span>
+                        <span>AI Workspace</span>
                       </a>
-                      <a href="/" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                      <a href="/dashboard" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+                        <LayoutDashboard size={14} color="var(--accent-primary)" />
+                        <span>Dashboard Tools</span>
+                      </a>
+                      <a href="/settings" onClick={() => setAvatarDropdownOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', textDecoration: 'none', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--theme-icon-hover)'} onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                         <Settings size={14} color="var(--text-muted)" />
-                        <span>Planning Home</span>
+                        <span>Settings</span>
                       </a>
                     </div>
 
@@ -511,7 +511,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <a
-                  href="/dashboard"
+                  href="/chat"
                   onClick={() => setMenuOpen(false)}
                   style={{
                     display: 'block',
@@ -523,7 +523,7 @@ export default function Navbar() {
                     textDecoration: 'none',
                   }}
                 >
-                  Dashboard
+                  AI Workspace
                 </a>
                 <button
                   onClick={() => {

@@ -82,10 +82,18 @@ export default function ChatPage() {
   const [error, setError] = useState(null)
 
   // Auth & Session History States
-  const { user } = useAuth()
+  const { user, userProfile } = useAuth()
   const { showInfo, showError, showSuccess } = useToast()
   const [chatSessions, setChatSessions] = useState([])
   const [activeSessionId, setActiveSessionId] = useState(null)
+
+  const profileRaw = sessionStorage.getItem('studentProfile')
+  const profile = userProfile || (profileRaw ? JSON.parse(profileRaw) : null)
+  const fullName = profile?.fullName || user?.displayName || user?.email?.split('@')[0] || 'Student'
+  const targetCountry = profile?.targetCountry || profile?.dreamCountry || 'Austria'
+  const targetDegree = profile?.targetDegree || "Master's"
+  const targetCourse = profile?.fieldOfStudy || profile?.targetCourse || 'Computer Science'
+  const targetIntake = profile?.targetIntake || '2028'
 
   const endRef = useRef(null)
   const inputRef = useRef(null)
@@ -127,7 +135,7 @@ export default function ChatPage() {
     }
   }
 
-  // Detect plan lock in loaded chat history
+  // detectPlanLock - parses locked plan from message content if present
   const detectPlanLock = (msgs) => {
     let plan = null
     // Scan backward to find the last assistant message with plan lock
@@ -142,49 +150,6 @@ export default function ChatPage() {
     }
     setLockedPlan(plan)
   }
-
-  // Initialize a new chat session greeting
-  const initChat = useCallback(async (customProfile = null) => {
-    if (initialized.current || showOnboarding) return
-    initialized.current = true
-    setLoading(true)
-    setError(null)
-
-    const profileRaw = sessionStorage.getItem('studentProfile')
-    const profile = customProfile || (profileRaw ? JSON.parse(profileRaw) : null)
-    const country = preselectedCountry || profile?.dreamCountry || ''
-
-    const trigger = country && country !== 'Not decided yet'
-      ? `A student named ${profile?.fullName || 'a student'} just arrived. They want to study in ${country}. They are currently doing ${profile?.currentLevel || 'their studies'} at ${profile?.currentUniversity || 'their institution'} and want to pursue ${profile?.targetDegree || 'a degree'} in ${profile?.targetCourse || 'their field'}. Greet them warmly by first name, acknowledge their country choice, and ask for their target intake and any specific questions they have.`
-      : `A student named ${profile?.fullName || 'a new student'} just arrived at Studytra. Greet them warmly, introduce yourself as Studytra AI, and run the 5-step onboarding: country (Germany/USA/Canada/UK/Australia), degree, intake, current stage (A-F), and budget.`
-
-    try {
-      const res = await callGemini([{ role: 'user', content: trigger }])
-      const { cleanText, plan } = parsePlanLock(res)
-      const welcomeMessages = [{ role: 'assistant', content: cleanText }]
-      setMessages(welcomeMessages)
-      if (plan) setLockedPlan(plan)
-
-      // If logged in, create a session in Firestore immediately
-      if (user) {
-        const title = plan ? `${plan.country} Plan` : (country && country !== 'Not decided yet' ? `${country} Counseling` : 'Abroad Plan Setup')
-        const newSess = await createChatSession(user.uid, title, welcomeMessages)
-        if (newSess) {
-          setActiveSessionId(newSess.id)
-          setChatSessions(prev => [newSess, ...prev])
-        }
-      }
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
-  }, [showOnboarding, preselectedCountry, user])
-
-  useEffect(() => { 
-    initChat() 
-  }, [initChat])
 
   // Handle message sending (user text or quick action)
   const handleSend = async (textToSend = null) => {
@@ -292,14 +257,6 @@ export default function ChatPage() {
     }
   }
 
-  const profile = (() => { 
-    try { 
-      return JSON.parse(sessionStorage.getItem('studentProfile') || 'null') 
-    } catch { 
-      return null 
-    } 
-  })()
-
   // Custom quick reply suggestions on active screens
   const quickReplies = lockedPlan ? [
     'Show complete roadmap', 'Visa step-by-step', 'Monthly cost breakdown',
@@ -314,10 +271,6 @@ export default function ChatPage() {
       {showOnboarding && (
         <OnboardingForm onClose={() => {
           setShowOnboarding(false)
-          setTimeout(() => { 
-            initialized.current = false
-            initChat() 
-          }, 100)
         }} />
       )}
 
@@ -440,6 +393,209 @@ export default function ChatPage() {
             display: 'flex', 
             flexDirection: 'column' 
           }} className="custom-scroll">
+             {messages.length === 0 && !loading && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: 'auto',
+                maxWidth: 680,
+                width: '100%',
+                padding: '40px 20px',
+                textAlign: 'center',
+                fontFamily: "'Plus Jakarta Sans', sans-serif"
+              }}>
+                <div style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 18,
+                  background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '2.2rem',
+                  color: '#FFFFFF',
+                  marginBottom: 24,
+                  boxShadow: '0 8px 24px rgba(37, 99, 235, 0.15)'
+                }}>
+                  🎓
+                </div>
+                
+                <h2 style={{
+                  fontSize: '1.9rem',
+                  fontWeight: 800,
+                  color: '#0F172A',
+                  margin: '0 0 10px',
+                  letterSpacing: '-0.02em',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif"
+                }}>
+                  Hello, {fullName} 👋
+                </h2>
+                
+                <p style={{
+                  fontSize: '0.98rem',
+                  color: '#64748B',
+                  margin: '0 0 36px',
+                  lineHeight: 1.5,
+                  fontWeight: 600
+                }}>
+                  Ready to build your {targetCountry} study abroad roadmap?
+                </p>
+
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  textAlign: 'left'
+                }}>
+                  <div style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    color: '#94A3B8',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginBottom: 4,
+                    paddingLeft: 4
+                  }}>
+                    Suggested Actions
+                  </div>
+
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: 12
+                  }}>
+                    {/* Action 1 */}
+                    <button
+                      onClick={() => handleSend(`Which are the best universities in ${targetCountry} for my ${targetDegree} in ${targetCourse}?`)}
+                      className="welcome-action-btn"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                        padding: '16px 20px',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(15, 23, 42, 0.08)',
+                        borderRadius: 16,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>🎓 Find universities</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.4 }}>Explore top programs suited for your CS master degree</span>
+                    </button>
+
+                    {/* Action 2 */}
+                    <button
+                      onClick={() => handleSend(`Help me outline and write my Statement of Purpose (SOP) for studying ${targetCourse} in ${targetCountry}.`)}
+                      className="welcome-action-btn"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                        padding: '16px 20px',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(15, 23, 42, 0.08)',
+                        borderRadius: 16,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>📄 Help me write SOP</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.4 }}>Structure your essay for target universities</span>
+                    </button>
+
+                    {/* Action 3 */}
+                    <button
+                      onClick={() => handleSend(`What is the estimated cost of living, tuition, and part-time salary in ${targetCountry}?`)}
+                      className="welcome-action-btn"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                        padding: '16px 20px',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(15, 23, 42, 0.08)',
+                        borderRadius: 16,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>💰 Estimate my budget</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.4 }}>Tuition fees & monthly living expenses checklist</span>
+                    </button>
+
+                    {/* Action 4 */}
+                    <button
+                      onClick={() => handleSend(`What is the step-by-step student visa process and document checklist for Indian students applying to ${targetCountry}?`)}
+                      className="welcome-action-btn"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                        padding: '16px 20px',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(15, 23, 42, 0.08)',
+                        borderRadius: 16,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>🛂 Create visa checklist</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.4 }}>Appointments, visa fees, block account rules</span>
+                    </button>
+
+                    {/* Action 5 */}
+                    <button
+                      onClick={() => handleSend(`Create a detailed preparation and application timeline for ${targetDegree} in ${targetCourse} for ${targetCountry} (Intake: ${targetIntake}).`)}
+                      className="welcome-action-btn"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                        padding: '16px 20px',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(15, 23, 42, 0.08)',
+                        borderRadius: 16,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)',
+                        gridColumn: '1 / -1' // Span full row for 5th item
+                      }}
+                    >
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>📅 Build my roadmap</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B', lineHeight: 1.4 }}>Day-by-day arrival preparation checklist for Intake: {targetIntake}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <style>{`
+                  .welcome-action-btn:hover {
+                    border-color: #2563EB !important;
+                    background: rgba(37, 99, 235, 0.02) !important;
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04) !important;
+                  }
+                `}</style>
+              </div>
+            )}
+
             {messages.length === 0 && loading && (
               <div style={{ textAlign: 'center', margin: 'auto', padding: '40px' }}>
                 <div style={{
@@ -539,13 +695,13 @@ export default function ChatPage() {
 
           {/* Sticky Input Bar */}
           <div style={{ 
-            padding: '14px 28px 20px', 
-            background: 'var(--navbar-bg)',
-            backdropFilter: 'blur(12px)',
-            borderTop: '1px solid var(--border)' 
+            padding: '20px 28px 24px', 
+            background: 'rgba(250, 250, 248, 0.75)',
+            backdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(15, 23, 42, 0.06)' 
           }}>
             <div style={{ 
-              maxWidth: 860, 
+              maxWidth: 800, 
               margin: '0 auto', 
               display: 'flex', 
               gap: 12, 
@@ -554,12 +710,12 @@ export default function ChatPage() {
               <div style={{ 
                 flex: 1, 
                 display: 'flex', 
-                border: `1.5px solid ${input ? 'var(--primary)' : 'var(--border-default)'}`,
-                borderRadius: 12, 
+                border: `1.5px solid ${input ? '#2563EB' : 'rgba(15, 23, 42, 0.08)'}`,
+                borderRadius: 16, 
                 overflow: 'hidden',
-                background: 'var(--bg-input)', 
+                background: '#FFFFFF', 
                 transition: 'all 0.2s',
-                boxShadow: input ? 'var(--shadow-xs)' : 'none'
+                boxShadow: input ? '0 4px 20px rgba(37, 99, 235, 0.05)' : '0 2px 10px rgba(15, 23, 42, 0.02)'
               }}>
                 <textarea 
                   ref={inputRef} 
@@ -571,20 +727,20 @@ export default function ChatPage() {
                       handleSend() 
                     } 
                   }}
-                  placeholder={lockedPlan ? `Ask anything about your ${lockedPlan.country} plan...` : 'Tell me your target country, degree, and intake...'}
+                  placeholder="Ask anything about studying abroad..."
                   rows={1} 
                   disabled={loading}
                   maxLength={1000}
                   style={{
                     width: '100%', 
-                    padding: '13px 16px',
+                    padding: '14px 18px',
                     background: 'transparent', 
                     border: 'none', 
                     outline: 'none',
                     resize: 'none', 
-                    fontSize: '0.9rem', 
-                    fontFamily: 'Inter, sans-serif',
-                    color: 'var(--text-primary)', 
+                    fontSize: '0.92rem', 
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    color: '#0F172A', 
                     lineHeight: 1.5, 
                     maxHeight: 120, 
                     overflowY: 'auto',
@@ -599,29 +755,30 @@ export default function ChatPage() {
                 onClick={() => handleSend()} 
                 disabled={loading || !input.trim()} 
                 style={{
-                  width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                  width: 50, height: 50, borderRadius: 16, flexShrink: 0,
                   background: input.trim() && !loading
-                    ? 'var(--gradient-main)'
-                    : 'var(--theme-icon-bg)',
+                    ? 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)'
+                    : '#FAFBFD',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'all 0.2s',
                   cursor: 'pointer',
-                  border: 'none'
+                  border: '1px solid rgba(15, 23, 42, 0.05)',
+                  boxShadow: input.trim() && !loading ? '0 4px 14px rgba(37, 99, 235, 0.15)' : 'none'
                 }}
               >
-                <Send size={16} color={input.trim() && !loading ? 'var(--text-inverse, #ffffff)' : 'var(--text-muted)'} />
+                <Send size={16} color={input.trim() && !loading ? '#FFFFFF' : '#94A3B8'} />
               </button>
             </div>
             
             {/* Character Count & Tip footer strip */}
-            <div style={{ maxWidth: 860, margin: '6px auto 0', display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
-              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                AI responses can take a few seconds. For best results, specify degree & Intake.
+            <div style={{ maxWidth: 800, margin: '8px auto 0', display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
+              <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>
+                💡 Tip: Ask for visa blocked account rules, SOP guidelines, or university fees.
               </span>
               <span style={{ 
                 fontSize: '0.68rem', 
-                color: input.length > 900 ? 'var(--accent-error)' : 'var(--text-muted)',
-                fontWeight: input.length > 900 ? 700 : 400
+                color: input.length > 900 ? '#EF4444' : '#94A3B8',
+                fontWeight: input.length > 900 ? 700 : 500
               }}>
                 {input.length} / 1000
               </span>

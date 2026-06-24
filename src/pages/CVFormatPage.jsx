@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 import CVTemplateView from '../components/tools/CVTemplateView'
 
 const COUNTRIES = [
@@ -151,9 +150,8 @@ export default function CVFormatPage() {
 
   return (
     <>
-      <Navbar />
       <div style={{
-        minHeight: '100vh', background: '#F4F6FA', paddingTop: 68,
+        minHeight: '100vh', background: 'transparent', paddingTop: 24,
         fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
       }}>
         {/* Back */}

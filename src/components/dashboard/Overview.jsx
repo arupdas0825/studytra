@@ -91,10 +91,10 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       {/* Welcome Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(79, 142, 247, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)',
-        border: '1px solid rgba(79, 142, 247, 0.25)',
-        borderRadius: 20,
-        padding: '30px 28px',
+        background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(124, 58, 237, 0.06) 100%)',
+        border: '1px solid rgba(37, 99, 235, 0.12)',
+        borderRadius: 24,
+        padding: '32px 30px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -103,39 +103,42 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
       }}>
         <div>
           <h2 style={{
-            fontSize: '1.75rem', fontWeight: 800, color: '#f0f4ff', margin: 0,
-            fontFamily: 'Plus Jakarta Sans, sans-serif'
+            fontSize: '1.65rem', fontWeight: 800, color: '#0F172A', margin: 0,
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
+            letterSpacing: '-0.02em'
           }}>
             Hello, {displayName}!
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginTop: 6, margin: 0 }}>
+          <p style={{ color: '#64748B', fontSize: '0.92rem', marginTop: 6, margin: 0, fontWeight: 500 }}>
             Here is your personalized roadmap status for studying in {targetCountry}.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <div style={{
-            background: 'rgba(15, 33, 53, 0.6)',
-            border: '1px solid rgba(79, 142, 247, 0.15)',
+            background: '#FFFFFF',
+            border: '1px solid rgba(15, 23, 42, 0.08)',
             borderRadius: 12,
-            padding: '10px 14px',
+            padding: '10px 16px',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
           }}>
-            <MapPin size={16} color="#4f8ef7" />
-            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f0f4ff' }}>{targetCountry}</span>
+            <MapPin size={16} color="#2563EB" />
+            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>{targetCountry}</span>
           </div>
           <div style={{
-            background: 'rgba(15, 33, 53, 0.6)',
-            border: '1px solid rgba(79, 142, 247, 0.15)',
+            background: '#FFFFFF',
+            border: '1px solid rgba(15, 23, 42, 0.08)',
             borderRadius: 12,
-            padding: '10px 14px',
+            padding: '10px 16px',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            boxShadow: '0 4px 12px rgba(15, 23, 42, 0.02)'
           }}>
             <BookOpen size={16} color="#7c3aed" />
-            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f0f4ff' }}>{targetDegree}</span>
+            <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A' }}>{targetDegree}</span>
           </div>
         </div>
       </div>
@@ -148,23 +151,23 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
       }}>
         {/* Card 1: Checklist Progress */}
         <div style={{
-          background: 'rgba(15, 33, 53, 0.6)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(79, 142, 247, 0.15)',
-          borderRadius: 16,
+          background: '#FFFFFF',
+          border: '1px solid rgba(15, 23, 42, 0.08)',
+          borderRadius: 24,
           padding: 24,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Checklist Progress
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f0f4ff', marginTop: 10 }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#0F172A', marginTop: 10, fontFamily: 'Plus Jakarta Sans' }}>
               {progressPct}%
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 6 }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: 6, fontWeight: 500 }}>
               {completedCount} of {totalTasks} items completed
             </div>
           </div>
@@ -172,7 +175,7 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
           {/* SVG Progress Ring */}
           <div style={{ position: 'relative', width: 70, height: 70 }}>
             <svg width="70" height="70" viewBox="0 0 70 70">
-              <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(79, 142, 247, 0.1)" strokeWidth="6" />
+              <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(37, 99, 235, 0.04)" strokeWidth="6" />
               <circle cx="35" cy="35" r="28" fill="none" stroke="url(#progressGradient)" strokeWidth="6"
                 strokeDasharray={`${2 * Math.PI * 28}`}
                 strokeDashoffset={`${2 * Math.PI * 28 * (1 - progressPct / 100)}`}
@@ -181,14 +184,14 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
               />
               <defs>
                 <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4f8ef7" />
+                  <stop offset="0%" stopColor="#2563EB" />
                   <stop offset="100%" stopColor="#7c3aed" />
                 </linearGradient>
               </defs>
             </svg>
             <div style={{
               position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.8rem', fontWeight: 700, color: '#f0f4ff'
+              fontSize: '0.8rem', fontWeight: 700, color: '#0F172A'
             }}>
               {progressPct}%
             </div>
@@ -197,68 +200,72 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
 
         {/* Card 2: Application Deadline */}
         <div style={{
-          background: 'rgba(15, 33, 53, 0.6)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(79, 142, 247, 0.15)',
-          borderRadius: 16,
+          background: '#FFFFFF',
+          border: '1px solid rgba(15, 23, 42, 0.08)',
+          borderRadius: 24,
           padding: 24,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Intake Deadline
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#fca5a5', marginTop: 10 }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#EF4444', marginTop: 10, fontFamily: 'Plus Jakarta Sans' }}>
               {daysLeft} Days
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 6 }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: 6, fontWeight: 500 }}>
               Typical deadline: {deadlineStr}
             </div>
           </div>
           <div style={{
-            width: 48, height: 48, borderRadius: 12, background: 'rgba(239, 68, 68, 0.1)',
+            width: 48, height: 48, borderRadius: 14, 
+            background: 'rgba(239, 68, 68, 0.06)',
+            border: '1px solid rgba(239, 68, 68, 0.12)',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            <Calendar size={24} color="#fca5a5" />
+            <Calendar size={22} color="#EF4444" />
           </div>
         </div>
 
         {/* Card 3: Budget Estimator */}
         <div style={{
-          background: 'rgba(15, 33, 53, 0.6)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(79, 142, 247, 0.15)',
-          borderRadius: 16,
+          background: '#FFFFFF',
+          border: '1px solid rgba(15, 23, 42, 0.08)',
+          borderRadius: 24,
           padding: 24,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)'
         }}>
           <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Planned Budget
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#34d399', marginTop: 10 }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#16A34A', marginTop: 10, fontFamily: 'Plus Jakarta Sans' }}>
               {budgetInfo.symbol}{budgetInfo.total.toLocaleString()}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 6 }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: 6, fontWeight: 500 }}>
               Estimated monthly cost of living
             </div>
           </div>
           <div style={{
-            width: 48, height: 48, borderRadius: 12, background: 'rgba(16, 185, 129, 0.1)',
+            width: 48, height: 48, borderRadius: 14, 
+            background: 'rgba(22, 163, 74, 0.06)',
+            border: '1px solid rgba(22, 163, 74, 0.12)',
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>
-            <Wallet size={24} color="#34d399" />
+            <Wallet size={22} color="#16A34A" />
           </div>
         </div>
       </div>
 
       {/* Quick Actions & Short Cuts */}
       <div>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f0f4ff', marginBottom: 16, fontFamily: 'Plus Jakarta Sans' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A', marginBottom: 18, fontFamily: 'Plus Jakarta Sans', letterSpacing: '-0.01em' }}>
           Quick Planning Shortcuts
         </h3>
         <div style={{
@@ -269,10 +276,11 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
           <button
             onClick={() => navigate('/chat')}
             style={{
-              padding: '20px 24px',
-              borderRadius: 16,
-              background: 'rgba(79, 142, 247, 0.05)',
-              border: '1px solid rgba(79, 142, 247, 0.15)',
+              padding: '24px',
+              borderRadius: 24,
+              background: '#FFFFFF',
+              border: '1px solid rgba(15, 23, 42, 0.08)',
+              boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)',
               textAlign: 'left',
               cursor: 'pointer',
               display: 'flex',
@@ -281,26 +289,29 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(79, 142, 247, 0.1)'
+              e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.2)'
+              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.01)'
               e.currentTarget.style.transform = 'translateY(-2px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(79, 142, 247, 0.05)'
+              e.currentTarget.style.borderColor = 'rgba(15, 23, 42, 0.08)'
+              e.currentTarget.style.background = '#FFFFFF'
               e.currentTarget.style.transform = 'none'
             }}
           >
-            <span style={{ fontSize: '1.3rem' }}>💬</span>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f0f4ff' }}>Chat with AI Advisor</div>
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0 }}>Get custom answers, review university profiles, or write essays.</p>
+            <span style={{ fontSize: '1.5rem', marginBottom: 4 }}>💬</span>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0F172A' }}>Chat with AI Advisor</div>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>Get custom answers, review university profiles, or write essays.</p>
           </button>
 
           <button
             onClick={() => navigate('/budget')}
             style={{
-              padding: '20px 24px',
-              borderRadius: 16,
-              background: 'rgba(124, 58, 237, 0.05)',
-              border: '1px solid rgba(124, 58, 237, 0.15)',
+              padding: '24px',
+              borderRadius: 24,
+              background: '#FFFFFF',
+              border: '1px solid rgba(15, 23, 42, 0.08)',
+              boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)',
               textAlign: 'left',
               cursor: 'pointer',
               display: 'flex',
@@ -309,26 +320,29 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(124, 58, 237, 0.1)'
+              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.2)'
+              e.currentTarget.style.background = 'rgba(124, 58, 237, 0.01)'
               e.currentTarget.style.transform = 'translateY(-2px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(124, 58, 237, 0.05)'
+              e.currentTarget.style.borderColor = 'rgba(15, 23, 42, 0.08)'
+              e.currentTarget.style.background = '#FFFFFF'
               e.currentTarget.style.transform = 'none'
             }}
           >
-            <span style={{ fontSize: '1.3rem' }}>💰</span>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f0f4ff' }}>Calculate Living Budget</div>
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0 }}>Adjust savings, calculate part-time job incomes, and compare cities.</p>
+            <span style={{ fontSize: '1.5rem', marginBottom: 4 }}>💰</span>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0F172A' }}>Calculate Living Budget</div>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>Adjust savings, calculate part-time job incomes, and compare cities.</p>
           </button>
 
           <button
             onClick={() => setActiveTab('timeline')}
             style={{
-              padding: '20px 24px',
-              borderRadius: 16,
-              background: 'rgba(16, 185, 129, 0.05)',
-              border: '1px solid rgba(16, 185, 129, 0.15)',
+              padding: '24px',
+              borderRadius: 24,
+              background: '#FFFFFF',
+              border: '1px solid rgba(15, 23, 42, 0.08)',
+              boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)',
               textAlign: 'left',
               cursor: 'pointer',
               display: 'flex',
@@ -337,17 +351,19 @@ export default function Overview({ profile, user, completedSteps, completedDocs,
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'
+              e.currentTarget.style.borderColor = 'rgba(22, 163, 74, 0.2)'
+              e.currentTarget.style.background = 'rgba(22, 163, 74, 0.01)'
               e.currentTarget.style.transform = 'translateY(-2px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.05)'
+              e.currentTarget.style.borderColor = 'rgba(15, 23, 42, 0.08)'
+              e.currentTarget.style.background = '#FFFFFF'
               e.currentTarget.style.transform = 'none'
             }}
           >
-            <span style={{ fontSize: '1.3rem' }}>📅</span>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f0f4ff' }}>Review Preparation Steps</div>
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0 }}>Check off steps like IELTS prep, loan applications, and visa steps.</p>
+            <span style={{ fontSize: '1.5rem', marginBottom: 4 }}>📅</span>
+            <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0F172A' }}>Review Preparation Steps</div>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, lineHeight: 1.5, fontWeight: 500 }}>Check off steps like IELTS prep, loan applications, and visa steps.</p>
           </button>
         </div>
       </div>

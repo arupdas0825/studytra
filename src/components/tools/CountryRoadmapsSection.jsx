@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../Navbar'
 
 const COUNTRIES = [
   {
@@ -139,8 +138,7 @@ export default function CountryRoadmapsSection() {
 
   return (
     <>
-      <Navbar />
-      <div style={{ minHeight: '100vh', background: '#F4F6FA', fontFamily: '"Plus Jakarta Sans", "DM Sans", sans-serif', paddingTop: 68 }}>
+      <div style={{ minHeight: '100vh', background: '#F4F6FA', fontFamily: '"Plus Jakarta Sans", "DM Sans", sans-serif', paddingTop: 24 }}>
 
         <div style={{ padding: '20px 5vw 0' }}>
           <button onClick={() => navigate(-1)} style={{

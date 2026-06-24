@@ -40,10 +40,10 @@ export default function DocumentChecklist({ completedDocs, onToggleDoc }) {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f0f4ff', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
           Document Checklist
         </h2>
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: 4, margin: 0 }}>
+        <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: 4, margin: 0, fontWeight: 500 }}>
           Collect and organize your documents according to standard visa and university requirements.
         </p>
       </div>
@@ -53,15 +53,15 @@ export default function DocumentChecklist({ completedDocs, onToggleDoc }) {
           <div
             key={category.title}
             style={{
-              background: 'rgba(15, 33, 53, 0.6)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(79, 142, 247, 0.15)',
-              borderRadius: 16,
-              padding: '24px 20px',
+              background: '#FFFFFF',
+              border: '1px solid rgba(15, 23, 42, 0.08)',
+              borderRadius: 24,
+              padding: '24px 24px',
+              boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)'
             }}
           >
             <h3 style={{
-              fontSize: '1.05rem', fontWeight: 700, color: '#f0f4ff', margin: '0 0 16px',
+              fontSize: '1.05rem', fontWeight: 700, color: '#0F172A', margin: '0 0 16px',
               fontFamily: 'Plus Jakarta Sans', display: 'flex', alignItems: 'center', gap: 8
             }}>
               {category.title}
@@ -79,36 +79,36 @@ export default function DocumentChecklist({ completedDocs, onToggleDoc }) {
                       alignItems: 'flex-start',
                       gap: 14,
                       padding: '12px 14px',
-                      borderRadius: 10,
-                      background: isChecked ? 'rgba(16, 185, 129, 0.04)' : 'rgba(255, 255, 255, 0.01)',
-                      border: isChecked ? '1px solid rgba(16, 185, 129, 0.15)' : '1px solid rgba(79, 142, 247, 0.08)',
+                      borderRadius: 12,
+                      background: isChecked ? 'rgba(16, 185, 129, 0.03)' : 'rgba(15, 23, 42, 0.01)',
+                      border: isChecked ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(15, 23, 42, 0.06)',
                       cursor: 'pointer',
                       transition: 'all 0.15s',
                     }}
                     onMouseEnter={e => {
-                      if (!isChecked) e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.2)'
+                      if (!isChecked) e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.2)'
                     }}
                     onMouseLeave={e => {
-                      if (!isChecked) e.currentTarget.style.borderColor = 'rgba(79, 142, 247, 0.08)'
+                      if (!isChecked) e.currentTarget.style.borderColor = 'rgba(15, 23, 42, 0.06)'
                     }}
                   >
                     <div style={{ marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {isChecked ? (
-                        <CheckSquare size={18} color="#10b981" style={{ fill: 'rgba(16, 185, 129, 0.1)' }} />
+                        <CheckSquare size={18} color="#10B981" style={{ fill: 'rgba(16, 185, 129, 0.1)' }} />
                       ) : (
-                        <Square size={18} color="#94a3b8" />
+                        <Square size={18} color="#64748B" />
                       )}
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
                         fontSize: '0.88rem', fontWeight: 700,
-                        color: isChecked ? '#10b981' : '#f0f4ff',
+                        color: isChecked ? '#10B981' : '#0F172A',
                         transition: 'color 0.15s'
                       }}>
                         {item.name}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: 4, lineHeight: 1.5 }}>
+                      <div style={{ fontSize: '0.78rem', color: '#64748B', marginTop: 4, lineHeight: 1.5, fontWeight: 500 }}>
                         {item.desc}
                       </div>
                     </div>

@@ -181,38 +181,9 @@ export default function BudgetPlanner() {
     }))
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #f0f7ff 0%, #fff 60%, #f0fdf4 100%)' }}>
+        <div style={{ minHeight: '100vh', background: 'transparent', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
-            {/* ── Sticky top bar ── */}
-            <div style={{
-                position: 'sticky', top: 0, zIndex: 200,
-                background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(14px)',
-                borderBottom: '1px solid var(--gray-200)', padding: '0 24px',
-            }}>
-                <div className="container" style={{
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'space-between', height: 64,
-                }}>
-                    {/* Left: back */}
-                    <button onClick={() => navigate('/')} style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        color: 'var(--blue-700)', fontWeight: 600, fontSize: '0.9rem',
-                        background: 'none', cursor: 'pointer', border: 'none',
-                    }}>
-                        <ArrowLeft size={18} /> Back to Home
-                    </button>
-
-                    {/* Centre: title */}
-                    <div style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '1.1rem', color: 'var(--blue-950)' }}>
-                        💰 Budget Planner
-                    </div>
-
-                    {/* Right: live rate ticker */}
-                    <RateTicker rates={rates} lastUpdated={lastUpdated} />
-                </div>
-            </div>
-
-            <div className="container" style={{ padding: '40px 24px 80px' }}>
+            <div className="container" style={{ padding: '32px 24px 80px' }}>
 
                 {/* Header */}
                 <div style={{ textAlign: 'center', marginBottom: 40 }}>
@@ -230,6 +201,9 @@ export default function BudgetPlanner() {
                     <p style={{ color: 'var(--gray-500)', maxWidth: 520, margin: '0 auto' }}>
                         Set your own spending limits for each category — see exactly how much you'll save each month.
                     </p>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+                        <RateTicker rates={rates} lastUpdated={lastUpdated} />
+                    </div>
                 </div>
 
                 {/* Country tabs */}

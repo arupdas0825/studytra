@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { db } from '../lib/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import Sidebar from '../components/dashboard/Sidebar'
 import Overview from '../components/dashboard/Overview'
 import Timeline from '../components/dashboard/Timeline'
 import DocumentChecklist from '../components/dashboard/DocumentChecklist'
@@ -13,11 +12,19 @@ import PremiumOnboardingModal from '../components/auth/PremiumOnboardingModal'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
   const { user, userProfile, loading: authLoading, logout, signInWithGoogle } = useAuth()
   const [progressLoading, setProgressLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState(tabParam || 'overview')
   const [completedSteps, setCompletedSteps] = useState([])
   const [completedDocs, setCompletedDocs] = useState([])
+
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam)
+    }
+  }, [tabParam])
   const [syncing, setSyncing] = useState(false)
 
   // Map onboarding fields (flat schema or legacy studyPlan) to snake_case profile expected by dashboard components
@@ -287,19 +294,10 @@ export default function Dashboard() {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      background: 'var(--bg-primary)',
-      color: 'var(--text-primary)',
+      background: '#FAFAF8',
+      color: '#0F172A',
       fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
-      {/* Sidebar navigation */}
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        user={user}
-        profile={profile}
-        onSignOut={handleSignOut}
-      />
-
       {/* Main panel */}
       <main style={{
         flex: 1,
@@ -317,13 +315,13 @@ export default function Dashboard() {
           height: 24,
         }}>
           {syncing ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#4f8ef7', fontSize: '0.75rem', fontWeight: 600 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#2563EB', fontSize: '0.75rem', fontWeight: 600 }}>
               <RefreshCw size={12} className="spin-loader" />
-              Syncing with Supabase...
+              Syncing with database...
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#34d399', fontSize: '0.75rem', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#16A34A', fontSize: '0.75rem', fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16A34A' }} />
               Progress Saved to Database
             </div>
           )}

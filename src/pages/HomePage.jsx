@@ -92,7 +92,7 @@ export default function HomePage() {
     if (!user) {
       setAuthModalOpen(true)
     } else {
-      navigate('/dashboard')
+      navigate('/chat')
     }
   }
 

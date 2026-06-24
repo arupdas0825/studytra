@@ -1,7 +1,6 @@
 import React from 'react'
 import { FileText, Download, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 import { COUNTRIES } from '../constants/countries'
 
 export default function RoadmapPage() {
@@ -9,19 +8,18 @@ export default function RoadmapPage() {
 
   // Generate some fake placeholder roadmap action
   const handlePdfAction = (countryName) => {
-    alert(`Generating 30-Day Arrival Roadmap PDF for \${countryName}... (Placeholder)`)
+    alert(`Generating 30-Day Arrival Roadmap PDF for ${countryName}... (Placeholder)`)
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--ivory)', fontFamily: 'DM Sans, sans-serif' }}>
-      <Navbar />
+    <div style={{ minHeight: '100vh', background: 'transparent', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       
-      <div style={{ paddingTop: '120px', paddingBottom: '80px', maxWidth: '1000px', margin: '0 auto', paddingX: '24px' }}>
+      <div style={{ paddingTop: '40px', paddingBottom: '80px', maxWidth: '1000px', margin: '0 auto', paddingLeft: '24px', paddingRight: '24px' }}>
         <button 
           onClick={() => navigate(-1)}
           style={{ 
             display: 'flex', alignItems: 'center', gap: '8px', 
-            background: 'none', border: 'none', color: 'var(--blue-700)', 
+            background: 'none', border: 'none', color: '#2563EB', 
             fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
             marginBottom: '32px'
           }}
