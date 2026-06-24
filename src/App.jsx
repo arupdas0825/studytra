@@ -13,7 +13,6 @@ import LoanGuidance from './components/dashboard/LoanGuidance'
 import CVFormatPage from './pages/CVFormatPage'
 import SOPGuidePage from './pages/SOPGuidePage'
 import ResumeFormatPage from './pages/ResumeFormatPage'
-import PremiumOnboardingModal from './components/auth/PremiumOnboardingModal'
 import AuthModal from './components/auth/AuthModal'
 import AppLayout from './layouts/AppLayout'
 import PublicLayout from './layouts/PublicLayout'
@@ -21,27 +20,30 @@ import AuthConditionalLayout from './layouts/AuthConditionalLayout'
 import UniversitiesPage from './pages/UniversitiesPage'
 import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
+import OnboardingPage from './pages/OnboardingPage'
 
 function AppContent() {
   const { user, userProfile, authModalOpen, setAuthModalOpen } = useAuth()
-  const [onboardingOpen, setOnboardingOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     if (user && userProfile) {
-      if (!userProfile.onboardingCompleted && !userProfile.onboardingComplete) {
-        setOnboardingOpen(true)
+      const isOnboardingDone = userProfile.onboardingCompleted || userProfile.onboardingComplete
+      if (!isOnboardingDone) {
+        if (window.location.pathname !== '/onboarding') {
+          navigate('/onboarding', { replace: true })
+        }
       } else {
-        setOnboardingOpen(false)
+        if (window.location.pathname === '/onboarding') {
+          navigate('/chat', { replace: true })
+        }
         // If authenticated and onboarding completed, redirect homepage visits to /chat
         if (window.location.pathname === '/' || window.location.pathname === '/home' || window.location.pathname === '/app') {
-          navigate('/chat')
+          navigate('/chat', { replace: true })
         }
       }
-    } else {
-      setOnboardingOpen(false)
     }
-  }, [user, userProfile, navigate])
+  }, [user, userProfile, navigate, window.location.pathname])
 
   return (
     <>
@@ -61,6 +63,9 @@ function AppContent() {
           <Route path="/settings"               element={<SettingsPage />} />
           <Route path="/profile"                element={<ProfilePage />} />
         </Route>
+        
+        {/* Standalone Protected Page (No sidebar/top nav) */}
+        <Route path="/onboarding"             element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
         
         {/* Shared/Conditional Tools Layout */}
         <Route element={<AuthConditionalLayout />}>
@@ -86,12 +91,6 @@ function AppContent() {
           </div>
         } />
       </Routes>
-      
-      <PremiumOnboardingModal 
-        isOpen={onboardingOpen} 
-        isDismissible={false} 
-        onClose={() => setOnboardingOpen(false)} 
-      />
 
       <AuthModal 
         isOpen={authModalOpen} 

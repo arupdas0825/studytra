@@ -8,6 +8,7 @@
 @import './styles/auth-modal.css';
 @import './styles/cards.css';
 @import './styles/hero.css';
+@import './styles/onboarding.css';
 
 *, *::before, *::after {
   box-sizing: border-box;

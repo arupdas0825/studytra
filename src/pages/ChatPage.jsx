@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Send, RefreshCw, Trash2, ShieldAlert, Sparkles, MessageSquare } from 'lucide-react'
-import OnboardingForm from '../components/OnboardingForm'
 import { callGemini, parsePlanLock } from '../utils/gemini'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -71,7 +70,6 @@ export default function ChatPage() {
   const [searchParams] = useSearchParams()
   const preselectedCountry = searchParams.get('country') || null
 
-  const [showOnboarding, setShowOnboarding] = useState(() => !sessionStorage.getItem('studentProfile'))
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -223,14 +221,6 @@ export default function ChatPage() {
     setActiveSessionId(null)
     initialized.current = false
     setError(null)
-    
-    // Check if profile exists, otherwise force onboarding
-    const profileRaw = sessionStorage.getItem('studentProfile')
-    if (!profileRaw) {
-      setShowOnboarding(true)
-    } else {
-      initChat(JSON.parse(profileRaw))
-    }
   }
 
   // Select an existing chat session from sidebar
@@ -274,12 +264,6 @@ export default function ChatPage() {
 
   return (
     <>
-      {showOnboarding && (
-        <OnboardingForm onClose={() => {
-          setShowOnboarding(false)
-        }} />
-      )}
-
       <div style={{ 
         display: 'flex', 
         height: '100vh', 
@@ -623,10 +607,7 @@ export default function ChatPage() {
                 <button 
                   onClick={() => { 
                     setError(null)
-                    if (!messages.length) { 
-                      initialized.current = false
-                      initChat() 
-                    } else {
+                    if (messages.length > 0) { 
                       handleSend(messages[messages.length - 1].content)
                     }
                   }} 

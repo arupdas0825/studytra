@@ -138,6 +138,9 @@ export function AuthProvider({ children }) {
         targetIntake: onboardingData.targetIntake || "",
         englishLevel: onboardingData.englishLevel || "",
         budgetRange: onboardingData.budgetRange || "",
+        careerGoal: onboardingData.careerGoal || "",
+        studyLanguage: onboardingData.studyLanguage || "",
+        workPreference: onboardingData.workPreference || "",
         onboardingCompleted: true,
         onboardingComplete: true, // Legacy compatibility
         createdAt: serverTimestamp(),
@@ -158,7 +161,10 @@ export function AuthProvider({ children }) {
         dreamCountry: dataToSave.targetCountry,
         targetIntake: dataToSave.targetIntake,
         englishLevel: dataToSave.englishLevel,
-        budgetRange: dataToSave.budgetRange
+        budgetRange: dataToSave.budgetRange,
+        careerGoal: dataToSave.careerGoal,
+        studyLanguage: dataToSave.studyLanguage,
+        workPreference: dataToSave.workPreference
       }));
 
       setUserProfile(prev => ({ ...prev, ...dataToSave }));

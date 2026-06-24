@@ -8,7 +8,7 @@ import Timeline from '../components/dashboard/Timeline'
 import DocumentChecklist from '../components/dashboard/DocumentChecklist'
 import VisaGuide from '../components/dashboard/VisaGuide'
 import { Landmark, ArrowLeft, RefreshCw } from 'lucide-react'
-import PremiumOnboardingModal from '../components/auth/PremiumOnboardingModal'
+
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -270,21 +270,8 @@ export default function Dashboard() {
   // If user is authenticated but profile is not completed
   if (!profile) {
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative', overflow: 'hidden' }}>
-        {/* Render a blurred mock dashboard layout for premium visual feel */}
-        <div style={{ filter: 'blur(12px)', pointerEvents: 'none', display: 'flex', minHeight: '100vh', opacity: 0.35 }}>
-          <Sidebar activeTab="overview" setActiveTab={() => {}} user={user} profile={null} onSignOut={() => {}} />
-          <main style={{ flex: 1, padding: '32px 36px 80px' }} />
-        </div>
-        
-        {/* Locked Premium Onboarding Modal */}
-        <PremiumOnboardingModal 
-          isOpen={true} 
-          isDismissible={false} 
-          onClose={() => {
-            // Modal saves data to Firestore, updating userProfile state which triggers re-render
-          }} 
-        />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-app)' }}>
+        <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, color: 'var(--navy)' }}>Loading profile...</div>
       </div>
     )
   }
