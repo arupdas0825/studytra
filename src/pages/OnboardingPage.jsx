@@ -146,6 +146,13 @@ export default function OnboardingPage() {
 
   return (
     <div className="ob-page">
+      {/* Subtle Animated Background Blobs */}
+      <div className="ob-bg-blobs" aria-hidden="true">
+        <div className="ob-blob ob-blob-1" />
+        <div className="ob-blob ob-blob-2" />
+        <div className="ob-blob ob-blob-3" />
+      </div>
+
       <div className="ob-card">
         
         {/* Step dots */}
@@ -215,63 +222,50 @@ export default function OnboardingPage() {
 
         {/* Footer buttons */}
         <div className="ob-footer">
-          {step > 1 ? (
-            <button type="button" onClick={handleBack} className="ob-btn-back">
-              <ArrowLeft size={16} /> Back
-            </button>
-          ) : (
-            <div /> // Spacer
-          )}
+          <div className="ob-footer-left">
+            {step > 1 && (
+              <button type="button" onClick={handleBack} className="ob-btn-back">
+                <ArrowLeft size={16} /> Back
+              </button>
+            )}
+            
+            <div className="ob-signout-text">
+              Signed in as <strong className="ob-signout-email">{user?.email}</strong>. Not you?{' '}
+              <button 
+                type="button" 
+                onClick={logout} 
+                className="ob-signout-btn"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
 
-          {step < 3 ? (
-            <button type="button" onClick={handleNext} className="ob-btn-next">
-              Continue <ArrowRight size={16} />
-            </button>
-          ) : (
-            <button 
-              type="button" 
-              onClick={handleSubmit} 
-              disabled={loading}
-              className="ob-btn-next ob-btn-finish"
-            >
-              {loading ? (
-                <span className="btn-spinner" />
-              ) : (
-                <>
-                  <span>Build My Roadmap</span>
-                  <Sparkles size={16} fill="white" />
-                </>
-              )}
-            </button>
-          )}
+          <div className="ob-footer-right">
+            {step < 3 ? (
+              <button type="button" onClick={handleNext} className="ob-btn-next">
+                Continue <ArrowRight size={16} />
+              </button>
+            ) : (
+              <button 
+                type="button" 
+                onClick={handleSubmit} 
+                disabled={loading}
+                className="ob-btn-next ob-btn-finish"
+              >
+                {loading ? (
+                  <span className="btn-spinner" />
+                ) : (
+                  <>
+                    <span>Build My Roadmap</span>
+                    <Sparkles size={16} fill="white" />
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
 
-      </div>
-
-      <div style={{ textAlign: 'center', zIndex: 1, marginTop: '16px' }}>
-        <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
-          Signed in as <strong style={{ color: 'var(--text-secondary)' }}>{user?.email}</strong>. Not you?{' '}
-          <button 
-            type="button"
-            onClick={logout}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--navy)',
-              fontWeight: 600,
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              padding: 0,
-              fontFamily: 'inherit',
-              fontSize: 'inherit',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-hover, #2b4c8c)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--navy)'}
-          >
-            Sign Out
-          </button>
-        </span>
       </div>
     </div>
   )

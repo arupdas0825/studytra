@@ -13,19 +13,22 @@
 
 /* The card */
 .ob-card {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 24px;
   padding: 48px 44px;
   width: 100%;
   max-width: 520px;
   box-shadow:
-    0 4px 6px rgba(30, 20, 10, 0.04),
-    0 16px 48px rgba(30, 20, 10, 0.08),
+    0 4px 6px rgba(30, 20, 10, 0.03),
+    0 16px 48px rgba(30, 20, 10, 0.06),
     0 1px 0 rgba(255, 255, 255, 0.9) inset;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 
 /* Step dots — show at very top of card */
@@ -317,6 +320,49 @@
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid var(--border-subtle);
+  width: 100%;
+}
+
+.ob-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ob-footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.ob-signout-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ob-signout-email {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.ob-signout-btn {
+  background: none;
+  border: none;
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  transition: color 0.2s ease;
+}
+
+.ob-signout-btn:hover {
+  color: var(--accent-hover, #2b4c8c);
 }
 
 .ob-btn-back {
@@ -474,5 +520,100 @@
   .ob-chip {
     padding: 8px 12px;
     font-size: 12px;
+  }
+
+  .ob-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .ob-footer-left {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ob-footer-right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .ob-signout-text {
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ob-btn-back {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ob-btn-next {
+    align-self: flex-end;
+  }
+}
+
+/* Subtle Animated Background Blobs */
+.ob-bg-blobs {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.ob-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+
+.ob-blob-1 {
+  background: var(--navy);
+  width: 500px;
+  height: 500px;
+  top: -10%;
+  left: -10%;
+  animation: drift 25s ease-in-out infinite alternate;
+}
+
+.ob-blob-2 {
+  background: var(--gold);
+  width: 400px;
+  height: 400px;
+  bottom: -10%;
+  right: -10%;
+  animation: drift 20s ease-in-out infinite alternate-reverse;
+}
+
+.ob-blob-3 {
+  background: #0ea5e9;
+  width: 350px;
+  height: 350px;
+  top: 40%;
+  left: 40%;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -60px) scale(1.10);
+  }
+  100% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ob-blob {
+    animation: none !important;
   }
 }
