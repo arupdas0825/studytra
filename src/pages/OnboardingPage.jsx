@@ -247,6 +247,32 @@ export default function OnboardingPage() {
         </div>
 
       </div>
+
+      <div style={{ textAlign: 'center', zIndex: 1, marginTop: '16px' }}>
+        <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
+          Signed in as <strong style={{ color: 'var(--text-secondary)' }}>{user?.email}</strong>. Not you?{' '}
+          <button 
+            type="button"
+            onClick={logout}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--navy)',
+              fontWeight: 600,
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              padding: 0,
+              fontFamily: 'inherit',
+              fontSize: 'inherit',
+              transition: 'color 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-hover, #2b4c8c)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--navy)'}
+          >
+            Sign Out
+          </button>
+        </span>
+      </div>
     </div>
   )
 }
