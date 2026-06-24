@@ -37,10 +37,11 @@ export default function AuthModal({ isOpen, onClose }) {
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
   
-  // Modal Views: 'options', 'login', 'register'
+  // Modal Views: 'options', 'login', 'register', 'redirect-pending'
   const [view, setView] = useState('options');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
   // Email form state
   const [form, setForm] = useState({
@@ -73,7 +74,15 @@ export default function AuthModal({ isOpen, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      // On mobile, signInWithGoogle() triggers a redirect (browser navigates away)
+      // result will be undefined — getRedirectResult in AuthContext handles routing on return.
+      // On desktop popup success, result is the UserCredential object.
+      if (!result) {
+        // Mobile redirect flow — show pending message (browser will navigate away shortly)
+        setView('redirect-pending');
+        return;
+      }
       showSuccess("Signed in successfully with Google 🎉");
       onClose();
       navigate('/chat');
@@ -88,7 +97,12 @@ export default function AuthModal({ isOpen, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      await signInWithApple();
+      const result = await signInWithApple();
+      // Same as Google — on mobile this triggers a redirect, result is undefined.
+      if (!result) {
+        setView('redirect-pending');
+        return;
+      }
       showSuccess("Signed in successfully with Apple 🎉");
       onClose();
       navigate('/chat');
@@ -193,6 +207,27 @@ export default function AuthModal({ isOpen, onClose }) {
             lineHeight: 1.4
           }}>
             {error}
+          </div>
+        )}
+
+        {/* View: Mobile Redirect Pending */}
+        {view === 'redirect-pending' && (
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <div style={{
+              width: 48, height: 48, margin: '0 auto 16px',
+              borderRadius: '50%',
+              border: '3px solid var(--border-default)',
+              borderTopColor: 'var(--navy)',
+              animation: 'spin 0.8s linear infinite',
+              display: 'inline-block',
+            }} />
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Signing you in…<br />
+              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
+                You'll be redirected automatically.
+              </span>
+            </p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         )}
 

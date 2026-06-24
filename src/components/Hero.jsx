@@ -63,6 +63,7 @@ export default function Hero() {
       padding: '110px 24px 90px',
       position: 'relative',
       overflowX: 'hidden',
+      isolation: 'isolate',
     }}>
       {/* Background gradients */}
       <div style={{

@@ -6,6 +6,10 @@
   max-width: 440px;
   height: 360px;
   margin: 0 auto;
+  /* Isolate as its own GPU compositor layer to prevent scroll-triggered repaints */
+  isolation: isolate;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .hero-feature-card {
@@ -17,16 +21,19 @@
   box-shadow: var(--shadow-xl);
   padding: 24px;
   opacity: 0;
-  transform: translateY(12px) scale(0.98);
+  transform: translateY(12px) scale(0.98) translateZ(0);
   transition: opacity 0.5s ease, transform 0.5s ease;
   pointer-events: none;
   display: flex;
   flex-direction: column;
+  /* Force each card into its own compositing layer */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .hero-feature-card.active {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0) scale(1) translateZ(0);
   pointer-events: auto;
 }
 

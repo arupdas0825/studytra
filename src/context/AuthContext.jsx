@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -20,9 +21,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  // True while we await a getRedirectResult() after mobile OAuth redirect
+  const [redirectPending, setRedirectPending] = useState(false);
+  const navigate = useNavigate();
 
   // On mount — check redirect result (for mobile compatibility)
   useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      setRedirectPending(true);
+    }
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) {
@@ -30,12 +38,19 @@ export function AuthProvider({ children }) {
           const profile = await fetchOrCreateUserProfile(result.user);
           setUserProfile(profile);
           setUser(result.user);
+          // Route immediately after redirect result — don't wait for App.jsx effect
+          const isOnboardingDone = profile?.onboardingCompleted || profile?.onboardingComplete;
+          navigate(isOnboardingDone ? '/chat' : '/onboarding', { replace: true });
         }
       })
       .catch((err) => {
         console.error("Firebase redirect login error: ", err);
         setAuthError(err.message);
+      })
+      .finally(() => {
+        setRedirectPending(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auth state listener
@@ -242,12 +257,29 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Apple Sign In
+  // Apple Sign In — popup on desktop, redirect on mobile
   async function signInWithApple() {
     setAuthError(null);
     try {
-      await signInWithPopup(auth, appleProvider);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        console.log("Mobile detected — using redirect for Apple Sign In");
+        await signInWithRedirect(auth, appleProvider);
+        // Browser navigates away — getRedirectResult handles the rest on return
+        return;
+      }
+      const result = await signInWithPopup(auth, appleProvider);
+      return result;
     } catch (err) {
+      // Fallback to redirect if popup is blocked
+      if (
+        err.code === "auth/popup-blocked" ||
+        err.code === "auth/operation-not-supported-in-this-environment"
+      ) {
+        console.log("Apple popup blocked — falling back to redirect");
+        await signInWithRedirect(auth, appleProvider);
+        return;
+      }
       setAuthError(err.message);
       throw err;
     }
@@ -281,6 +313,7 @@ export function AuthProvider({ children }) {
       user,
       userProfile,
       loading,
+      redirectPending,
       authError,
       authModalOpen,
       setAuthModalOpen,

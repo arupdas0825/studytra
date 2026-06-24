@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
@@ -23,27 +23,30 @@ import SettingsPage from './pages/SettingsPage'
 import OnboardingPage from './pages/OnboardingPage'
 
 function AppContent() {
-  const { user, userProfile, authModalOpen, setAuthModalOpen } = useAuth()
+  const { user, userProfile, loading, authModalOpen, setAuthModalOpen } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
+    // Wait until auth state is fully resolved before any redirect
+    if (loading) return;
     if (user && userProfile) {
       const isOnboardingDone = userProfile.onboardingCompleted || userProfile.onboardingComplete
       if (!isOnboardingDone) {
-        if (window.location.pathname !== '/onboarding') {
+        if (location.pathname !== '/onboarding') {
           navigate('/onboarding', { replace: true })
         }
       } else {
-        if (window.location.pathname === '/onboarding') {
+        if (location.pathname === '/onboarding') {
           navigate('/chat', { replace: true })
         }
         // If authenticated and onboarding completed, redirect homepage visits to /chat
-        if (window.location.pathname === '/' || window.location.pathname === '/home' || window.location.pathname === '/app') {
+        if (location.pathname === '/' || location.pathname === '/home' || location.pathname === '/app') {
           navigate('/chat', { replace: true })
         }
       }
     }
-  }, [user, userProfile, navigate, window.location.pathname])
+  }, [user, userProfile, loading, navigate, location.pathname])
 
   return (
     <>

@@ -340,7 +340,8 @@
   color: var(--text-tertiary);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .ob-signout-email {
@@ -348,21 +349,35 @@
   font-weight: 600;
 }
 
+/* Sign Out — outline ghost button matching Continue's shape */
 .ob-signout-btn {
-  background: none;
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: transparent;
+  border: 1.5px solid var(--navy);
+  border-radius: 12px;
   color: var(--navy);
+  font-family: var(--font-ui);
+  font-size: 13px;
   font-weight: 700;
-  text-decoration: underline;
   cursor: pointer;
-  padding: 0;
-  font-family: inherit;
-  font-size: inherit;
-  transition: color 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
 }
 
 .ob-signout-btn:hover {
-  color: var(--accent-hover, #2b4c8c);
+  background: rgba(29, 52, 97, 0.07);
+  box-shadow: 0 0 0 3px rgba(29, 52, 97, 0.08);
+  color: var(--navy);
+}
+
+.ob-signout-btn:active {
+  background: rgba(29, 52, 97, 0.12);
 }
 
 .ob-btn-back {
@@ -542,7 +557,16 @@
   .ob-signout-text {
     text-align: center;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
+    gap: 8px;
+  }
+
+  .ob-signout-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
   }
 
   .ob-btn-back {
