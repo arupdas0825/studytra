@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -48,6 +48,19 @@ export default function AuthModal({ isOpen, onClose }) {
     email: '',
     password: ''
   });
+
+  // Escape key close listener
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -123,8 +136,8 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="auth-backdrop">
-      <div className="auth-modal">
+    <div className="auth-backdrop" onClick={onClose}>
+      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
         {/* Close Button */}
         <button onClick={onClose} className="auth-close" aria-label="Close modal">
           <X size={16} />
@@ -303,7 +316,7 @@ export default function AuthModal({ isOpen, onClose }) {
         )}
 
         {/* Legal Disclaimer */}
-        <p className="auth-legal" style={{ marginTop: 24 }}>
+        <p className="auth-legal" style={{ marginTop: 16 }}>
           By continuing, you agree to Studytra's Terms of Service.<br />
           Your study plan data remains private and secure.
         </p>

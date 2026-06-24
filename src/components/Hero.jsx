@@ -56,13 +56,13 @@ export default function Hero() {
 
   return (
     <section style={{
-      minHeight: '90vh',
+      minHeight: '95vh',
       background: 'var(--bg-app)',
       display: 'flex',
       alignItems: 'center',
-      padding: '80px 24px 60px',
+      padding: '110px 24px 90px',
       position: 'relative',
-      overflow: 'hidden',
+      overflowX: 'hidden',
     }}>
       {/* Background gradients */}
       <div style={{
@@ -149,19 +149,19 @@ export default function Hero() {
               
               {/* Card 1: AI Chat Demo */}
               <div className={`hero-feature-card ${activeCard === 0 ? 'active' : ''}`}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 12 }}>
-                  <span style={{ fontSize: '18px' }}>🤖</span>
-                  <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Studytra AI</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 10, borderBottom: '1px solid var(--border-subtle)', marginBottom: 12 }}>
+                  <span style={{ fontSize: '20px' }}>🤖</span>
+                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Studytra AI</span>
                 </div>
                 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
                   {/* User Bubble */}
                   <div style={{
                     alignSelf: 'flex-end',
                     background: 'var(--bg-app)',
                     padding: '10px 14px',
                     borderRadius: '16px 16px 4px 16px',
-                    fontSize: '12.5px',
+                    fontSize: '13.5px',
                     color: 'var(--text-primary)',
                     fontWeight: 600,
                     maxWidth: '85%'
@@ -176,12 +176,12 @@ export default function Hero() {
                     border: '1px solid var(--border-strong)',
                     padding: '12px 14px',
                     borderRadius: '16px 16px 16px 4px',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     color: 'var(--navy)',
                     lineHeight: 1.5,
                     maxWidth: '90%',
                     fontFamily: 'var(--font-body)',
-                    minHeight: 80
+                    minHeight: 90
                   }}>
                     <TypewriterText 
                       active={activeCard === 0} 
@@ -193,9 +193,9 @@ export default function Hero() {
 
               {/* Card 2: Budget Snapshot */}
               <div className={`hero-feature-card ${activeCard === 1 ? 'active' : ''}`}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}>
-                  <span style={{ fontSize: '18px' }}>💰</span>
-                  <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Monthly Budget — Vienna</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 10, borderBottom: '1px solid var(--border-subtle)', marginBottom: 14 }}>
+                  <span style={{ fontSize: '20px' }}>💰</span>
+                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Monthly Budget — Vienna</span>
                 </div>
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -206,9 +206,9 @@ export default function Hero() {
                     { label: 'Miscellaneous', value: '€340', pct: 28, color: '#10b981' },
                   ].map(item => (
                     <div key={item.label}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 2 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 2 }}>
                         <span>{item.label}</span>
-                        <span>{item.value} ({item.pct}%)</span>
+                        <span style={{ fontWeight: 700 }}>{item.value} <span style={{ fontWeight: 500, fontSize: '11px', color: 'var(--text-tertiary)' }}>({item.pct}%)</span></span>
                       </div>
                       <div style={{ background: 'var(--bg-app)', height: 6, borderRadius: 3, overflow: 'hidden' }}>
                         <div style={{ width: `${item.pct}%`, height: '100%', background: item.color, borderRadius: 3 }} />
@@ -216,11 +216,11 @@ export default function Hero() {
                     </div>
                   ))}
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 10, borderTop: '1px solid var(--border-subtle)' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--navy)' }}>
-                      Total €1,200/mo <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '11px' }}>= ₹1,09,200</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--navy)' }}>
+                      Total €1,200/mo <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '13px' }}>= ₹1,09,200</span>
                     </div>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gold)', fontFamily: 'var(--font-ui)', cursor: 'pointer' }} onClick={() => navigate('/budget')}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--gold)', fontFamily: 'var(--font-ui)', cursor: 'pointer' }} onClick={() => navigate('/budget')}>
                       Calculate →
                     </span>
                   </div>
@@ -230,11 +230,11 @@ export default function Hero() {
               {/* Card 3: Roadmap Steps */}
               <div className={`hero-feature-card ${activeCard === 2 ? 'active' : ''}`}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 10, borderBottom: '1px solid var(--border-subtle)', marginBottom: 12 }}>
-                  <span style={{ fontSize: '18px' }}>🗺️</span>
-                  <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Germany M.Sc Roadmap</span>
+                  <span style={{ fontSize: '20px' }}>🗺️</span>
+                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--navy)', fontFamily: 'var(--font-ui)' }}>Germany M.Sc Roadmap</span>
                 </div>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 7 }}>
                   {[
                     { text: 'IELTS 7.0+ achieved', done: true },
                     { text: 'Universities shortlisted', done: true },
@@ -243,7 +243,7 @@ export default function Hero() {
                     { text: 'Blocked account setup', pending: true },
                     { text: 'Student Visa appointment', pending: true }
                   ].map((step, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '11px' }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '13px' }}>
                       <span style={{ 
                         color: step.done ? '#10b981' : step.active ? 'var(--navy)' : 'var(--text-tertiary)',
                         fontWeight: 900
@@ -251,7 +251,7 @@ export default function Hero() {
                         {step.done ? '✓' : step.active ? '●' : '○'}
                       </span>
                       <span style={{ 
-                        fontWeight: step.active || step.done ? 700 : 500,
+                        fontWeight: step.active || step.done ? 600 : 500,
                         color: step.pending ? 'var(--text-secondary)' : 'var(--text-primary)'
                       }}>
                         {step.text}
@@ -260,9 +260,9 @@ export default function Hero() {
                   ))}
 
                   <div style={{ marginTop: 'auto', paddingTop: 8, borderTop: '1px solid var(--border-subtle)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, color: 'var(--navy)', marginBottom: 4 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 600, color: 'var(--navy)', marginBottom: 4 }}>
                       <span>4 of 6 steps complete</span>
-                      <span>67%</span>
+                      <span style={{ fontWeight: 700 }}>67%</span>
                     </div>
                     <div style={{ background: 'var(--bg-app)', height: 6, borderRadius: 3, overflow: 'hidden' }}>
                       <div style={{ width: '67%', height: '100%', background: 'var(--gradient-primary)', borderRadius: 3 }} />
