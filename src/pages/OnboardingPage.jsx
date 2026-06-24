@@ -9,7 +9,7 @@ import StepTwo from '../components/onboarding/StepTwo'
 import StepThree from '../components/onboarding/StepThree'
 
 export default function OnboardingPage() {
-  const { user, userProfile, saveOnboardingData } = useAuth()
+  const { user, userProfile, saveOnboardingData, logout } = useAuth()
   const { showSuccess, showError } = useToast()
   const navigate = useNavigate()
 
