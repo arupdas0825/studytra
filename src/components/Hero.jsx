@@ -55,14 +55,14 @@ export default function Hero() {
   }
 
   return (
-    <section style={{
-      minHeight: '95vh',
+    <section className="hero-section" style={{
+      minHeight: '100vh',
       background: 'var(--bg-app)',
       display: 'flex',
       alignItems: 'center',
-      padding: '110px 24px 90px',
+      padding: '80px 24px 64px',
       position: 'relative',
-      overflowX: 'hidden',
+      overflow: 'hidden',
       isolation: 'isolate',
     }}>
       {/* Background gradients */}
@@ -274,14 +274,14 @@ export default function Hero() {
 
             </div>
 
-            {/* Dot Navigation */}
-            <div className="hero-card-dots">
-              {[0, 1, 2].map(idx => (
+            {/* Dots OUTSIDE the card container — below it */}
+            <div className="hero-card-dots" style={{ marginTop: 16 }}>
+              {[0, 1, 2].map(i => (
                 <button
-                  key={idx}
-                  onClick={() => setActiveCard(idx)}
-                  className={`hero-card-dot ${activeCard === idx ? 'active' : ''}`}
-                  aria-label={`Show card ${idx + 1}`}
+                  key={i}
+                  className={`hero-card-dot ${activeCard === i ? 'active' : ''}`}
+                  onClick={() => setActiveCard(i)}
+                  aria-label={`Show card ${i + 1}`}
                 />
               ))}
             </div>

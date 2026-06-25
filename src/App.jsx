@@ -31,7 +31,7 @@ function AppContent() {
     // Wait until auth state is fully resolved before any redirect
     if (loading) return;
     if (user && userProfile) {
-      const isOnboardingDone = userProfile.onboardingCompleted || userProfile.onboardingComplete
+      const isOnboardingDone = userProfile.onboardingComplete
       if (!isOnboardingDone) {
         if (location.pathname !== '/onboarding') {
           navigate('/onboarding', { replace: true })

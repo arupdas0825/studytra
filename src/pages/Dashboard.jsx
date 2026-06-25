@@ -28,7 +28,7 @@ export default function Dashboard() {
   const [syncing, setSyncing] = useState(false)
 
   // Map onboarding fields (flat schema or legacy studyPlan) to snake_case profile expected by dashboard components
-  const profile = (userProfile?.onboardingCompleted || userProfile?.onboardingComplete) ? {
+  const profile = userProfile?.onboardingComplete ? {
     full_name: userProfile.fullName || userProfile.displayName || user?.displayName || 'Student',
     dream_country: userProfile.targetCountry || 'Germany',
     target_degree: userProfile.targetDegree || "Master's",

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { Users, Globe, Star, Zap } from 'lucide-react'
-import { fetchLiveSessionCount, subscribeToSessionCount } from '../utils/supabase'
 
 export function getAIUsageCount() {
   return parseInt(localStorage.getItem('studytra_ai_sessions') || '10247')
@@ -87,17 +86,14 @@ export default function StatsSection() {
   const [liveCount, setLiveCount] = useState(getAIUsageCount())
 
   useEffect(() => {
-    fetchLiveSessionCount().then(count => {
-      setLiveCount(count)
-      localStorage.setItem('studytra_ai_sessions', String(count))
-    })
-
-    const unsubscribe = subscribeToSessionCount((newCount) => {
-      setLiveCount(newCount)
-      localStorage.setItem('studytra_ai_sessions', String(newCount))
-    })
-
-    return unsubscribe
+    const interval = setInterval(() => {
+      setLiveCount(prev => {
+        const next = prev + (Math.random() > 0.7 ? 1 : 0)
+        localStorage.setItem('studytra_ai_sessions', String(next))
+        return next
+      })
+    }, 10000)
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {

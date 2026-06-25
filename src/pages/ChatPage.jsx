@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Send, RefreshCw, Trash2, ShieldAlert, Sparkles, MessageSquare } from 'lucide-react'
 import { callGemini, parsePlanLock } from '../utils/gemini'
+import MessageBubble from '../components/chat/MessageBubble'
+import TypingIndicator from '../components/chat/TypingIndicator'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { db } from '../lib/firebase'
@@ -597,12 +599,12 @@ export default function ChatPage() {
                   <ShieldAlert size={36} color="var(--accent-error)" />
                 </div>
                 <h3 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: 8 }}>
-                  {error === 'QUOTA_EXCEEDED' ? 'AI limit reached' : 'Connection timeout'}
+                  {error === 'QUOTA_EXCEEDED' ? 'AI limit reached' : 'API Connection Issue'}
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 20, lineHeight: 1.6 }}>
                   {error === 'QUOTA_EXCEEDED'
                     ? 'Our servers are experiencing high traffic from study abroad students. Please wait 30 seconds and try again.'
-                    : 'We could not reach the AI server. Verify your internet and trigger a quick retry.'}
+                    : `Error details: ${error}`}
                 </p>
                 <button 
                   onClick={() => { 

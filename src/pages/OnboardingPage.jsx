@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext'
 import StepOne from '../components/onboarding/StepOne'
 import StepTwo from '../components/onboarding/StepTwo'
 import StepThree from '../components/onboarding/StepThree'
+import AIQuickSetup from '../components/onboarding/AIQuickSetup'
 
 export default function OnboardingPage() {
   const { user, userProfile, saveOnboardingData, logout } = useAuth()
@@ -18,6 +19,7 @@ export default function OnboardingPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [showAISetup, setShowAISetup] = useState(true)
 
   const [formData, setFormData] = useState({
     // Step 1
@@ -52,10 +54,14 @@ export default function OnboardingPage() {
 
   // Redirect if already onboarded
   useEffect(() => {
-    if (userProfile && (userProfile.onboardingCompleted || userProfile.onboardingComplete)) {
+    if (userProfile && userProfile.onboardingComplete) {
       navigate('/chat', { replace: true })
     }
   }, [userProfile, navigate])
+
+  const handleAIExtracted = (extracted) => {
+    setFormData(prev => ({ ...prev, ...extracted }))
+  }
 
   const update = (key, val) => {
     setFormData(prev => ({ ...prev, [key]: val }))
@@ -153,119 +159,131 @@ export default function OnboardingPage() {
         <div className="ob-blob ob-blob-3" />
       </div>
 
-      <div className="ob-card">
+      <div style={{ width: '100%', maxWidth: 520, margin: '0 auto', zIndex: 10, position: 'relative' }}>
         
-        {/* Step dots */}
-        <div className="ob-step-dots">
-          {[1, 2, 3].map((n, i) => (
-            <React.Fragment key={n}>
-              <div className={`ob-dot ${n < step ? 'done' : n === step ? 'active' : 'pending'}`}>
-                {n < step ? <Check size={10} /> : n}
-              </div>
-              {i < 2 && (
-                <div className={`ob-dot-connector ${step > n ? 'filled' : ''}`} />
+        {/* Zone A — AI Quick Setup (above form) */}
+        {showAISetup && (
+          <AIQuickSetup
+            onExtracted={handleAIExtracted}
+            onSkip={() => setShowAISetup(false)}
+          />
+        )}
+
+        {/* Zone B — 3-step form card */}
+        <div className="ob-card">
+          
+          {/* Step dots */}
+          <div className="ob-step-dots">
+            {[1, 2, 3].map((n, i) => (
+              <React.Fragment key={n}>
+                <div className={`ob-dot ${n < step ? 'done' : n === step ? 'active' : 'pending'}`}>
+                  {n < step ? <Check size={10} /> : n}
+                </div>
+                {i < 2 && (
+                  <div className={`ob-dot-connector ${step > n ? 'filled' : ''}`} />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Header content */}
+          <div className="ob-step-header">
+            <div className="ob-step-icon-wrap">
+              {step === 1 && <User size={24} />}
+              {step === 2 && <Globe size={24} />}
+              {step === 3 && <Sparkles size={24} />}
+            </div>
+            <div className="ob-step-label">Step {step} of 3</div>
+            <h2 className="ob-step-title">
+              {step === 1 && "Tell Us About You"}
+              {step === 2 && "Where Are You Headed?"}
+              {step === 3 && "Personalize Your AI"}
+            </h2>
+            <p className="ob-step-subtitle">
+              {step === 1 && "We'll use this to personalize your study abroad roadmap."}
+              {step === 2 && "Choose your destination and degree goal."}
+              {step === 3 && (
+                <span>
+                  Help Studytra AI give you sharper, more relevant guidance.
+                  <span style={{
+                    marginLeft: 8,
+                    background: 'var(--gold-faint)',
+                    border: '1px solid var(--gold-border)',
+                    color: 'var(--gold)',
+                    fontSize: '9px',
+                    fontWeight: 700,
+                    padding: '2px 6px',
+                    borderRadius: 4,
+                    fontFamily: 'var(--font-ui)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    display: 'inline-block',
+                    verticalAlign: 'middle'
+                  }}>[RECOMMENDED]</span>
+                </span>
               )}
-            </React.Fragment>
-          ))}
-        </div>
+            </p>
 
-        {/* Header content */}
-        <div className="ob-step-header">
-          <div className="ob-step-icon-wrap">
-            {step === 1 && <User size={24} />}
-            {step === 2 && <Globe size={24} />}
-            {step === 3 && <Sparkles size={24} />}
-          </div>
-          <div className="ob-step-label">Step {step} of 3</div>
-          <h2 className="ob-step-title">
-            {step === 1 && "Tell Us About You"}
-            {step === 2 && "Where Are You Headed?"}
-            {step === 3 && "Personalize Your AI"}
-          </h2>
-          <p className="ob-step-subtitle">
-            {step === 1 && "We'll use this to personalize your study abroad roadmap."}
-            {step === 2 && "Choose your destination and degree goal."}
-            {step === 3 && (
-              <span>
-                Help Studytra AI give you sharper, more relevant guidance.
-                <span style={{
-                  marginLeft: 8,
-                  background: 'var(--gold-faint)',
-                  border: '1px solid var(--gold-border)',
-                  color: 'var(--gold)',
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  padding: '2px 6px',
-                  borderRadius: 4,
-                  fontFamily: 'var(--font-ui)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  display: 'inline-block',
-                  verticalAlign: 'middle'
-                }}>[RECOMMENDED]</span>
-              </span>
-            )}
-          </p>
-
-          {/* Thin Progress bar */}
-          <div className="ob-progress-track">
-            <div className="ob-progress-fill" style={{ width: getStepProgress() }} />
-          </div>
-        </div>
-
-        {/* Transition form content */}
-        <div key={step} className={`ob-step-content ${direction === 'back' ? 'going-back' : ''}`}>
-          {step === 1 && <StepOne formData={formData} update={update} errors={errors} />}
-          {step === 2 && <StepTwo formData={formData} update={update} errors={errors} />}
-          {step === 3 && <StepThree formData={formData} update={update} />}
-        </div>
-
-        {/* Footer buttons */}
-        <div className="ob-footer">
-          <div className="ob-footer-left">
-            {step > 1 && (
-              <button type="button" onClick={handleBack} className="ob-btn-back">
-                <ArrowLeft size={16} /> Back
-              </button>
-            )}
-            
-            <div className="ob-signout-text">
-              Signed in as <strong className="ob-signout-email">{user?.email}</strong>. Not you?{' '}
-              <button 
-                type="button" 
-                onClick={logout} 
-                className="ob-signout-btn"
-              >
-                Sign Out
-              </button>
+            {/* Thin Progress bar */}
+            <div className="ob-progress-track">
+              <div className="ob-progress-fill" style={{ width: getStepProgress() }} />
             </div>
           </div>
 
-          <div className="ob-footer-right">
-            {step < 3 ? (
-              <button type="button" onClick={handleNext} className="ob-btn-next">
-                Continue <ArrowRight size={16} />
-              </button>
-            ) : (
-              <button 
-                type="button" 
-                onClick={handleSubmit} 
-                disabled={loading}
-                className="ob-btn-next ob-btn-finish"
-              >
-                {loading ? (
-                  <span className="btn-spinner" />
-                ) : (
-                  <>
-                    <span>Build My Roadmap</span>
-                    <Sparkles size={16} fill="white" />
-                  </>
-                )}
-              </button>
-            )}
+          {/* Transition form content */}
+          <div key={step} className={`ob-step-content ${direction === 'back' ? 'going-back' : ''}`}>
+            {step === 1 && <StepOne formData={formData} update={update} errors={errors} />}
+            {step === 2 && <StepTwo formData={formData} update={update} errors={errors} />}
+            {step === 3 && <StepThree formData={formData} update={update} />}
           </div>
-        </div>
 
+          {/* Footer buttons */}
+          <div className="ob-footer">
+            <div className="ob-footer-left">
+              {step > 1 && (
+                <button type="button" onClick={handleBack} className="ob-btn-back">
+                  <ArrowLeft size={16} /> Back
+                </button>
+              )}
+              
+              <div className="ob-signout-text">
+                Signed in as <strong className="ob-signout-email">{user?.email}</strong>. Not you?{' '}
+                <button 
+                  type="button" 
+                  onClick={logout} 
+                  className="ob-signout-btn"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+            <div className="ob-footer-right">
+              {step < 3 ? (
+                <button type="button" onClick={handleNext} className="ob-btn-next">
+                  Continue <ArrowRight size={16} />
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  onClick={handleSubmit} 
+                  disabled={loading}
+                  className="ob-btn-next ob-btn-finish"
+                >
+                  {loading ? (
+                    <span className="btn-spinner" />
+                  ) : (
+                    <>
+                      <span>Build My Roadmap</span>
+                      <Sparkles size={16} fill="white" />
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   )

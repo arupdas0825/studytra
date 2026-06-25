@@ -24,7 +24,6 @@ export default function SettingsPage() {
     try {
       const userRef = doc(db, "users", user.uid)
       await updateDoc(userRef, {
-        onboardingCompleted: false,
         onboardingComplete: false,
         studyPlan: null
       })

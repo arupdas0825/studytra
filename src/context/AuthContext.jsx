@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   onAuthStateChanged,
@@ -21,7 +21,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  // True while we await a getRedirectResult() after mobile OAuth redirect
   const [redirectPending, setRedirectPending] = useState(false);
   const navigate = useNavigate();
 
@@ -34,12 +33,10 @@ export function AuthProvider({ children }) {
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) {
-          console.log("Redirect login result received successfully");
           const profile = await fetchOrCreateUserProfile(result.user);
           setUserProfile(profile);
           setUser(result.user);
-          // Route immediately after redirect result — don't wait for App.jsx effect
-          const isOnboardingDone = profile?.onboardingCompleted || profile?.onboardingComplete;
+          const isOnboardingDone = profile?.onboardingComplete;
           navigate(isOnboardingDone ? '/chat' : '/onboarding', { replace: true });
         }
       })
@@ -56,7 +53,6 @@ export function AuthProvider({ children }) {
   // Auth state listener
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log("User authenticated:", firebaseUser);
       setUser(firebaseUser);
       if (firebaseUser) {
         try {
@@ -80,7 +76,6 @@ export function AuthProvider({ children }) {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         const data = snap.data();
-        console.log("User profile fetched from Firestore:", data);
         
         // Sync to sessionStorage for AI context mapping
         sessionStorage.setItem('studentProfile', JSON.stringify({
@@ -99,7 +94,6 @@ export function AuthProvider({ children }) {
 
         return data;
       } else {
-        console.log("Creating new user profile doc in Firestore...");
         const newProfile = {
           uid: firebaseUser.uid,
           email: firebaseUser.email || "",
@@ -107,7 +101,6 @@ export function AuthProvider({ children }) {
           photoURL: firebaseUser.photoURL || "",
           provider: firebaseUser.providerData[0]?.providerId || "unknown",
           createdAt: serverTimestamp(),
-          onboardingCompleted: false,
           onboardingComplete: false,
           studyPlan: null,
         };
@@ -123,7 +116,6 @@ export function AuthProvider({ children }) {
         fullName: firebaseUser.displayName || "",
         photoURL: firebaseUser.photoURL || "",
         provider: firebaseUser.providerData[0]?.providerId || "unknown",
-        onboardingCompleted: false,
         onboardingComplete: false,
         studyPlan: null
       };
@@ -134,7 +126,6 @@ export function AuthProvider({ children }) {
   async function saveOnboardingData(onboardingData) {
     if (!user) return;
     try {
-      console.log("Saving onboarding data to Firestore for UID:", user.uid);
       const ref = doc(db, "users", user.uid);
       const dataToSave = {
         uid: user.uid,
@@ -156,8 +147,7 @@ export function AuthProvider({ children }) {
         careerGoal: onboardingData.careerGoal || "",
         studyLanguage: onboardingData.studyLanguage || "",
         workPreference: onboardingData.workPreference || "",
-        onboardingCompleted: true,
-        onboardingComplete: true, // Legacy compatibility
+        onboardingComplete: true,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -183,7 +173,6 @@ export function AuthProvider({ children }) {
       }));
 
       setUserProfile(prev => ({ ...prev, ...dataToSave }));
-      console.log("Onboarding data saved successfully:", dataToSave);
     } catch (err) {
       console.error("Error saving onboarding data to Firestore:", err);
       throw err;
@@ -198,7 +187,6 @@ export function AuthProvider({ children }) {
       const updateData = {
         studyPlan: plan,
         onboardingComplete: true,
-        onboardingCompleted: true,
         updatedAt: serverTimestamp()
       };
       await setDoc(ref, updateData, { merge: true });
@@ -211,18 +199,14 @@ export function AuthProvider({ children }) {
 
   // Google Sign In — popup on desktop, redirect on mobile
   async function signInWithGoogle() {
-    console.log("Google Sign In started");
     setAuthError(null);
     try {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        console.log("Mobile context detected - using redirect authentication");
         await signInWithRedirect(auth, googleProvider);
       } else {
-        console.log("Desktop context detected - attempting popup authentication");
         try {
           const result = await signInWithPopup(auth, googleProvider);
-          console.log("Google Sign In success via popup, user authenticated:", result.user);
           return result;
         } catch (popupErr) {
           console.error("Popup authentication failed:", popupErr);
@@ -233,7 +217,6 @@ export function AuthProvider({ children }) {
             popupErr.code === "auth/operation-not-supported-in-this-environment" ||
             popupErr.code === "auth/unauthorized-domain"
           ) {
-            console.log("Popup blocked or not supported in environment. Falling back to redirect...");
             await signInWithRedirect(auth, googleProvider);
           } else {
             throw popupErr;
@@ -263,20 +246,16 @@ export function AuthProvider({ children }) {
     try {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        console.log("Mobile detected — using redirect for Apple Sign In");
         await signInWithRedirect(auth, appleProvider);
-        // Browser navigates away — getRedirectResult handles the rest on return
         return;
       }
       const result = await signInWithPopup(auth, appleProvider);
       return result;
     } catch (err) {
-      // Fallback to redirect if popup is blocked
       if (
         err.code === "auth/popup-blocked" ||
         err.code === "auth/operation-not-supported-in-this-environment"
       ) {
-        console.log("Apple popup blocked — falling back to redirect");
         await signInWithRedirect(auth, appleProvider);
         return;
       }
