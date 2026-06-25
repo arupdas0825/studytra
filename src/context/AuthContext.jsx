@@ -5,10 +5,7 @@ import {
   signInWithPopup,
   signOut,
   signInWithRedirect,
-  getRedirectResult,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  updateProfile
+  getRedirectResult
 } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider, appleProvider } from "../lib/firebase";
@@ -272,20 +269,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  // Sign in with email
-  function loginWithEmail(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
 
-  // Register with email
-  async function registerWithEmail(email, password, name) {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, { displayName: name });
-    const profile = await fetchOrCreateUserProfile(userCredential.user);
-    setUserProfile(profile);
-    setUser(userCredential.user);
-    return userCredential.user;
-  }
 
   return (
     <AuthContext.Provider value={{
@@ -298,8 +282,6 @@ export function AuthProvider({ children }) {
       setAuthModalOpen,
       signInWithGoogle,
       signInWithApple,
-      loginWithEmail,
-      registerWithEmail,
       saveStudyPlan,
       saveOnboardingData,
       logout

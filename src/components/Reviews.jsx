@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Star, Plus, X, Send, Loader } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { db } from '../lib/firebase'
-import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore'
+import { supabase } from '../lib/supabase'
 
 const DEFAULT_REVIEWS = [
   { id: '1', name: 'Vikram Reddy', country: 'Germany', university: 'MSc Robotics', text: 'APS and visa checklist saved me from so many mistakes. Never needed a consultancy.', rating: 5, created_at: '2026-06-01T00:00:00Z' },
@@ -37,20 +36,20 @@ export default function Reviews() {
   const fetchReviews = async () => {
     try {
       setLoading(true)
-      const q = query(collection(db, "reviews"), orderBy("created_at", "desc"));
-      const querySnapshot = await getDocs(q);
-      const data = [];
-      querySnapshot.forEach((docSnap) => {
-        data.push({ id: docSnap.id, ...docSnap.data() });
-      });
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-      if (data.length > 0) {
+      if (error) throw error
+
+      if (data && data.length > 0) {
         setReviews(data)
       } else {
         setReviews(DEFAULT_REVIEWS)
       }
     } catch (err) {
-      console.warn('Could not load reviews from Firestore. Using defaults.', err)
+      console.warn('Could not load reviews from Supabase. Using defaults.', err)
       setReviews(DEFAULT_REVIEWS)
     } finally {
       setLoading(false)
@@ -100,11 +99,15 @@ export default function Reviews() {
     }, 1200)
 
     try {
-      // Async save to Firestore in background
-      await addDoc(collection(db, "reviews"), newReview);
+      // Async save to Supabase in background
+      const { error } = await supabase
+        .from('reviews')
+        .insert([newReview])
+
+      if (error) throw error
       fetchReviews() // refresh in background to sync database IDs
     } catch (err) {
-      console.error('Failed to save review to Firestore:', err)
+      console.error('Failed to save review to Supabase:', err)
       setReviews(originalReviews) // roll back if fails
       setDone(false)
     } finally {
@@ -266,7 +269,7 @@ export default function Reviews() {
                 <div style={{ textAlign: 'center', padding: '30px 0' }}>
                   <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>🎉</div>
                   <h3 style={{ fontFamily: 'Plus Jakarta Sans', color: 'var(--text-primary)', fontWeight: 800, fontSize: '1.4rem', marginBottom: 8 }}>Thank You!</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>Your review has been saved to Firebase and is now live on our homepage.</p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>Your review has been saved and is now live on our homepage.</p>
                 </div>
               ) : (
                 <>

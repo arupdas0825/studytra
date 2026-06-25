@@ -26,3 +26,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agent task and plan files
+task.md
+*.md
+!README.md

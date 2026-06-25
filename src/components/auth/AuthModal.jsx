@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 
@@ -19,343 +18,101 @@ const AppleIcon = () => (
   </svg>
 );
 
-const getErrorMessage = (code) => ({
-  "auth/popup-closed-by-user": "Sign-in was cancelled.",
-  "auth/popup-blocked": "Popup was blocked. Please allow popups for this site.",
-  "auth/network-request-failed": "Network error. Check your connection.",
-  "auth/user-disabled": "This account has been disabled.",
-  "auth/cancelled-popup-request": "Sign-in was cancelled.",
-  "auth/invalid-email": "Please enter a valid email address.",
-  "auth/user-not-found": "No account found with this email.",
-  "auth/wrong-password": "Incorrect password. Please try again.",
-  "auth/email-already-in-use": "An account already exists with this email.",
-  "auth/weak-password": "Password should be at least 6 characters.",
-})[code] || "Authentication failed. Please try again.";
-
 export default function AuthModal({ isOpen, onClose }) {
-  const { signInWithGoogle, signInWithApple, loginWithEmail, registerWithEmail } = useAuth();
-  const { showSuccess, showError } = useToast();
-  const navigate = useNavigate();
-  
-  // Modal Views: 'options', 'login', 'register', 'redirect-pending'
-  const [view, setView] = useState('options');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  
-  // Email form state
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: ''
-  });
+  const { signInWithGoogle, signInWithApple, authError } = useAuth()
+  const { showSuccess, showError } = useToast()
+  const navigate = useNavigate()
+  const [loadingGoogle, setLoadingGoogle] = useState(false)
+  const [loadingApple, setLoadingApple] = useState(false)
 
-  // Escape key close listener
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    if (isOpen) window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isOpen, onClose])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
-  const updateField = (key, val) => {
-    setForm(p => ({ ...p, [key]: val }));
-    setError(null);
-  };
-
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError(null);
+  const handleGoogle = async () => {
+    setLoadingGoogle(true)
     try {
-      const result = await signInWithGoogle();
-      // On mobile, signInWithGoogle() triggers a redirect (browser navigates away)
-      // result will be undefined — getRedirectResult in AuthContext handles routing on return.
-      // On desktop popup success, result is the UserCredential object.
-      if (!result) {
-        // Mobile redirect flow — show pending message (browser will navigate away shortly)
-        setView('redirect-pending');
-        return;
+      const result = await signInWithGoogle()
+      if (result) {
+        showSuccess('Signed in successfully ✓')
+        onClose()
+        navigate('/chat')
       }
-      showSuccess("Signed in successfully with Google 🎉");
-      onClose();
-      navigate('/chat');
     } catch (err) {
-      setError(getErrorMessage(err.code || err.message));
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        showError(err.message || 'Sign-in failed.')
+      }
+    } finally { setLoadingGoogle(false) }
+  }
 
-  const handleAppleLogin = async () => {
-    setLoading(true);
-    setError(null);
+  const handleApple = async () => {
+    setLoadingApple(true)
     try {
-      const result = await signInWithApple();
-      // Same as Google — on mobile this triggers a redirect, result is undefined.
-      if (!result) {
-        setView('redirect-pending');
-        return;
+      const result = await signInWithApple()
+      if (result) {
+        showSuccess('Signed in with Apple ✓')
+        onClose()
+        navigate('/chat')
       }
-      showSuccess("Signed in successfully with Apple 🎉");
-      onClose();
-      navigate('/chat');
     } catch (err) {
-      setError(getErrorMessage(err.code || err.message));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.email || !form.password) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    
-    setLoading(true);
-    setError(null);
-    try {
-      if (view === 'login') {
-        await loginWithEmail(form.email, form.password);
-        showSuccess("Logged in successfully ✓");
-      } else {
-        if (!form.name.trim()) {
-          setError("Name is required to create an account.");
-          setLoading(false);
-          return;
-        }
-        await registerWithEmail(form.email, form.password, form.name);
-        showSuccess("Account created successfully 🎉");
-      }
-      onClose();
-      navigate('/chat');
-    } catch (err) {
-      setError(getErrorMessage(err.code || err.message));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGuestLogin = () => {
-    onClose();
-    navigate('/budget'); // Take guest to budget calculator as a trial
-  };
+      showError(err.message || 'Apple sign-in failed.')
+    } finally { setLoadingApple(false) }
+  }
 
   return (
     <div className="auth-backdrop" onClick={onClose}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Close Button */}
-        <button onClick={onClose} className="auth-close" aria-label="Close modal">
-          <X size={16} />
+      <div className="auth-modal" onClick={e => e.stopPropagation()}>
+
+        {/* Back / close */}
+        <button className="auth-close" onClick={onClose} aria-label="Close">
+          ✕
         </button>
 
-        {/* Brand Header */}
+        {/* Brand */}
         <div className="auth-brand">
-          <img src="/studytra-logo.png" alt="Studytra Logo" className="auth-logo" />
-          <span className="auth-brand-name">Studytra</span>
+          <img src="/studytra-logo.png" alt="Studytra" className="auth-logo" />
+          <span className="auth-brand-text">Studytra</span>
         </div>
 
-        {/* Dynamic Titles */}
-        <h2 className="auth-title">
-          {view === 'options' && "Welcome to Studytra"}
-          {view === 'login' && "Sign In"}
-          {view === 'register' && "Create Account"}
-        </h2>
-        <p className="auth-subtitle">
-          {view === 'options' && "Join thousands of Indian students mapping out their study abroad journey."}
-          {view === 'login' && "Enter your credentials below to access your workspace."}
-          {view === 'register' && "Create an account to start building your study abroad profile."}
-        </p>
+        {/* Heading */}
+        <h2 className="auth-title">Welcome back</h2>
+        <p className="auth-desc">Sign in to save your roadmap and track your progress.</p>
 
-        {/* Interactive Benefit Chips */}
-        {view === 'options' && (
-          <div className="auth-benefits">
-            <div className="auth-benefit-chip">
-              <span className="check">✓</span> Personalized Roadmaps
-            </div>
-            <div className="auth-benefit-chip">
-              <span className="check">✓</span> Visa Checklists
-            </div>
-            <div className="auth-benefit-chip">
-              <span className="check">✓</span> Budget Calculators
-            </div>
-            <div className="auth-benefit-chip">
-              <span className="check">✓</span> Free Templates
-            </div>
-          </div>
-        )}
+        {/* Benefit chips */}
+        <div className="auth-chips">
+          <span className="auth-chip">✓ Personalized Roadmaps</span>
+          <span className="auth-chip">✓ Visa Checklists</span>
+          <span className="auth-chip">✓ Budget Calculators</span>
+          <span className="auth-chip">✓ AI Chat History</span>
+        </div>
 
-        {/* Error Notification */}
-        {error && (
-          <div style={{
-            background: 'rgba(220, 38, 38, 0.08)',
-            border: '1px solid rgba(220, 38, 38, 0.2)',
-            color: '#dc2626',
-            borderRadius: 'var(--radius-md)',
-            padding: '10px 14px',
-            fontSize: '12.5px',
-            fontWeight: 600,
-            marginBottom: 20,
-            lineHeight: 1.4
-          }}>
-            {error}
-          </div>
-        )}
+        {/* Buttons */}
+        <div className="auth-btns">
+          <button className="auth-btn-google" onClick={handleGoogle} disabled={loadingGoogle || loadingApple}>
+            {loadingGoogle ? <span className="auth-spinner dark" /> : <GoogleIcon />}
+            <span>{loadingGoogle ? 'Signing in…' : 'Continue with Google'}</span>
+          </button>
+          <button className="auth-btn-apple" onClick={handleApple} disabled={loadingGoogle || loadingApple}>
+            {loadingApple ? <span className="auth-spinner white" /> : <AppleIcon />}
+            <span>{loadingApple ? 'Signing in…' : 'Continue with Apple'}</span>
+          </button>
+        </div>
 
-        {/* View: Mobile Redirect Pending */}
-        {view === 'redirect-pending' && (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{
-              width: 48, height: 48, margin: '0 auto 16px',
-              borderRadius: '50%',
-              border: '3px solid var(--border-default)',
-              borderTopColor: 'var(--navy)',
-              animation: 'spin 0.8s linear infinite',
-              display: 'inline-block',
-            }} />
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Signing you in…<br />
-              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
-                You'll be redirected automatically.
-              </span>
-            </p>
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          </div>
-        )}
+        {authError && <div className="auth-error">{authError}</div>}
 
-        {/* View 1: Main Login Options */}
-        {view === 'options' && (
-          <div className="auth-buttons">
-            <button onClick={handleGoogleLogin} disabled={loading} className="btn-auth-google">
-              <GoogleIcon />
-              Continue with Google
-            </button>
-            <button onClick={handleAppleLogin} disabled={loading} className="btn-auth-apple">
-              <AppleIcon />
-              Continue with Apple
-            </button>
+        <div className="auth-or"><span /><span>or</span><span /></div>
 
-            <div className="auth-divider">
-              <div className="auth-divider-line" />
-              <span className="auth-divider-text">or</span>
-              <div className="auth-divider-line" />
-            </div>
+        <button className="auth-guest-btn" onClick={onClose}>
+          Continue without signing in →
+        </button>
 
-            <button 
-              onClick={() => { setView('login'); setError(null); }} 
-              className="btn btn-md btn-soft btn-pill"
-              style={{ width: '100%' }}
-            >
-              <Mail size={16} /> Continue with Email
-            </button>
-            
-            <button 
-              onClick={() => { setView('register'); setError(null); }} 
-              className="btn btn-md btn-ghost btn-pill"
-              style={{ width: '100%', marginTop: 4 }}
-            >
-              Create Email Account
-            </button>
+        <p className="auth-legal">By continuing, you agree to Studytra's Terms of Service.</p>
 
-            <div className="auth-divider" style={{ marginTop: 8 }} />
-
-            <button onClick={handleGuestLogin} className="btn-auth-guest">
-              Skip & Continue as Guest →
-            </button>
-          </div>
-        )}
-
-        {/* View 2 & 3: Email Forms */}
-        {view !== 'options' && (
-          <form onSubmit={handleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {view === 'register' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Full Name</label>
-                <div style={{ position: 'relative' }}>
-                  <User size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Arup Das" 
-                    value={form.name}
-                    onChange={(e) => updateField('name', e.target.value)}
-                    style={{ width: '100%', paddingLeft: 40 }}
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Email Address</label>
-              <div style={{ position: 'relative' }}>
-                <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-                <input 
-                  type="email" 
-                  placeholder="name@example.com" 
-                  value={form.email}
-                  onChange={(e) => updateField('email', e.target.value)}
-                  style={{ width: '100%', paddingLeft: 40 }}
-                  required
-                />
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Password</label>
-              <div style={{ position: 'relative' }}>
-                <Lock size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
-                <input 
-                  type="password" 
-                  placeholder="At least 6 characters" 
-                  value={form.password}
-                  onChange={(e) => updateField('password', e.target.value)}
-                  style={{ width: '100%', paddingLeft: 40 }}
-                  required
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="btn btn-md btn-primary btn-pill"
-              style={{ width: '100%', marginTop: 8 }}
-            >
-              {loading ? (
-                <span className="btn-spinner" />
-              ) : (
-                <>
-                  <span>{view === 'login' ? 'Sign In' : 'Create Account'}</span>
-                  <ArrowRight size={16} />
-                </>
-              )}
-            </button>
-
-            <button 
-              type="button"
-              onClick={() => { setView('options'); setError(null); }}
-              className="btn btn-md btn-ghost btn-pill"
-              style={{ width: '100%' }}
-            >
-              Back to all options
-            </button>
-          </form>
-        )}
-
-        {/* Legal Disclaimer */}
-        <p className="auth-legal" style={{ marginTop: 16 }}>
-          By continuing, you agree to Studytra's Terms of Service.<br />
-          Your study plan data remains private and secure.
-        </p>
       </div>
     </div>
-  );
+  )
 }
