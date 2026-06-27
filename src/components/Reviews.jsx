@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Star, Plus, X, Send, Loader } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabase'
+import { db } from '../lib/firebase'
+import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore'
 
 const DEFAULT_REVIEWS = [
   { id: '1', name: 'Vikram Reddy', country: 'Germany', university: 'MSc Robotics', text: 'APS and visa checklist saved me from so many mistakes. Never needed a consultancy.', rating: 5, created_at: '2026-06-01T00:00:00Z' },
@@ -36,20 +37,16 @@ export default function Reviews() {
   const fetchReviews = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-
-      if (data && data.length > 0) {
-        setReviews(data)
+      const q = query(collection(db, 'reviews'), orderBy('created_at', 'desc'))
+      const snap = await getDocs(q)
+      if (!snap.empty) {
+        const fetched = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        setReviews(fetched)
       } else {
         setReviews(DEFAULT_REVIEWS)
       }
     } catch (err) {
-      console.warn('Could not load reviews from Supabase. Using defaults.', err)
+      console.warn('Could not load reviews from Firestore. Using defaults.', err)
       setReviews(DEFAULT_REVIEWS)
     } finally {
       setLoading(false)
@@ -99,15 +96,11 @@ export default function Reviews() {
     }, 1200)
 
     try {
-      // Async save to Supabase in background
-      const { error } = await supabase
-        .from('reviews')
-        .insert([newReview])
-
-      if (error) throw error
+      // Async save to Firestore in background
+      await addDoc(collection(db, 'reviews'), newReview)
       fetchReviews() // refresh in background to sync database IDs
     } catch (err) {
-      console.error('Failed to save review to Supabase:', err)
+      console.error('Failed to save review to Firestore:', err)
       setReviews(originalReviews) // roll back if fails
       setDone(false)
     } finally {

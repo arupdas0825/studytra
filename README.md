@@ -10,7 +10,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 [![React Router](https://img.shields.io/badge/React_Router-v6-CA4245?style=flat-square&logo=reactrouter&logoColor=white)](https://reactrouter.com)
 [![Gemini](https://img.shields.io/badge/Gemini_2.0_Flash-AI-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
-[![Supabase](https://img.shields.io/badge/Supabase-Auth_%26_DB-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://studytra.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-0EA5A0?style=flat-square)](LICENSE)
 
@@ -20,7 +20,7 @@
   from IELTS prep to landing at the airport. No consultant needed.
 </p>
 
-**[Live Demo](https://studytra.vercel.app)** · [Report Bug](../../issues) · [Request Feature](../../issues)
+[Live Demo](https://studytra.vercel.app) · [Report Bug](../../issues) · [Request Feature](../../issues)
 
 </div>
 
@@ -61,7 +61,7 @@
 
 Studytra is a **production-deployed React SPA** that replaces the traditional study-abroad consultancy model with a self-serve, AI-assisted execution system. It covers the full student journey across five countries — Germany, USA, Canada, UK, and Australia — providing country-specific timelines, visa documentation, cost planning, loan comparison, and flight guidance in one unified interface.
 
-The AI layer is powered by **Google Gemini 2.0 Flash** via a secure Vercel serverless proxy — the API key never touches the browser. Supabase handles authentication and persistent data storage.
+The AI layer is powered by **Google Gemini 2.0 Flash** via a secure Vercel serverless proxy — the API key never touches the browser. Firebase handles authentication and persistent data storage.
 
 ---
 
@@ -77,16 +77,14 @@ Browser (React SPA)
 ├── /api/gemini.js               — Vercel Serverless Function (API key never exposed)
 │   └── Gemini 2.0 Flash         — AI assistant powered by Google Generative AI
 │
-├── Supabase                     — Auth (Google OAuth + Email) + Postgres DB
-│   ├── auth.users               — user identity
-│   ├── chat_sessions + messages — persistent AI chat history
-│   ├── decision_lock            — user's locked study plan
-│   └── cost_plans               — saved budget configurations
+├── Firebase                     — Auth (Google OAuth + Email) + Firestore
+│   ├── users                    — user profile & identity
+│   └── reviews                  — community student reviews
 │
 └── public/pdfs/                 — pre-generated country roadmap PDFs (ReportLab)
 ```
 
-> **Security:** Gemini API key is stored as a Vercel environment variable (`GEMINI_API_KEY`). All AI requests are proxied through `/api/gemini` — the key is never included in the browser bundle. `VITE_` prefix is only used for Supabase public keys (anon key by design).
+> **Security:** Gemini API key is stored as a Vercel environment variable (`GEMINI_API_KEY`). All AI requests are proxied through `/api/gemini` — the key is never included in the browser bundle. `VITE_FIREBASE_` variables handle client authentication.
 
 ---
 
@@ -185,7 +183,7 @@ POST /api/gemini
 | Icons | Lucide React | Consistent icon system |
 | AI | Google Gemini 2.0 Flash | AI Assistant core |
 | AI Proxy | Vercel Serverless Function | Secure API key handling |
-| Auth & DB | Supabase | Google OAuth, email auth, Postgres |
+| Auth & DB | Firebase | Google OAuth, email auth, Firestore |
 | PDF Generation | Python ReportLab | Country roadmap PDFs (local script) |
 | Deployment | Vercel | SPA hosting with serverless functions |
 
@@ -257,10 +255,12 @@ studytra/
 │   │   ├── CVFormatPage.jsx
 │   │   └── SOPGuidePage.jsx
 │   │
+│   ├── lib/
+│   │   └── firebase.js                    # Firebase client
+│   │
 │   ├── utils/
 │   │   ├── gemini.js                      # Gemini calls via /api/gemini proxy
-│   │   ├── studytraKnowledge.js           # Full AI knowledge base + system prompt
-│   │   └── supabase.js                    # Supabase client
+│   │   └── studytraKnowledge.js           # Full AI knowledge base + system prompt
 │   │
 │   ├── App.jsx
 │   ├── App.css
@@ -283,7 +283,7 @@ studytra/
 - Node.js 18+
 - npm
 - Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey))
-- Supabase project ([create here](https://supabase.com))
+- Firebase project ([create here](https://firebase.google.com))
 
 ### Installation
 
@@ -324,16 +324,19 @@ python scripts/generate_pdfs.py
 # Gemini AI — NO VITE_ prefix, server-side only via /api/gemini
 GEMINI_API_KEY=AIzaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# Supabase — VITE_ prefix required, public by design (RLS enforced)
-VITE_SUPABASE_URL=https://xxxxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Firebase Config
+VITE_FIREBASE_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+VITE_FIREBASE_AUTH_DOMAIN=xxxxxxxx.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=xxxxxxxx
+VITE_FIREBASE_STORAGE_BUCKET=xxxxxxxx.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=xxxxxxxx
+VITE_FIREBASE_APP_ID=xxxxxxxx
 ```
 
 | Variable | Used in | Browser exposed? |
 |----------|---------|-----------------|
 | `GEMINI_API_KEY` | `api/gemini.js` (server) | ❌ Never |
-| `VITE_SUPABASE_URL` | `src/utils/supabase.js` | ✅ Safe (public URL) |
-| `VITE_SUPABASE_ANON_KEY` | `src/utils/supabase.js` | ✅ Safe (RLS enforced) |
+| `VITE_FIREBASE_*` | `src/lib/firebase.js` | ✅ Safe (public config) |
 
 ---
 
@@ -371,9 +374,10 @@ Required for React Router — prevents 404 on direct URL access or refresh.
 ### Vercel Environment Variables
 Set these in Vercel Dashboard → Settings → Environment Variables:
 ```
-GEMINI_API_KEY         → Production + Preview + Development
-VITE_SUPABASE_URL      → Production + Preview + Development
-VITE_SUPABASE_ANON_KEY → Production + Preview + Development
+GEMINI_API_KEY            → Production + Preview + Development
+VITE_FIREBASE_API_KEY     → Production + Preview + Development
+VITE_FIREBASE_AUTH_DOMAIN → Production + Preview + Development
+... (all Firebase VITE_ vars)
 ```
 
 ### Deploy
@@ -386,8 +390,8 @@ git push        # Vercel auto-deploys on push to main
 
 ## Roadmap
 
-**v1.1 — Supabase Persistence**
-- [ ] Chat history saved per user session to Supabase
+**v1.1 — Cloud Persistence**
+- [ ] Chat history saved per user session to Firestore
 - [ ] Decision Lock synced to cloud (not just localStorage)
 - [ ] Cost plans saved and loadable across devices
 
