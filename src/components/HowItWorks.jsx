@@ -10,59 +10,107 @@ const steps = [
 
 export default function HowItWorks() {
   const ref = useRef(null)
+
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')) })
-    }, { threshold: 0.15 })
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.sr').forEach(el => el.classList.add('sr-visible'))
+        }
+      })
+    }, { threshold: 0.12 })
     if (ref.current) obs.observe(ref.current)
     return () => obs.disconnect()
   }, [])
 
   return (
-    <section id="how-it-works" ref={ref} style={{ padding: '100px 24px', background: '#FFFFFF', borderTop: '1px solid var(--border-default)' }}>
-      <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
-          <span style={{
-            display: 'inline-block', background: 'rgba(37, 99, 235, 0.05)',
-            color: 'var(--accent-primary)', fontSize: '0.72rem', fontWeight: 700,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            padding: '5px 14px', borderRadius: 'var(--r-full)', marginBottom: 16,
-          }} className="reveal">Process</span>
-          <h2 className="reveal" style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', color: 'var(--text-primary)', transitionDelay: '0.1s' }}>
+    <section
+      id="how-it-works"
+      ref={ref}
+      style={{
+        padding: '108px 24px',
+        background: '#ffffff',
+        borderTop: '1px solid rgba(26,20,8,0.07)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Subtle background radial for depth */}
+      <div style={{
+        position: 'absolute', top: '30%', right: '-8%',
+        width: 480, height: 480,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(29,52,97,0.035) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '10%', left: '-6%',
+        width: 360, height: 360,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(184,146,42,0.03) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* Header */}
+        <div className="sr" style={{ textAlign: 'center', marginBottom: 60 }}>
+          <span className="section-badge">Process</span>
+          <h2 className="section-headline" style={{ textAlign: 'center' }}>
             Four Stages, One Clear Path
           </h2>
-          <p className="reveal" style={{ color: 'var(--text-secondary)', maxWidth: 500, margin: '12px auto 0', fontSize: '1rem', transitionDelay: '0.15s' }}>
-            We break your entire study abroad journey into four logical stages.
+          <div className="gold-rule" />
+          <p className="section-subtext" style={{ textAlign: 'center' }}>
+            We break your entire study abroad journey into four logical stages —
+            so you never feel lost.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }} className="steps-grid">
+        {/* Steps Grid */}
+        <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
           {steps.map(({ n, icon: Icon, title, desc }, i) => (
-            <div key={n} className="reveal" style={{
-              transitionDelay: `${0.1 + i * 0.1}s`,
-              background: 'var(--bg-primary)',
-              borderRadius: 'var(--r-lg)', padding: '32px 24px',
-              border: '1px solid var(--border-default)',
-              position: 'relative', overflow: 'hidden',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+            <div
+              key={n}
+              className={`navy-step-card sr sr-delay-${i + 1}`}
+              style={{ padding: '32px 24px' }}
             >
+              {/* Big ghost number */}
               <div style={{
-                fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 900,
-                fontSize: '3.5rem', color: 'rgba(15, 23, 42, 0.04)', lineHeight: 1, marginBottom: 20,
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontWeight: 900,
+                fontSize: '3.8rem',
+                color: 'rgba(29, 52, 97, 0.05)',
+                lineHeight: 1,
+                marginBottom: 18,
+                userSelect: 'none',
               }}>{n}</div>
+
+              {/* Icon */}
               <div style={{
-                width: 46, height: 46, borderRadius: 'var(--r-md)',
-                background: 'var(--gradient-main)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18,
-                boxShadow: '0 4px 14px rgba(37,99,235,0.15)',
+                width: 46, height: 46,
+                borderRadius: 13,
+                background: 'var(--gradient-primary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 18,
+                boxShadow: '0 4px 16px rgba(29,52,97,0.22)',
               }}>
                 <Icon size={20} color="white" />
               </div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: 10, color: 'var(--text-primary)' }}>{title}</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{desc}</p>
+
+              <h3 style={{
+                fontSize: '1rem',
+                fontWeight: 800,
+                marginBottom: 10,
+                color: 'var(--text-primary)',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
+              }}>{title}</h3>
+
+              <p style={{
+                fontSize: '0.85rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.72,
+                margin: 0,
+              }}>{desc}</p>
             </div>
           ))}
         </div>

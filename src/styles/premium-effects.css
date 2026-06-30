@@ -1,0 +1,422 @@
+/* src/styles/premium-effects.css
+   White-luxury 3D depth system — navy (#1d3461) + gold (#b8922a) on white/parchment.
+   No new background hues. Depth via shadow, sheen, blur, and inner light only.
+*/
+
+/* ============================================================
+   SECTION GLASS CARDS — depth panels used in features, how-it-works, etc.
+   ============================================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 0 rgba(26, 20, 8, 0.04) inset,
+    0 16px 48px rgba(26, 20, 8, 0.08),
+    0 4px 12px rgba(26, 20, 8, 0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+/* top sheen */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,1) 30%, rgba(255,255,255,1) 70%, transparent);
+  pointer-events: none;
+}
+.glass-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,1) inset,
+    0 -1px 0 rgba(26,20,8,0.04) inset,
+    0 28px 64px rgba(26,20,8,0.12),
+    0 8px 20px rgba(26,20,8,0.06);
+}
+
+/* ============================================================
+   NAVY GLOW CARD — used for how-it-works steps
+   ============================================================ */
+.navy-step-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(29, 52, 97, 0.08);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 4px 24px rgba(29, 52, 97, 0.07),
+    0 1px 4px rgba(26, 20, 8, 0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+.navy-step-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--navy), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0 0 20px 20px;
+}
+.navy-step-card:hover {
+  transform: translateY(-7px);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 20px 56px rgba(29, 52, 97, 0.12),
+    0 4px 12px rgba(29, 52, 97, 0.06);
+}
+.navy-step-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* ============================================================
+   COUNTRY CARD — premium surface hover
+   ============================================================ */
+.country-card-premium {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(26, 20, 8, 0.08);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 4px 20px rgba(26, 20, 8, 0.06),
+    0 1px 4px rgba(26, 20, 8, 0.03);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.country-card-premium::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 50% 0%, rgba(29,52,97,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.country-card-premium:hover {
+  transform: translateY(-8px);
+  border-color: rgba(29, 52, 97, 0.14);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 28px 60px rgba(26, 20, 8, 0.10),
+    0 8px 20px rgba(29, 52, 97, 0.08);
+}
+.country-card-premium:hover::before { opacity: 1; }
+
+/* ============================================================
+   SECTION BADGE — replaces generic "label" tags
+   ============================================================ */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(29, 52, 97, 0.055);
+  border: 1px solid rgba(29, 52, 97, 0.12);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--navy);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   SECTION HEADLINES
+   ============================================================ */
+.section-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 2.9rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+.section-subtext {
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   GOLD ACCENT DIVIDERS / MICRO LINES
+   ============================================================ */
+.gold-rule {
+  display: inline-block;
+  width: 40px;
+  height: 2px;
+  background: var(--gradient-gold);
+  border-radius: 2px;
+  margin: 12px auto 18px;
+}
+
+/* ============================================================
+   FEATURE ALTERNATING ROW CONTAINER
+   ============================================================ */
+.feature-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  padding: 32px 0;
+}
+@media (max-width: 860px) {
+  .feature-row {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .feature-row > * { order: unset !important; }
+}
+
+/* ============================================================
+   MOCKUP CONTAINER (alternating feature section preview boxes)
+   ============================================================ */
+.mockup-container {
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(26,20,8,0.08);
+  border-radius: 24px;
+  padding: 44px 28px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 16px 48px rgba(26,20,8,0.07),
+    0 4px 12px rgba(26,20,8,0.04);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* ============================================================
+   ICON BOX
+   ============================================================ */
+.icon-box {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--navy-faint);
+  border: 1px solid rgba(29, 52, 97, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(29,52,97,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   SCROLL REVEAL UTILITY
+   ============================================================ */
+.sr {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sr.sr-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.sr-delay-1 { transition-delay: 0.08s; }
+.sr-delay-2 { transition-delay: 0.15s; }
+.sr-delay-3 { transition-delay: 0.22s; }
+.sr-delay-4 { transition-delay: 0.30s; }
+
+/* ============================================================
+   TESTIMONIAL CARD
+   ============================================================ */
+.testimonial-card {
+  background: #ffffff;
+  border: 1px solid rgba(26,20,8,0.08);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 6px 24px rgba(26,20,8,0.06),
+    0 1px 4px rgba(26,20,8,0.03);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.95) inset,
+    0 16px 40px rgba(26,20,8,0.09),
+    0 4px 10px rgba(26,20,8,0.04);
+}
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: -4px; right: 18px;
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 1;
+  color: rgba(29,52,97,0.06);
+  pointer-events: none;
+}
+
+/* ============================================================
+   AVATAR CHIP
+   ============================================================ */
+.avatar-chip {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* ============================================================
+   HERO CARD PREMIUM UPGRADE
+   ============================================================ */
+.hero-feature-card {
+  background: rgba(255,255,255,0.90) !important;
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.95) !important;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,1) inset,
+    0 20px 60px rgba(26,20,8,0.12),
+    0 6px 16px rgba(26,20,8,0.06) !important;
+}
+
+/* ============================================================
+   FAQ ACCORDION CARD
+   ============================================================ */
+.faq-item {
+  background: #ffffff;
+  border: 1px solid rgba(26,20,8,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(26,20,8,0.04);
+}
+.faq-item.open {
+  border-color: rgba(29,52,97,0.15);
+  box-shadow: 0 6px 24px rgba(29,52,97,0.08), 0 2px 6px rgba(26,20,8,0.04);
+}
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  gap: 12px;
+  transition: background 0.2s ease;
+}
+.faq-question:hover { background: rgba(29,52,97,0.02); }
+.faq-chevron {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), color 0.2s;
+}
+.faq-item.open .faq-chevron {
+  transform: rotate(180deg);
+  color: var(--navy);
+}
+.faq-answer {
+  padding: 0 22px 18px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  border-top: 1px solid rgba(26,20,8,0.06);
+  padding-top: 16px;
+  margin: 0 22px 18px;
+}
+
+/* ============================================================
+   FOOTER PREMIUM SURFACE
+   ============================================================ */
+.footer-premium {
+  background: #0f1e38;
+  color: rgba(255,255,255,0.75);
+  position: relative;
+  overflow: hidden;
+}
+.footer-premium::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(184,146,42,0.5) 50%, transparent 100%);
+}
+
+/* ============================================================
+   STATS / TRUST BADGES ROW
+   ============================================================ */
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(29,52,97,0.10);
+  border-radius: 999px;
+  padding: 6px 16px 6px 8px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  box-shadow: 0 2px 8px rgba(26,20,8,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   MICRO ANIMATIONS
+   ============================================================ */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.7; }
+}
+@keyframes shimmerMove {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-float-slow { animation: floatSlow 5s ease-in-out infinite; }
+.animate-glow-pulse { animation: glowPulse 3s ease-in-out infinite; }
+
+/* Shimmer overlay for loading/emphasis states */
+.shimmer-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: shimmerMove 2.4s ease-in-out infinite;
+  pointer-events: none;
+}

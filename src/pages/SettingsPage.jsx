@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Settings, Shield, Trash2, RotateCcw, AlertTriangle, RefreshCw, Info } from 'lucide-react'
 import { db } from '../lib/firebase'
 import { doc, updateDoc } from 'firebase/firestore'
+import { AI_CONFIG } from '../services/ai/config'
 
 export default function SettingsPage() {
   const { user, userProfile, logout } = useAuth()
@@ -221,7 +222,7 @@ export default function SettingsPage() {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: '0.8rem', color: '#64748B' }}>
             <div>App Version: <span style={{ fontWeight: 700, color: '#0F172A' }}>0.0.1</span></div>
-            <div>AI Core: <span style={{ fontWeight: 700, color: '#0F172A' }}>Gemini Pro Core (v1.5)</span></div>
+            <div>AI Core: <span style={{ fontWeight: 700, color: '#0F172A' }}>Groq ({AI_CONFIG.model})</span></div>
             <div>Environment: <span style={{ fontWeight: 700, color: '#0F172A' }}>Development</span></div>
           </div>
         </div>

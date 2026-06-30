@@ -1,20 +1,22 @@
-// api/gemini.js
-// Vercel Serverless Function — Gemini API proxy
+// api/groq.js
+// Vercel Serverless Function — Groq API proxy
 // Key stays server-side only, never exposed to browser
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
 
-  const MODEL   = 'gemini-2.0-flash'
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+  const API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
   try {
-    const { contents, generationConfig, safetySettings } = req.body
+    const body = req.body
 
-    const response = await fetch(`${API_URL}?key=${process.env.GEMINI_API_KEY}`, {
+    const response = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents, generationConfig, safetySettings }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify(body),
     })
 
     const data = await response.json()
@@ -27,7 +29,7 @@ export default async function handler(req, res) {
     return res.status(200).json(data)
 
   } catch (error) {
-    console.error('Gemini proxy error:', error)
+    console.error('Groq proxy error:', error)
     return res.status(500).json({ error: 'Internal server error' })
   }
 }

@@ -9,7 +9,7 @@
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 [![React Router](https://img.shields.io/badge/React_Router-v6-CA4245?style=flat-square&logo=reactrouter&logoColor=white)](https://reactrouter.com)
-[![Gemini](https://img.shields.io/badge/Gemini_2.0_Flash-AI-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
+[![Groq](https://img.shields.io/badge/Groq-AI-f25f22?style=flat-square&logo=openai&logoColor=white)](https://groq.com)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://studytra.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-0EA5A0?style=flat-square)](LICENSE)
@@ -61,7 +61,7 @@
 
 Studytra is a **production-deployed React SPA** that replaces the traditional study-abroad consultancy model with a self-serve, AI-assisted execution system. It covers the full student journey across five countries — Germany, USA, Canada, UK, and Australia — providing country-specific timelines, visa documentation, cost planning, loan comparison, and flight guidance in one unified interface.
 
-The AI layer is powered by **Google Gemini 2.0 Flash** via a secure Vercel serverless proxy — the API key never touches the browser. Firebase handles authentication and persistent data storage.
+The AI layer is powered by **Groq AI** via a secure Vercel serverless proxy — the API key never touches the browser. Firebase handles authentication and persistent data storage.
 
 ---
 
@@ -74,8 +74,8 @@ Browser (React SPA)
 ├── Context API + useState       — global country selection, decision lock, chat state
 ├── Component Modules            — feature-isolated sections per dashboard module
 │
-├── /api/gemini.js               — Vercel Serverless Function (API key never exposed)
-│   └── Gemini 2.0 Flash         — AI assistant powered by Google Generative AI
+├── /api/groq.js                 — Vercel Serverless Function (API key never exposed)
+│   └── Groq Llama 3.3           — AI assistant powered by Groq API
 │
 ├── Firebase                     — Auth (Google OAuth + Email) + Firestore
 │   ├── users                    — user profile & identity
@@ -84,17 +84,17 @@ Browser (React SPA)
 └── public/pdfs/                 — pre-generated country roadmap PDFs (ReportLab)
 ```
 
-> **Security:** Gemini API key is stored as a Vercel environment variable (`GEMINI_API_KEY`). All AI requests are proxied through `/api/gemini` — the key is never included in the browser bundle. `VITE_FIREBASE_` variables handle client authentication.
+> **Security:** Groq API key is stored as a Vercel environment variable (`GROQ_API_KEY`). All AI requests are proxied through `/api/groq` — the key is never included in the browser bundle. `VITE_FIREBASE_` variables handle client authentication.
 
 ---
 
 ## Feature Modules
 
 ### 🤖 AI Assistant
-Powered by Gemini 2.0 Flash via a secure serverless proxy. The assistant is persona-engineered as "Studytra AI" — a knowledgeable guide for Indian students navigating the full study abroad process across 5 countries.
+Powered by Groq AI (Llama 3.3 70B) via a secure serverless proxy. The assistant is persona-engineered as "Studytra AI" — a knowledgeable guide for Indian students navigating the full study abroad process across 5 countries.
 
 **Implementation details:**
-- Full conversation history sent on every API call (Gemini is stateless)
+- Full conversation history sent on every API call (AI is stateless)
 - Student profile (name, age, target country, degree, course) stored in `sessionStorage` and injected into every request via `studytraKnowledge.js`
 - System prompt pair injected at conversation start with full knowledge base
 - Last 10 messages sent to stay within token limits
@@ -156,17 +156,19 @@ src/utils/studytraKnowledge.js
 │   └── Post-study pathways   — OPT/STEM OPT, PGWP, Graduate Route, Subclass 485
 └── PLAN_LOCKED format        — structured JSON extraction from AI responses
 
-src/utils/gemini.js  →  /api/gemini (Vercel Function)  →  Gemini 2.0 Flash API
+src/services/ai/groq.ts  →  /api/groq (Vercel Function)  →  Groq Chat Completions API
 ```
 
 **Proxy call structure:**
 ```js
-// Browser calls the proxy — never Gemini directly
-POST /api/gemini
+// Browser calls the proxy — never Groq directly
+POST /api/groq
 {
-  contents: [...systemPair, ...recentMessages],  // last 10 messages
-  generationConfig: { temperature: 0.65, maxOutputTokens: 1800 },
-  safetySettings: [...]
+  model: "llama-3.3-70b-versatile",
+  messages: [{ role: "system", content: "..." }, ...recentMessages],  // last 10 messages
+  temperature: 0.65,
+  max_tokens: 1800,
+  top_p: 0.9
 }
 ```
 
@@ -181,7 +183,7 @@ POST /api/gemini
 | State | Context API + useState + sessionStorage | Global + persistent state |
 | Styling | Vanilla CSS + Custom Properties | Design tokens, glassmorphism |
 | Icons | Lucide React | Consistent icon system |
-| AI | Google Gemini 2.0 Flash | AI Assistant core |
+| AI | Groq AI (Llama 3.3 70B) | AI Assistant core |
 | AI Proxy | Vercel Serverless Function | Secure API key handling |
 | Auth & DB | Firebase | Google OAuth, email auth, Firestore |
 | PDF Generation | Python ReportLab | Country roadmap PDFs (local script) |
@@ -195,7 +197,7 @@ POST /api/gemini
 studytra/
 │
 ├── api/
-│   └── gemini.js                          # Vercel serverless proxy — key server-side only
+│   └── groq.js                            # Vercel serverless proxy — key server-side only
 │
 ├── public/
 │   ├── pdfs/
@@ -259,8 +261,12 @@ studytra/
 │   │   └── firebase.js                    # Firebase client
 │   │
 │   ├── utils/
-│   │   ├── gemini.js                      # Gemini calls via /api/gemini proxy
-│   │   └── studytraKnowledge.js           # Full AI knowledge base + system prompt
+│   │   ├── studytraKnowledge.js           # Full AI knowledge base + system prompt
+│   │
+│   ├── services/
+│   │   └── ai/
+│   │       ├── config.ts                  # Active model configuration
+│   │       └── groq.ts                    # Groq service calling api/groq or Groq directly
 │   │
 │   ├── App.jsx
 │   ├── App.css
@@ -282,7 +288,7 @@ studytra/
 
 - Node.js 18+
 - npm
-- Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey))
+- Groq API key ([get one here](https://console.groq.com/))
 - Firebase project ([create here](https://firebase.google.com))
 
 ### Installation
@@ -321,8 +327,9 @@ python scripts/generate_pdfs.py
 ```env
 # .env — never commit this file
 
-# Gemini AI — NO VITE_ prefix, server-side only via /api/gemini
-GEMINI_API_KEY=AIzaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Groq AI — VITE_ prefix for dev, server-side only in prod
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+VITE_GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Firebase Config
 VITE_FIREBASE_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -335,7 +342,7 @@ VITE_FIREBASE_APP_ID=xxxxxxxx
 
 | Variable | Used in | Browser exposed? |
 |----------|---------|-----------------|
-| `GEMINI_API_KEY` | `api/gemini.js` (server) | ❌ Never |
+| `GROQ_API_KEY` | `api/groq.js` (server) | ❌ Never |
 | `VITE_FIREBASE_*` | `src/lib/firebase.js` | ✅ Safe (public config) |
 
 ---
@@ -345,7 +352,7 @@ VITE_FIREBASE_APP_ID=xxxxxxxx
 | Path | Component | Description |
 |------|-----------|-------------|
 | `/` | `HomePage` | Hero, countries, features, reviews |
-| `/chat` | `ChatPage` | Gemini AI assistant with onboarding |
+| `/chat` | `ChatPage` | Groq AI assistant with onboarding |
 | `/dashboard` | `Dashboard` | Full dashboard with sidebar modules |
 | `/budget` | `BudgetPlanner` | Cost estimator + savings engine |
 | `/roadmap` | `RoadmapPage` | Visual timeline roadmap |
@@ -374,7 +381,7 @@ Required for React Router — prevents 404 on direct URL access or refresh.
 ### Vercel Environment Variables
 Set these in Vercel Dashboard → Settings → Environment Variables:
 ```
-GEMINI_API_KEY            → Production + Preview + Development
+GROQ_API_KEY              → Production + Preview + Development
 VITE_FIREBASE_API_KEY     → Production + Preview + Development
 VITE_FIREBASE_AUTH_DOMAIN → Production + Preview + Development
 ... (all Firebase VITE_ vars)
@@ -420,7 +427,7 @@ git checkout -b feat/your-feature-name
 git commit -m "feat: add scholarship finder module"
 git commit -m "fix: correct blocked account amount for Germany 2026"
 git commit -m "docs: update SBI loan rate"
-git commit -m "chore: upgrade Gemini model version"
+git commit -m "chore: upgrade Groq model version"
 
 git push origin feat/your-feature-name
 ```

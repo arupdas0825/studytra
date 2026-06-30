@@ -76,4 +76,20 @@
   --status-online:    #10b981;
   --status-loading:   #f59e0b;
   --status-error:     #ef4444;
+
+  /* === COMPATIBILITY ALIASES (for legacy component references) === */
+  --bg-primary:       #ffffff;
+  --bg-secondary:     #f7f5f0;
+  --bg-card:          #ffffff;
+  --bg-skeleton:      #eae7df;
+  --text-muted:       #9a8f7e;
+  --border-card:      rgba(30, 20, 10, 0.10);
+  --shadow-card:      0 4px 20px rgba(30,20,10,0.07), 0 1px 4px rgba(30,20,10,0.04);
+  --shadow-button:    0 4px 14px rgba(29, 52, 97, 0.24);
+  --gradient-main:    linear-gradient(135deg, #1d3461 0%, #2d5498 100%);
+  --r-full:           999px;
+  --r-lg:             16px;
+  --r-md:             12px;
+  --theme-icon-bg:    rgba(30, 20, 10, 0.04);
+  --theme-icon-hover: rgba(29, 52, 97, 0.06);
 }

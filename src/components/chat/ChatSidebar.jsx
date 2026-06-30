@@ -350,7 +350,7 @@ export default function ChatSidebar({
           </div>
         ) : (
           <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.45, margin: 0 }}>
-            ⚡ Powered by Gemini 2.0 Pro
+            ⚡ Powered by Groq AI
           </p>
         )}
       </div>

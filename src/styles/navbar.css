@@ -1,15 +1,12 @@
-/* src/styles/navbar.css */
+/* src/styles/navbar.css — Premium glass navbar */
 
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 200;
-  background: rgba(247, 245, 240, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  /* NO border-bottom — none, zero, nada */
+  background: rgba(247, 245, 240, 0.82);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border-bottom: none;
   box-shadow: none;
   padding: 0 32px;
@@ -18,34 +15,43 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* On scroll — add very subtle shadow instead of border */
 .navbar.scrolled {
   background: rgba(247, 245, 240, 0.96);
-  box-shadow: 0 1px 20px rgba(30, 20, 10, 0.06);
+  box-shadow:
+    0 1px 0 rgba(26, 20, 8, 0.07),
+    0 4px 24px rgba(26, 20, 8, 0.06);
 }
 
+/* Logo */
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
+  flex-shrink: 0;
 }
-.navbar-logo img { width: 30px; height: 30px; border-radius: 7px; object-fit: contain; }
+.navbar-logo img {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 2px 6px rgba(29,52,97,0.12);
+}
 .navbar-logo-text {
   font-family: var(--font-ui);
   font-size: 17px;
   font-weight: 800;
   color: var(--navy);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
+/* Desktop link row */
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
   justify-content: center;
 }
@@ -54,50 +60,61 @@
   padding: 7px 14px;
   border-radius: var(--radius-md);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: all 0.15s;
+  transition: all 0.18s ease;
   white-space: nowrap;
   background: none;
   border: none;
   cursor: pointer;
+  letter-spacing: -0.01em;
 }
 .nav-link:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  background: rgba(29, 52, 97, 0.06);
+  color: var(--navy);
 }
 .nav-link.active {
-  background: var(--navy-faint);
+  background: rgba(29, 52, 97, 0.08);
   color: var(--navy);
   font-weight: 600;
 }
 
+/* Right side */
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
-/* Sign In button in navbar */
+/* CTA button in navbar */
 .btn-signin-nav {
-  padding: 9px 20px;
+  padding: 9px 22px;
   background: var(--gradient-primary);
   color: white;
   border: none;
   border-radius: var(--radius-pill);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 10px rgba(29,52,97,0.20);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 3px 12px rgba(29,52,97,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  letter-spacing: -0.01em;
 }
 .btn-signin-nav:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(29,52,97,0.28);
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(29,52,97,0.34),
+    inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.btn-signin-nav:active {
+  transform: translateY(0);
 }

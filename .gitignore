@@ -9,7 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
-.env*
+.env
+.env.*
+!.env.example
 *.pem
 service-account*.json
 firebase-admin*.json

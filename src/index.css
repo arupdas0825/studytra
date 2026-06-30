@@ -9,6 +9,7 @@
 @import './styles/cards.css';
 @import './styles/hero.css';
 @import './styles/onboarding.css';
+@import './styles/premium-effects.css';
 
 *, *::before, *::after {
   box-sizing: border-box;

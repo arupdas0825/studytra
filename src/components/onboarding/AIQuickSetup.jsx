@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Sparkles, Send, ChevronDown } from 'lucide-react'
+import { callGroq } from '../../services/ai/groq'
 
 const QUICK_QUESTIONS = [
   "Hey! I'm Studytra AI. To set up your personalized roadmap, tell me — which country are you planning to study in, and what degree are you targeting? (e.g. Germany for M.Sc CS, October 2028)",
@@ -72,11 +73,7 @@ export default function AIQuickSetup({ onExtracted, onSkip }) {
     setLoading(true)
 
     try {
-      // Call Gemini to process this and extract structured data
-      const IS_DEV = import.meta.env.DEV
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-      const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
-      
+      // Call Groq to process this and extract structured data
       const prompt = `You are helping a student fill out a study abroad planning form.
 The student said: "${userText}"
 
@@ -87,31 +84,7 @@ Then reply warmly confirming what you understood and ask ONE follow-up if critic
 End your reply with this JSON on a new line (hidden from display):
 DATA:${JSON.stringify({ extracting: true })}`
 
-      let aiReply = ''
-
-      if (IS_DEV && apiKey) {
-        const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 200 }
-          })
-        })
-        const data = await res.json()
-        aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
-      } else {
-        const res = await fetch('/api/gemini', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 200 }
-          })
-        })
-        const data = await res.json()
-        aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
-      }
+      const aiReply = await callGroq([{ role: 'user', content: prompt }])
 
       // Clean up the DATA: line from display
       const displayReply = aiReply.replace(/DATA:\{.*\}/, '').trim()

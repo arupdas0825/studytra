@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Send, RefreshCw, Trash2, ShieldAlert, Sparkles, MessageSquare } from 'lucide-react'
-import { callGemini, parsePlanLock } from '../utils/gemini'
+import { callGroq, parsePlanLock } from '../services/ai/groq'
 import MessageBubble from '../components/chat/MessageBubble'
 import TypingIndicator from '../components/chat/TypingIndicator'
 import { useAuth } from '../context/AuthContext'
@@ -178,8 +178,8 @@ export default function ChatPage() {
     }
 
     try {
-      // Call Gemini AI
-      const res = await callGemini(updated.map(m => ({ role: m.role, content: m.content })))
+      // Call Groq AI
+      const res = await callGroq(updated.map(m => ({ role: m.role, content: m.content })))
       const { cleanText, plan } = parsePlanLock(res)
       const finalMessages = [...updated, { role: 'assistant', content: cleanText }]
       setMessages(finalMessages)

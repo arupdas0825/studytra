@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Wallet, GraduationCap, Briefcase } from 'lucide-react'
 import { COUNTRIES } from '../constants/countries'
@@ -7,15 +7,27 @@ import { useAuth } from '../context/AuthContext'
 export default function Countries() {
   const navigate = useNavigate()
   const { user, setAuthModalOpen } = useAuth()
+  const ref = useRef(null)
 
-  // Tuition helper mapping since it differs in raw data
+  useEffect(() => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.sr').forEach(el => el.classList.add('sr-visible'))
+        }
+      })
+    }, { threshold: 0.08 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+
   const getTuition = (c) => {
-    if (c.id === 'germany') return 'Free (Public)'
-    if (c.id === 'austria') return '€1,500 - €3,000 / yr'
-    if (c.id === 'usa') return '$20,000 - $35,000 / yr'
-    if (c.id === 'canada') return 'CAD $15,000 - $35,000 / yr'
-    if (c.id === 'uk') return '£12,000 - £22,000 / yr'
-    if (c.id === 'australia') return 'AUD $20,000 - $40,000 / yr'
+    if (c.id === 'germany')   return 'Free (Public)'
+    if (c.id === 'austria')   return '€1,500 – €3,000 / yr'
+    if (c.id === 'usa')       return '$20,000 – $35,000 / yr'
+    if (c.id === 'canada')    return 'CAD $15,000 – $35,000 / yr'
+    if (c.id === 'uk')        return '£12,000 – £22,000 / yr'
+    if (c.id === 'australia') return 'AUD $20,000 – $40,000 / yr'
     return 'Affordable'
   }
 
@@ -29,102 +41,70 @@ export default function Countries() {
   }
 
   return (
-    <section id="countries" style={{
-      padding: '100px 24px',
-      background: '#FFFFFF',
-      position: 'relative',
-      overflow: 'hidden',
-      borderTop: '1px solid var(--border-default)'
-    }}>
-      {/* Background Glow */}
+    <section
+      id="countries"
+      ref={ref}
+      style={{
+        padding: '108px 24px',
+        background: '#f7f5f0',
+        position: 'relative',
+        overflow: 'hidden',
+        borderTop: '1px solid rgba(26,20,8,0.07)',
+      }}
+    >
+      {/* Large radial depth glow */}
       <div style={{
-        position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)',
-        width: 600, height: 600, background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)',
-        pointerEvents: 'none'
+        position: 'absolute',
+        top: '40%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 700, height: 700,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(29,52,97,0.05) 0%, transparent 65%)',
+        pointerEvents: 'none',
       }} />
 
-      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <span style={{
-            display: 'inline-block',
-            background: 'rgba(37, 99, 235, 0.05)',
-            border: '1px solid rgba(37, 99, 235, 0.12)',
-            color: 'var(--accent-primary)',
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            padding: '5px 14px',
-            borderRadius: 'var(--r-full)',
-            marginBottom: 16,
-          }}>
-            Destinations
-          </span>
-          <h2 style={{
-            fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
-            fontWeight: 800,
-            color: 'var(--text-primary)',
-            fontFamily: 'Plus Jakarta Sans, sans-serif'
-          }}>
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* Header */}
+        <div className="sr" style={{ textAlign: 'center', marginBottom: 52 }}>
+          <span className="section-badge">Destinations</span>
+          <h2 className="section-headline" style={{ textAlign: 'center' }}>
             Explore Top Study Destinations
           </h2>
-          <p style={{
-            color: 'var(--text-secondary)',
-            fontSize: '1rem',
-            maxWidth: 520,
-            margin: '12px auto 0',
-            lineHeight: 1.6
-          }}>
-            Compare tuition costs, living expenses, and post-study opportunities for Indian students.
+          <div className="gold-rule" />
+          <p className="section-subtext" style={{ textAlign: 'center' }}>
+            Compare tuition costs, living expenses, and post-study opportunities tailored for Indian students.
           </p>
         </div>
 
-        {/* Countries Grid/Row */}
+        {/* Countries Grid */}
         <div className="countries-grid-scroll" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
           gap: 28,
         }}>
-          {COUNTRIES.map((c) => (
+          {COUNTRIES.map((c, i) => (
             <div
               key={c.id}
               onClick={(e) => handleCountryClick(e, c.name)}
-              className="country-hover-card"
+              className={`country-card-premium sr sr-delay-${Math.min(i + 1, 4)}`}
               style={{
-                background: '#FFFFFF',
-                border: '1px solid var(--border-default)',
-                borderRadius: 20,
-                padding: '30px 24px',
-                boxShadow: 'var(--shadow-card)',
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
+                padding: '30px 26px',
                 display: 'flex',
                 flexDirection: 'column',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-6px)'
-                e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.15)'
-                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
-                const btn = e.currentTarget.querySelector('.explore-btn')
-                if (btn) btn.style.opacity = '1'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.borderColor = 'var(--border-default)'
-                e.currentTarget.style.boxShadow = 'var(--shadow-card)'
-                const btn = e.currentTarget.querySelector('.explore-btn')
-                if (btn) btn.style.opacity = '0'
               }}
             >
-              {/* Flag and name */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{c.flag}</span>
+              {/* Flag + name row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <span style={{ fontSize: '2.6rem', lineHeight: 1, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}>
+                    {c.flag}
+                  </span>
                   <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Plus Jakarta Sans' }}>
+                    <h3 style={{
+                      fontSize: '1.22rem', fontWeight: 800, color: 'var(--text-primary)',
+                      margin: '0 0 2px', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                    }}>
                       {c.name}
                     </h3>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
@@ -134,61 +114,70 @@ export default function Countries() {
                 </div>
               </div>
 
-              {/* Stats block */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, flex: 1, marginBottom: 28 }}>
-                
-                {/* Tuition Fee */}
+              {/* Stats */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 13, flex: 1, marginBottom: 24 }}>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <GraduationCap size={16} color="var(--accent-primary)" />
+                  <div style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    background: 'rgba(29,52,97,0.06)', border: '1px solid rgba(29,52,97,0.10)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <GraduationCap size={14} color="var(--navy)" />
+                  </div>
                   <div style={{ fontSize: '0.86rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Tuition: </span>
                     <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{getTuition(c)}</strong>
                   </div>
                 </div>
 
-                {/* Living Costs */}
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <Wallet size={16} color="#7c3aed" />
+                  <div style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    background: 'rgba(184,146,42,0.07)', border: '1px solid rgba(184,146,42,0.14)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <Wallet size={14} color="var(--gold)" />
+                  </div>
                   <div style={{ fontSize: '0.86rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Living: </span>
                     <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{c.costRange}</strong>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 6 }}>({c.costINR.replace('≈ ', '')})</span>
+                    <span style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', marginLeft: 6 }}>
+                      ({c.costINR.replace('≈ ', '')})
+                    </span>
                   </div>
                 </div>
 
-                {/* Work Permit */}
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <Briefcase size={16} color="var(--accent-success)" />
+                  <div style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    background: 'rgba(5,150,105,0.07)', border: '1px solid rgba(5,150,105,0.14)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <Briefcase size={14} color="var(--accent-success)" />
+                  </div>
                   <div style={{ fontSize: '0.86rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Work Permit: </span>
                     <strong style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{c.workAllowed}</strong>
                   </div>
                 </div>
-
               </div>
 
-              {/* Bottom Explore Button (revealed on hover) */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-default)', paddingTop: 16 }}>
+              {/* Bottom bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                borderTop: '1px solid rgba(26,20,8,0.07)', paddingTop: 16,
+              }}>
                 <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
                   Top Uni: {c.topUnis[0]}
                 </span>
-                <span 
-                  className="explore-btn"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                    fontSize: '0.84rem',
-                    fontWeight: 700,
-                    color: 'var(--accent-primary)',
-                    opacity: 0,
-                    transition: 'opacity 0.25s ease'
-                  }}
-                >
+                <span style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  fontSize: '0.84rem', fontWeight: 700, color: 'var(--navy)',
+                  transition: 'gap 0.2s ease',
+                }}>
                   Explore <ArrowRight size={13} />
                 </span>
               </div>
-
             </div>
           ))}
         </div>
@@ -205,16 +194,11 @@ export default function Countries() {
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
           }
-          .countries-grid-scroll::-webkit-scrollbar {
-            display: none;
-          }
-          .country-hover-card {
+          .countries-grid-scroll::-webkit-scrollbar { display: none; }
+          .country-card-premium {
             flex-shrink: 0;
-            width: 290px !important;
+            width: 300px !important;
             scroll-snap-align: center;
-          }
-          .explore-btn {
-            opacity: 1 !important;
           }
         }
       `}</style>
