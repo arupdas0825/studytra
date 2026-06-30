@@ -231,7 +231,7 @@ export default function Navbar() {
           borderBottom: '1px solid var(--border-subtle)',
           boxShadow: 'var(--shadow-md)',
           padding: '16px 24px 24px',
-          zIndex: 199,
+          zIndex: 99998,
           display: 'flex',
           flexDirection: 'column',
           gap: 16
