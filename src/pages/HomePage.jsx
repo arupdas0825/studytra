@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronDown, Sparkles, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import HowItWorks from '../components/HowItWorks'
 import Features from '../components/Features'
@@ -106,9 +105,6 @@ export default function HomePage() {
 
   return (
     <div style={{ overflowX: 'hidden', background: 'var(--bg-primary)' }}>
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Content Sections */}
       <main>
         {/* 1. Hero Section */}

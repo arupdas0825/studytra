@@ -149,14 +149,18 @@ export default function Footer() {
             {/* Brand column */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-                <div style={{
-                  width: 38, height: 38, borderRadius: 11,
-                  background: 'var(--gradient-primary)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 14px rgba(29,52,97,0.40)',
-                }}>
-                  <GraduationCap size={20} color="white" />
-                </div>
+                <img 
+                  src="/studytra-logo.png" 
+                  alt="Studytra Logo" 
+                  style={{
+                    width: 38, height: 38, borderRadius: 11,
+                    objectFit: 'contain',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    background: '#ffffff',
+                    padding: 4,
+                    boxShadow: '0 4px 14px rgba(29,52,97,0.40)',
+                  }}
+                />
                 <span style={{
                   fontFamily: 'Plus Jakarta Sans, sans-serif',
                   fontWeight: 800, fontSize: '1.25rem',
