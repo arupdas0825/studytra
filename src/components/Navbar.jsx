@@ -78,15 +78,43 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <svg style={{ display: 'none' }}>
+        <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+          <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence" />
+          <feComponentTransfer in="turbulence" result="mapped">
+            <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
+            <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+            <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+          </feComponentTransfer>
+          <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
+          <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lightingColor="white" result="specLight">
+            <fePointLight x="-200" y="-200" z="300" />
+          </feSpecularLighting>
+          <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage" />
+          <feDisplacementMap in="SourceGraphic" in2="softMap" scale="200" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </svg>
+
+      <nav className={`navbar liquid-glass-container ${scrolled ? 'scrolled' : ''}`}>
+        {/* Liquid Glass Layers */}
+        <div className="liquid-glass-distortion-layer" />
+        <div 
+          className="liquid-glass-color-layer" 
+          style={{ 
+            background: scrolled ? 'rgba(247, 245, 240, 0.88)' : 'rgba(247, 245, 240, 0.25)',
+            transition: 'background 0.35s ease'
+          }} 
+        />
+        <div className="liquid-glass-sheen-layer" />
+
         {/* Logo and Brand */}
-        <Link to="/" className="navbar-logo">
+        <Link to="/" className="navbar-logo" style={{ position: 'relative', zIndex: 10 }}>
           <img src="/studytra-logo.png" alt="Studytra Logo" />
           <span className="navbar-logo-text">Studytra</span>
         </Link>
 
         {/* Desktop Links */}
-        <div className="navbar-links navbar-desktop-links" style={{ display: 'none' }}>
+        <div className="navbar-links navbar-desktop-links" style={{ display: 'none', position: 'relative', zIndex: 10 }}>
           {navLinks.map(link => 
             link.dropdown ? (
               <div 
@@ -165,7 +193,7 @@ export default function Navbar() {
         </div>
 
         {/* Right Buttons */}
-        <div className="navbar-right">
+        <div className="navbar-right" style={{ position: 'relative', zIndex: 10 }}>
           {user ? (
             <button onClick={handleAuthAction} className="btn-signin-nav">
               Workspace →

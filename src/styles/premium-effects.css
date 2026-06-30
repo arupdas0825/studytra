@@ -415,8 +415,52 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%);
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
   transform: translateX(-100%);
   animation: shimmerMove 2.4s ease-in-out infinite;
   pointer-events: none;
 }
+
+/* ============================================================
+   LIQUID GLASS SYSTEM (User's Exact Specification)
+   ============================================================ */
+.liquid-glass-container {
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+}
+
+.liquid-glass-distortion-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  border-radius: inherit;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  filter: url(#glass-distortion);
+  pointer-events: none;
+}
+
+.liquid-glass-color-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+.liquid-glass-sheen-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  overflow: hidden;
+  box-shadow: 
+    inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), 
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
